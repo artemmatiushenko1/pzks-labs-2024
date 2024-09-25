@@ -5,7 +5,6 @@ import org.example.Token
 import org.example.TokenType
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
-import org.junit.jupiter.params.provider.ValueSources
 import kotlin.test.Test
 
 // TARGET INPUT SOURCE: a+b*(c*cos(t-a*x)-d*sin(t+a*x)/(4.81*k-q*t))/(d*cos(t+a*y/f1(5.616*x-t))+c*sin(t-a*y*(u-v*i)))
@@ -19,6 +18,17 @@ class LexicalAnalyzerImplTest {
                 arrayOf("-", "-"),
                 arrayOf("/", "/"),
                 arrayOf("*", "*")
+            )
+        }
+
+        @JvmStatic
+        fun provideIdentifiersWithUnderscore(): List<Array<Any>> {
+            return listOf(
+                arrayOf("_variable", "_variable"),
+                arrayOf("__variable", "__variable"),
+                arrayOf("vari_able", "vari_able"),
+                arrayOf("vari___able", "vari___able"),
+                arrayOf("_vari__able__", "_vari__able__"),
             )
         }
 
@@ -47,6 +57,17 @@ class LexicalAnalyzerImplTest {
                         Token(type = TokenType.INTEGER, lexeme = "2"),
                     )
                 ),
+                arrayOf(
+                    "-2-+9873*vari_able=", listOf(
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
+                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                        Token(type = TokenType.INTEGER, lexeme = "9873"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
+                        Token(type = TokenType.IDENTIFIER, lexeme = "vari_able"),
+                    )
+                )
             )
         }
     }
@@ -81,10 +102,14 @@ class LexicalAnalyzerImplTest {
         lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "variable")))
     }
 
-    @Test
-    fun `tokenize returns a list with identifier token that starts with underscore`() {
-        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "_variable")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "_variable")))
+    @ParameterizedTest
+    @MethodSource("provideIdentifiersWithUnderscore")
+    fun `tokenize returns a list with identifier token that contains underscore`(
+        expressionSource: String,
+        expectedLexeme: String
+    ) {
+        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = expectedLexeme)))
     }
 
     @Test
@@ -102,7 +127,10 @@ class LexicalAnalyzerImplTest {
 
     @ParameterizedTest
     @MethodSource("provideSimpleExpressionsWithoutBrackets")
-    fun `tokenize returns correct tokens for a simple expression without brackets`(expressionSource: String, expectedTokens: List<Token>) {
+    fun `tokenize returns correct tokens for a simple expression without brackets`(
+        expressionSource: String,
+        expectedTokens: List<Token>
+    ) {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
         lexicalAnalyzer.tokenize().should.equal(expectedTokens)
     }
