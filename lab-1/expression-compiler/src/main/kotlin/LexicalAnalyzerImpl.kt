@@ -43,7 +43,6 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
 
             if (tokenMatcher.skip) {
                 position = position.inc()
-                continue
             } else {
                 this.tokens.add(token)
                 position += token.lexeme.length
