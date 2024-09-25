@@ -102,7 +102,7 @@ class LexicalAnalyzerImplTest {
 
     @ParameterizedTest
     @MethodSource("provideSimpleExpressionsWithoutBrackets")
-    fun `tokenize returns correct tokens for a 2+2 expression`(expressionSource: String, expectedTokens: List<Token>) {
+    fun `tokenize returns correct tokens for a simple expression without brackets`(expressionSource: String, expectedTokens: List<Token>) {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
         lexicalAnalyzer.tokenize().should.equal(expectedTokens)
     }
