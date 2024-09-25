@@ -5,8 +5,8 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
 
     override fun tokenize(): List<Token> {
         val integerRegex = Regex("^\\d+")
-        val identifierRegex = Regex("^_*[a-zA-Z_]+")
-        val mathOperatorRegex = Regex("[+-/*]")
+        val identifierRegex = Regex("^_*[a-zA-Z_0-9]+")
+        val mathOperatorRegex = Regex("^[+-/*]")
 
         var cursor = 0
 

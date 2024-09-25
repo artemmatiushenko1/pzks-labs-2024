@@ -29,6 +29,9 @@ class LexicalAnalyzerImplTest {
                 arrayOf("vari_able", "vari_able"),
                 arrayOf("vari___able", "vari___able"),
                 arrayOf("_vari__able__", "_vari__able__"),
+                arrayOf("f1", "f1"),
+                arrayOf("abc35", "abc35"),
+                arrayOf("var345end5", "var345end5"),
             )
         }
 
@@ -58,7 +61,8 @@ class LexicalAnalyzerImplTest {
                     )
                 ),
                 arrayOf(
-                    "-2-+9873*vari_able=", listOf(
+                    "variAble_-2-+9873*vari_able", listOf(
+                        Token(type = TokenType.IDENTIFIER, lexeme = "variAble_"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
                         Token(type = TokenType.INTEGER, lexeme = "2"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
