@@ -5,7 +5,6 @@ enum class TokenType {
     OPEN_PAREN, // "("
     CLOSE_PAREN, // ")"
     MATH_OPERATOR, // "=", "+", "-"
-    INTEGER, // "1", "2", "345"
-    FLOAT, // "5.616", "4.32",
+    NUMBER, // "1", "2", "345", "5.616", "4.32"
     // TODO: add sin, cos etc.
 }

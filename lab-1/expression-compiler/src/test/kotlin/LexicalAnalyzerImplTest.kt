@@ -43,33 +43,33 @@ class LexicalAnalyzerImplTest {
                 arrayOf(
                     "2+3",
                     listOf(
-                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.INTEGER, lexeme = "3")
+                        Token(type = TokenType.NUMBER, lexeme = "3")
                     )
                 ),
                 arrayOf(
                     "0*345-8+55/2",
                     listOf(
-                        Token(type = TokenType.INTEGER, lexeme = "0"),
+                        Token(type = TokenType.NUMBER, lexeme = "0"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.INTEGER, lexeme = "345"),
+                        Token(type = TokenType.NUMBER, lexeme = "345"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.INTEGER, lexeme = "8"),
+                        Token(type = TokenType.NUMBER, lexeme = "8"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.INTEGER, lexeme = "55"),
+                        Token(type = TokenType.NUMBER, lexeme = "55"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "/"),
-                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
                     )
                 ),
                 arrayOf(
                     "variAble_-2-+9873*vari_able", listOf(
                         Token(type = TokenType.IDENTIFIER, lexeme = "variAble_"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.INTEGER, lexeme = "9873"),
+                        Token(type = TokenType.NUMBER, lexeme = "9873"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
                         Token(type = TokenType.IDENTIFIER, lexeme = "vari_able"),
                     )
@@ -92,12 +92,12 @@ class LexicalAnalyzerImplTest {
                 arrayOf(
                     "2*(1+1)",
                     listOf(
-                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
                         Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.NUMBER, lexeme = "1"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.NUMBER, lexeme = "1"),
                         Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
                     )
                 ),
@@ -107,22 +107,43 @@ class LexicalAnalyzerImplTest {
                         Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
                         Token(type = TokenType.OPEN_PAREN, lexeme = "("),
                         Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.INTEGER, lexeme = "246"),
+                        Token(type = TokenType.NUMBER, lexeme = "246"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
                         Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.NUMBER, lexeme = "1"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.NUMBER, lexeme = "1"),
                         Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "/"),
                         Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.INTEGER, lexeme = "4"),
+                        Token(type = TokenType.NUMBER, lexeme = "4"),
                         Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
                         Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
                         Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
                     )
                 ),
+            )
+        }
+
+        @JvmStatic
+        fun provideExpressionsWithFloatNumbers(): List<Array<Any>> {
+            return listOf(
+                arrayOf(
+                    "-1.2*2+(0.55+1.99999)",
+                    listOf(
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
+                        Token(type = TokenType.NUMBER, lexeme = "1.2"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
+                        Token(type = TokenType.NUMBER, lexeme = "2"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.NUMBER, lexeme = "0.55"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                        Token(type = TokenType.NUMBER, lexeme = "1.99999"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                    )
+                )
             )
         }
     }
@@ -134,15 +155,15 @@ class LexicalAnalyzerImplTest {
     }
 
     @Test
-    fun `tokenize returns a list with single digit integer token`() {
+    fun `tokenize returns a list with single digit NUMBER token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "1")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.INTEGER, lexeme = "1")))
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1")))
     }
 
     @Test
-    fun `tokenize returns a list with multiple digit integer token`() {
+    fun `tokenize returns a list with multiple digit NUMBER token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "1345")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.INTEGER, lexeme = "1345")))
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1345")))
     }
 
     @Test
@@ -195,11 +216,11 @@ class LexicalAnalyzerImplTest {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = " 2+4 -  123 ")
         lexicalAnalyzer.tokenize().should.equal(
             listOf(
-                Token(type = TokenType.INTEGER, lexeme = "2"),
+                Token(type = TokenType.NUMBER, lexeme = "2"),
                 Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                Token(type = TokenType.INTEGER, lexeme = "4"),
+                Token(type = TokenType.NUMBER, lexeme = "4"),
                 Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                Token(type = TokenType.INTEGER, lexeme = "123")
+                Token(type = TokenType.NUMBER, lexeme = "123")
             )
         )
     }
@@ -219,6 +240,16 @@ class LexicalAnalyzerImplTest {
     @ParameterizedTest
     @MethodSource("provideExpressionsWithParenthesis")
     fun `tokenize returns correct set of tokens for expression with parenthesis`(
+        expressionSource: String,
+        expectedTokens: List<Token>
+    ) {
+        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
+        lexicalAnalyzer.tokenize().should.equal(expectedTokens)
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideExpressionsWithFloatNumbers")
+    fun `tokenize returns correct set of tokens for expression with NUMBER numbers`(
         expressionSource: String,
         expectedTokens: List<Token>
     ) {

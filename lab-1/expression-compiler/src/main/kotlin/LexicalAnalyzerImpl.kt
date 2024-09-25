@@ -4,12 +4,12 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
     override val tokens: MutableList<Token> = mutableListOf()
 
     override fun tokenize(): List<Token> {
-        val integerRegex = Regex("^\\d+")
         val identifierRegex = Regex("^_*[a-zA-Z_0-9]+")
-        val mathOperatorRegex = Regex("^[+-/*]")
+        val mathOperatorRegex = Regex("^[+\\-/*]")
         val whiteSpaceRegex = Regex("^\\s")
         val openParenthesisRegex = Regex("^\\(")
         val closeParenthesisRegex = Regex("^\\)")
+        val numberRegex = Regex("^([0-9]*[.])?[0-9]+")
 
         var position = 0
 
@@ -36,10 +36,10 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
                 continue
             }
 
-            val integerMatch = integerRegex.find(restOfExpression)
-            if (integerMatch != null) {
-                this.tokens.add(Token(type = TokenType.INTEGER, lexeme = integerMatch.value))
-                position += integerMatch.value.length
+            val numberMatch = numberRegex.find(restOfExpression)
+            if (numberMatch != null) {
+                this.tokens.add(Token(type = TokenType.NUMBER, lexeme = numberMatch.value))
+                position += numberMatch.value.length
                 continue
             }
 
