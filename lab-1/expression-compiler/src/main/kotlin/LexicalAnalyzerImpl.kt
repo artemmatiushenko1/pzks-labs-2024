@@ -7,11 +7,18 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         val integerRegex = Regex("^\\d+")
         val identifierRegex = Regex("^_*[a-zA-Z_0-9]+")
         val mathOperatorRegex = Regex("^[+-/*]")
+        val whiteSpaceRegex = Regex("^\\s")
 
         var position = 0
 
         while (position < expressionSource.length) {
             val restOfExpression = expressionSource.slice(position until expressionSource.length)
+
+            val whiteSpaceMatch = whiteSpaceRegex.find(restOfExpression)
+            if (whiteSpaceMatch != null) {
+                position = position.inc()
+                continue
+            }
 
             val integerMatch = integerRegex.find(restOfExpression)
             if (integerMatch != null) {

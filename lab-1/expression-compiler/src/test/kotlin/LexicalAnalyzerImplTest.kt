@@ -150,6 +150,20 @@ class LexicalAnalyzerImplTest {
         lexicalAnalyzer.tokenize().should.equal(expectedTokens)
     }
 
+    @Test
+    fun `tokenize skips whitespace tokens`() {
+        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = " 2+4 -  123 ")
+        lexicalAnalyzer.tokenize().should.equal(
+            listOf(
+                Token(type = TokenType.INTEGER, lexeme = "2"),
+                Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                Token(type = TokenType.INTEGER, lexeme = "4"),
+                Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
+                Token(type = TokenType.INTEGER, lexeme = "123")
+            )
+        )
+    }
+
     @ParameterizedTest
     @MethodSource("provideExpressionsWithUnknownTokens")
     fun `tokenize throws LexicalError exception when unknown token is met`(
