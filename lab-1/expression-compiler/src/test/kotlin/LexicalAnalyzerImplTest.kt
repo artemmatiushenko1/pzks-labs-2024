@@ -161,7 +161,7 @@ class LexicalAnalyzerImplTest {
     }
 
     @Test
-    fun `tokenize returns a list with multiple digit NUMBER token`() {
+    fun `tokenize returns a list with multiple digit number token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "1345")
         lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1345")))
     }
@@ -249,7 +249,7 @@ class LexicalAnalyzerImplTest {
 
     @ParameterizedTest
     @MethodSource("provideExpressionsWithFloatNumbers")
-    fun `tokenize returns correct set of tokens for expression with NUMBER numbers`(
+    fun `tokenize returns correct set of tokens for expression with float numbers`(
         expressionSource: String,
         expectedTokens: List<Token>
     ) {
