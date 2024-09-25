@@ -1,6 +1,8 @@
+import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.LexicalAnalyzerImpl
+import org.example.LexicalError
 import org.example.Token
 import org.example.TokenType
 import org.junit.jupiter.params.ParameterizedTest
@@ -74,6 +76,15 @@ class LexicalAnalyzerImplTest {
                 )
             )
         }
+
+        @JvmStatic
+        fun provideExpressionsWithUnknownTokens(): List<Array<Any>> {
+            return listOf(
+                arrayOf("1+3*#9", "Unknown token '#' at position 4."),
+                arrayOf("3/3*3?2$", "Unknown token '?' at position 5."),
+                arrayOf(" 5 /variable+6&89", "Unknown token '&' at position 14.")
+            )
+        }
     }
 
     @Test
@@ -137,5 +148,17 @@ class LexicalAnalyzerImplTest {
     ) {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
         lexicalAnalyzer.tokenize().should.equal(expectedTokens)
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideExpressionsWithUnknownTokens")
+    fun `tokenize throws LexicalError exception when unknown token is met`(
+        expressionSource: String,
+        expectedErrorMessage: String
+    ) {
+        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
+        expect {
+            lexicalAnalyzer.tokenize()
+        }.throws(LexicalError::class) { it.message.should.equal(expectedErrorMessage) }
     }
 }

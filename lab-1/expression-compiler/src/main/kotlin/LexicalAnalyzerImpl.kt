@@ -8,33 +8,33 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         val identifierRegex = Regex("^_*[a-zA-Z_0-9]+")
         val mathOperatorRegex = Regex("^[+-/*]")
 
-        var cursor = 0
+        var position = 0
 
-        while (cursor < expressionSource.length) {
-            val restOfExpression = expressionSource.slice(cursor until expressionSource.length)
+        while (position < expressionSource.length) {
+            val restOfExpression = expressionSource.slice(position until expressionSource.length)
 
             val integerMatch = integerRegex.find(restOfExpression)
             if (integerMatch != null) {
                 this.tokens.add(Token(type = TokenType.INTEGER, lexeme = integerMatch.value))
-                cursor += integerMatch.value.length
+                position += integerMatch.value.length
                 continue
             }
 
             val mathOperatorMatch = mathOperatorRegex.find(restOfExpression)
             if (mathOperatorMatch != null) {
                 this.tokens.add(Token(type = TokenType.MATH_OPERATOR, lexeme = mathOperatorMatch.value))
-                cursor += mathOperatorMatch.value.length
+                position += mathOperatorMatch.value.length
                 continue
             }
 
             val identifierMatch = identifierRegex.find(restOfExpression)
             if (identifierMatch != null) {
                 this.tokens.add(Token(type = TokenType.IDENTIFIER, lexeme = identifierMatch.value))
-                cursor += identifierMatch.value.length
+                position += identifierMatch.value.length
                 continue
             }
 
-            cursor = cursor.inc()
+            throw LexicalError("Unknown token '${expressionSource[position]}' at position $position.", position)
         }
 
         return this.tokens
