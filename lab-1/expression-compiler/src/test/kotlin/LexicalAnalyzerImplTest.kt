@@ -85,6 +85,46 @@ class LexicalAnalyzerImplTest {
                 arrayOf(" 5 /variable+6&89", "Unknown token '&' at position 14.")
             )
         }
+
+        @JvmStatic
+        fun provideExpressionsWithParenthesis(): List<Array<Any>> {
+            return listOf(
+                arrayOf(
+                    "2*(1+1)",
+                    listOf(
+                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                    )
+                ),
+                arrayOf(
+                    ")((246*(1+1)/(4-2))",
+                    listOf(
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.INTEGER, lexeme = "246"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
+                        Token(type = TokenType.INTEGER, lexeme = "1"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "/"),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
+                        Token(type = TokenType.INTEGER, lexeme = "4"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
+                        Token(type = TokenType.INTEGER, lexeme = "2"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                    )
+                ),
+            )
+        }
     }
 
     @Test
@@ -174,5 +214,15 @@ class LexicalAnalyzerImplTest {
         expect {
             lexicalAnalyzer.tokenize()
         }.throws(LexicalError::class) { it.message.should.equal(expectedErrorMessage) }
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideExpressionsWithParenthesis")
+    fun `tokenize returns correct set of tokens for expression with parenthesis`(
+        expressionSource: String,
+        expectedTokens: List<Token>
+    ) {
+        val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
+        lexicalAnalyzer.tokenize().should.equal(expectedTokens)
     }
 }

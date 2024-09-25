@@ -8,6 +8,8 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         val identifierRegex = Regex("^_*[a-zA-Z_0-9]+")
         val mathOperatorRegex = Regex("^[+-/*]")
         val whiteSpaceRegex = Regex("^\\s")
+        val openParenthesisRegex = Regex("^\\(")
+        val closeParenthesisRegex = Regex("^\\)")
 
         var position = 0
 
@@ -17,6 +19,20 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
             val whiteSpaceMatch = whiteSpaceRegex.find(restOfExpression)
             if (whiteSpaceMatch != null) {
                 position = position.inc()
+                continue
+            }
+
+            val openParenthesisMatch = openParenthesisRegex.find(restOfExpression)
+            if (openParenthesisMatch != null) {
+                this.tokens.add(Token(type = TokenType.OPEN_PAREN, lexeme = openParenthesisMatch.value))
+                position += openParenthesisMatch.value.length
+                continue
+            }
+
+            val closeParenthesisMatch = closeParenthesisRegex.find(restOfExpression)
+            if (closeParenthesisMatch != null) {
+                this.tokens.add(Token(type = TokenType.CLOSE_PAREN, lexeme = closeParenthesisMatch.value))
+                position += closeParenthesisMatch.value.length
                 continue
             }
 
