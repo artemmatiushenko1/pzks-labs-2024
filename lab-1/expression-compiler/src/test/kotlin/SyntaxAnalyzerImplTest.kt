@@ -18,7 +18,7 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze(tokens).should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, close_paren] after '+' at position 2.",
+                    "Expecting one of the following [number, identifier, open_paren] after '+' at position 2.",
                     position = 2
                 )
             )

@@ -20,7 +20,7 @@ class SyntaxAnalyzerImpl : SyntaxAnalyzer {
                     ) {
                         errors.add(
                             SyntaxError(
-                                "Expecting one of the following [number, identifier, close_paren] after '${currentToken.lexeme}' at position $nextTokenPosition.",
+                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}' at position $nextTokenPosition.",
                                 position = nextTokenPosition
                             )
                         )
