@@ -13,7 +13,7 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         TokenMatcher(regex = Regex("^\\s"), tokenType = TokenType.MATH_OPERATOR, skip = true),
         TokenMatcher(regex = Regex("^\\("), tokenType = TokenType.OPEN_PAREN),
         TokenMatcher(regex = Regex("^\\)"), tokenType = TokenType.CLOSE_PAREN),
-        TokenMatcher(regex = Regex("^([0-9]*[.])?[0-9]+"), tokenType = TokenType.NUMBER),
+        TokenMatcher(regex = Regex("^([0-9]*(?<=\\d)\\.)?[0-9]+"), tokenType = TokenType.NUMBER),
         TokenMatcher(regex = Regex("^[+\\-/*]"), tokenType = TokenType.MATH_OPERATOR),
         TokenMatcher(regex = Regex("^_*[a-zA-Z_0-9]+"), tokenType = TokenType.IDENTIFIER),
     )
