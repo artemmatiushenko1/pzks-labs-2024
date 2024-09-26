@@ -18,12 +18,16 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         TokenMatcher(regex = Regex("^_*[a-zA-Z_0-9]+"), tokenType = TokenType.IDENTIFIER),
     )
 
-    private fun findMatchedToken(input: String): Pair<TokenMatcher, Token>? {
+    private fun findMatchedToken(input: String, currentCursorPosition: Int): Pair<TokenMatcher, Token>? {
         for (matcher in this.matchers) {
             val matchedTokenLexeme = matcher.match(input)
 
             if (matchedTokenLexeme != null) {
-                return matcher to Token(type = matcher.tokenType, lexeme = matchedTokenLexeme)
+                return matcher to Token(
+                    type = matcher.tokenType,
+                    lexeme = matchedTokenLexeme,
+                    position = currentCursorPosition
+                )
             }
         }
 
@@ -36,7 +40,7 @@ class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyz
         while (position < expressionSource.length) {
             val restOfExpression = expressionSource.slice(position until expressionSource.length)
 
-            val matchedTokenResult = this.findMatchedToken(restOfExpression)
+            val matchedTokenResult = this.findMatchedToken(restOfExpression, position)
                 ?: throw LexicalError("Unknown token '${expressionSource[position]}' at position $position.", position)
 
             val (tokenMatcher, token) = matchedTokenResult

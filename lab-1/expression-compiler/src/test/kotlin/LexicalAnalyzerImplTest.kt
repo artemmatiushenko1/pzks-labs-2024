@@ -43,35 +43,35 @@ class LexicalAnalyzerImplTest {
                 arrayOf(
                     "2+3",
                     listOf(
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "3")
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 0),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 1),
+                        Token(type = TokenType.NUMBER, lexeme = "3", position = 2)
                     )
                 ),
                 arrayOf(
                     "0*345-8+55/2",
                     listOf(
-                        Token(type = TokenType.NUMBER, lexeme = "0"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.NUMBER, lexeme = "345"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.NUMBER, lexeme = "8"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "55"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "/"),
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
+                        Token(type = TokenType.NUMBER, lexeme = "0", position = 0),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*", position = 1),
+                        Token(type = TokenType.NUMBER, lexeme = "345", position = 2),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 5),
+                        Token(type = TokenType.NUMBER, lexeme = "8", position = 6),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 7),
+                        Token(type = TokenType.NUMBER, lexeme = "55", position = 8),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "/", position = 10),
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 11),
                     )
                 ),
                 arrayOf(
                     "variAble_-2-+9873*vari_able", listOf(
-                        Token(type = TokenType.IDENTIFIER, lexeme = "variAble_"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "9873"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.IDENTIFIER, lexeme = "vari_able"),
+                        Token(type = TokenType.IDENTIFIER, lexeme = "variAble_", position = 0),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 9),
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 10),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 11),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 12),
+                        Token(type = TokenType.NUMBER, lexeme = "9873", position = 13),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*", position = 17),
+                        Token(type = TokenType.IDENTIFIER, lexeme = "vari_able", position = 18),
                     )
                 )
             )
@@ -92,35 +92,35 @@ class LexicalAnalyzerImplTest {
                 arrayOf(
                     "2*(1+1)",
                     listOf(
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.NUMBER, lexeme = "1"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "1"),
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 0),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*", position = 1),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 2),
+                        Token(type = TokenType.NUMBER, lexeme = "1", position = 3),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 4),
+                        Token(type = TokenType.NUMBER, lexeme = "1", position = 5),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 6),
                     )
                 ),
                 arrayOf(
                     ")((246*(1+1)/(4-2))",
                     listOf(
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.NUMBER, lexeme = "246"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.NUMBER, lexeme = "1"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "1"),
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "/"),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.NUMBER, lexeme = "4"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 0),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 1),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 2),
+                        Token(type = TokenType.NUMBER, lexeme = "246", position = 3),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*", position = 6),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 7),
+                        Token(type = TokenType.NUMBER, lexeme = "1", position = 8),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 9),
+                        Token(type = TokenType.NUMBER, lexeme = "1", position = 10),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 11),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "/", position = 12),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 13),
+                        Token(type = TokenType.NUMBER, lexeme = "4", position = 14),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 15),
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 16),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 17),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 18),
                     )
                 ),
             )
@@ -132,16 +132,16 @@ class LexicalAnalyzerImplTest {
                 arrayOf(
                     "-1.2*2+(0.55+1.99999)",
                     listOf(
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                        Token(type = TokenType.NUMBER, lexeme = "1.2"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*"),
-                        Token(type = TokenType.NUMBER, lexeme = "2"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.OPEN_PAREN, lexeme = "("),
-                        Token(type = TokenType.NUMBER, lexeme = "0.55"),
-                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                        Token(type = TokenType.NUMBER, lexeme = "1.99999"),
-                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")"),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 0),
+                        Token(type = TokenType.NUMBER, lexeme = "1.2", position = 1),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "*", position = 4),
+                        Token(type = TokenType.NUMBER, lexeme = "2", position = 5),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 6),
+                        Token(type = TokenType.OPEN_PAREN, lexeme = "(", position = 7),
+                        Token(type = TokenType.NUMBER, lexeme = "0.55", position = 8),
+                        Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 12),
+                        Token(type = TokenType.NUMBER, lexeme = "1.99999", position = 13),
+                        Token(type = TokenType.CLOSE_PAREN, lexeme = ")", position = 20),
                     )
                 )
             )
@@ -157,25 +157,33 @@ class LexicalAnalyzerImplTest {
     @Test
     fun `tokenize returns a list with single digit NUMBER token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "1")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1")))
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1", position = 0)))
     }
 
     @Test
     fun `tokenize returns a list with multiple digit number token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "1345")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1345")))
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.NUMBER, lexeme = "1345", position = 0)))
     }
 
     @Test
     fun `tokenize returns a list with single char identifier token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "a")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "a")))
+        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "a", position = 0)))
     }
 
     @Test
     fun `tokenize returns a list with multiple char identifier token`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "variable")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "variable")))
+        lexicalAnalyzer.tokenize().should.equal(
+            listOf(
+                Token(
+                    type = TokenType.IDENTIFIER,
+                    lexeme = "variable",
+                    position = 0
+                )
+            )
+        )
     }
 
     @ParameterizedTest
@@ -185,20 +193,44 @@ class LexicalAnalyzerImplTest {
         expectedLexeme: String
     ) {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = expectedLexeme)))
+        lexicalAnalyzer.tokenize().should.equal(
+            listOf(
+                Token(
+                    type = TokenType.IDENTIFIER,
+                    lexeme = expectedLexeme,
+                    position = 0
+                )
+            )
+        )
     }
 
     @Test
     fun `tokenize returns a list with identifier token that contains uppercase letters`() {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = "CONSTANT")
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.IDENTIFIER, lexeme = "CONSTANT")))
+        lexicalAnalyzer.tokenize().should.equal(
+            listOf(
+                Token(
+                    type = TokenType.IDENTIFIER,
+                    lexeme = "CONSTANT",
+                    position = 0
+                )
+            )
+        )
     }
 
     @ParameterizedTest
     @MethodSource("provideSingleMathematicalOperatorExpressions")
     fun `tokenize returns a list with mathematical operator token`(expressionSource: String, expectedLexeme: String) {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = expressionSource)
-        lexicalAnalyzer.tokenize().should.equal(listOf(Token(type = TokenType.MATH_OPERATOR, lexeme = expectedLexeme)))
+        lexicalAnalyzer.tokenize().should.equal(
+            listOf(
+                Token(
+                    type = TokenType.MATH_OPERATOR,
+                    lexeme = expectedLexeme,
+                    position = 0
+                )
+            )
+        )
     }
 
     @ParameterizedTest
@@ -216,11 +248,11 @@ class LexicalAnalyzerImplTest {
         val lexicalAnalyzer = LexicalAnalyzerImpl(expressionSource = " 2+4 -  123 ")
         lexicalAnalyzer.tokenize().should.equal(
             listOf(
-                Token(type = TokenType.NUMBER, lexeme = "2"),
-                Token(type = TokenType.MATH_OPERATOR, lexeme = "+"),
-                Token(type = TokenType.NUMBER, lexeme = "4"),
-                Token(type = TokenType.MATH_OPERATOR, lexeme = "-"),
-                Token(type = TokenType.NUMBER, lexeme = "123")
+                Token(type = TokenType.NUMBER, lexeme = "2", position = 1),
+                Token(type = TokenType.MATH_OPERATOR, lexeme = "+", position = 2),
+                Token(type = TokenType.NUMBER, lexeme = "4", position = 3),
+                Token(type = TokenType.MATH_OPERATOR, lexeme = "-", position = 5),
+                Token(type = TokenType.NUMBER, lexeme = "123", position = 8)
             )
         )
     }

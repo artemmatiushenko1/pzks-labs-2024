@@ -1,3 +1,3 @@
 package org.example
 
-open class LexicalError(override val message: String?, val position: Int) : Exception()
+class LexicalError(override val message: String?, val position: Int) : Exception()
