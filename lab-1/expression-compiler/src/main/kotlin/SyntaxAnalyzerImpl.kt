@@ -1,17 +1,35 @@
 package org.example
 
+/**
+ * - помилки на початку арифметичного виразу (наприклад, вираз не може
+ * починатись із закритої дужки, алгебраїчних операцій * та /);
+ * - помилки, пов’язані з неправильним написанням імен змінних, констант
+ * та при необхідності функцій;
+ * - помилки у кінці виразу (наприклад, вираз не може закінчуватись будь-
+ * якою алгебраїчною операцією);
+ * - помилки в середині виразу (подвійні операції, відсутність операцій
+ * перед або між дужками, операції* або / після відкритої дужки тощо);
+ * - помилки, пов’язані з використанням дужок ( нерівна кількість відкритих
+ * та закритих дужок, неправильний порядок дужок, пусті дужки).
+ */
+
 class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
     override fun analyze(): List<SyntaxError> {
+        var noValidateTokenPosition: Int? = null
+
         for (index in this.tokens.indices) {
+            if (noValidateTokenPosition == index) continue
+            noValidateTokenPosition = null
+
             val currentToken = this.tokens[index]
 
-            val nextTokenPosition = index + 1
-            val nextToken = this.tokens.getOrNull(nextTokenPosition)
+            val nextTokenIndex = index + 1
+            val nextToken = this.tokens.getOrNull(nextTokenIndex)
 
-            val previousTokenPosition = index - 1
-            val previousToken = tokens.getOrNull(previousTokenPosition)
+            val previousTokenIndex = index - 1
+            val previousToken = tokens.getOrNull(previousTokenIndex)
 
             when (currentToken.type) {
                 TokenType.MATH_OPERATOR -> {
@@ -24,26 +42,32 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
                             TokenType.CLOSE_PAREN
                         )
                     ) {
+                        val position = previousToken?.position ?: previousTokenIndex
+
                         this.errors.add(
                             SyntaxError(
-                                "Expecting '${currentToken.lexeme}' to be preceded by one of the following [number, identifier, close_paren] at position $previousTokenPosition.",
-                                position = previousTokenPosition
+                                "Expecting '${currentToken.lexeme}' to be preceded by one of the following [number, identifier, close_paren] at position $position.",
+                                position = position
                             )
                         )
                     }
-                    
+
                     if (nextToken == null || nextToken.type !in listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN
                         )
                     ) {
+                        val position = nextToken?.position ?: nextTokenIndex
+
                         this.errors.add(
                             SyntaxError(
-                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}' at position $nextTokenPosition.",
-                                position = nextTokenPosition
+                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}' at position $position.",
+                                position = position
                             )
                         )
+
+                        noValidateTokenPosition = nextTokenIndex
                     }
                 }
 

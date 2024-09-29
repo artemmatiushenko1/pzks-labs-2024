@@ -7,7 +7,7 @@ class TokenMatcher(private val regex: Regex, val skip: Boolean = false, val toke
 }
 
 class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyzer {
-    override val tokens: MutableList<Token> = mutableListOf()
+    private val tokens: MutableList<Token> = mutableListOf()
 
     private val matchers: List<TokenMatcher> = listOf(
         TokenMatcher(regex = Regex("^\\s"), tokenType = TokenType.MATH_OPERATOR, skip = true),
