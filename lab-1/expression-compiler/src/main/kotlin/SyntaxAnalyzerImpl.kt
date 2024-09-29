@@ -16,10 +16,30 @@ package org.example
 class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
+    private fun validateStartToken(): SyntaxError? {
+        val startToken = this.tokens.first()
+        val isMulOrDivOperator = startToken.type == TokenType.MATH_OPERATOR && startToken.lexeme in listOf("/", "*")
+
+        if (startToken.type == TokenType.CLOSE_PAREN || isMulOrDivOperator) {
+            return SyntaxError(
+                "Expression should start with one of the following [number, identifier, open_paren].",
+                position = 0
+            )
+        }
+
+        return null
+    }
+
     override fun analyze(): List<SyntaxError> {
+        validateStartToken()?.let {
+            this.errors.add(it)
+        }
+
         var noValidateTokenPosition: Int? = null
 
-        for (index in this.tokens.indices) {
+        val iterationRange = tokens.indices.drop(1)
+
+        for (index in iterationRange) {
             if (noValidateTokenPosition == index) continue
             noValidateTokenPosition = null
 
@@ -71,8 +91,14 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
                     }
                 }
 
-                TokenType.IDENTIFIER -> {}
-                TokenType.OPEN_PAREN -> {}
+                TokenType.IDENTIFIER -> {
+
+                }
+
+                TokenType.OPEN_PAREN -> {
+
+                }
+
                 TokenType.CLOSE_PAREN -> {}
                 TokenType.NUMBER -> {}
             }

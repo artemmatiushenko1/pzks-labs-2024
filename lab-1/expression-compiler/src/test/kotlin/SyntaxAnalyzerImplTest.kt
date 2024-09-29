@@ -17,14 +17,6 @@ class SyntaxAnalyzerImplTest {
         @JvmStatic
         fun provideTokensWithBadTokensPrecedingOrFollowingMathOperator(): List<Pair<List<Token>, SyntaxError>> {
             return listOf(
-                "/2+2".toTokens() to SyntaxError(
-                    "Expecting '/' to be preceded by one of the following [number, identifier, close_paren] at position -1.",
-                    position = -1
-                ),
-                "*2-a".toTokens() to SyntaxError(
-                    "Expecting '*' to be preceded by one of the following [number, identifier, close_paren] at position -1.",
-                    position = -1
-                ),
                 "variable**2".toTokens() to SyntaxError(
                     "Expecting one of the following [number, identifier, open_paren] after '*' at position 9.",
                     position = 9
@@ -46,6 +38,11 @@ class SyntaxAnalyzerImplTest {
 //                    position = 4
 //                )
             )
+        }
+
+        @JvmStatic
+        fun provideTokensWithWrongStartingToken(): List<List<Token>> {
+            return listOf("/1+34+a".toTokens(), "*1+34+a".toTokens(), ")1+34+a".toTokens())
         }
     }
 
@@ -85,6 +82,21 @@ class SyntaxAnalyzerImplTest {
 
         syntaxAnalyzer.analyze().should.equal(
             listOf(error)
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensWithWrongStartingToken")
+    fun `returns a list with error for tokens list with wrong starting token`(tokens: List<Token>) {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
+
+        syntaxAnalyzer.analyze().should.equal(
+            listOf(
+                SyntaxError(
+                    "Expression should start with one of the following [number, identifier, open_paren].",
+                    position = 0
+                )
+            )
         )
     }
 }
