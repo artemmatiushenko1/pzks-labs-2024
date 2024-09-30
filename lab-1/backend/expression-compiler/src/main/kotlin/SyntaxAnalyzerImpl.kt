@@ -10,7 +10,20 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         if (startToken.type == TokenType.CLOSE_PAREN || isMulOrDivOperator) {
             return SyntaxError(
                 "Expression should start with one of the following [number, identifier, open_paren].",
-                position = 0
+                position = startToken.position
+            )
+        }
+
+        return null
+    }
+
+    private fun validateEndToken(): SyntaxError? {
+        val endToken = this.tokens.last()
+
+        if (endToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
+            return SyntaxError(
+                "Expression should end with one of the following [number, identifier, close_paren].",
+                position = endToken.position
             )
         }
 
@@ -37,11 +50,17 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
     }
 
     override fun analyze(): List<SyntaxError> {
+        if(tokens.isEmpty()) return this.errors
+
+        validateParenthesisMatch()?.let {
+            this.errors.add(it)
+        }
+        
         validateStartToken()?.let {
             this.errors.add(it)
         }
 
-        validateParenthesisMatch()?.let {
+        validateEndToken()?.let {
             this.errors.add(it)
         }
 
@@ -56,41 +75,19 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
             val nextTokenIndex = index + 1
             val nextToken = this.tokens.getOrNull(nextTokenIndex)
 
-            val previousTokenIndex = index - 1
-            val previousToken = tokens.getOrNull(previousTokenIndex)
-
             when (currentToken.type) {
                 TokenType.MATH_OPERATOR -> {
-                    if ((previousToken == null && currentToken.lexeme in listOf(
-                            "*",
-                            "/"
-                        )) || previousToken != null && previousToken.type !in listOf(
-                            TokenType.NUMBER,
-                            TokenType.IDENTIFIER,
-                            TokenType.CLOSE_PAREN
-                        )
-                    ) {
-                        val position = previousToken?.position ?: previousTokenIndex
-
-                        this.errors.add(
-                            SyntaxError(
-                                "Expecting '${currentToken.lexeme}' to be preceded by one of the following [number, identifier, close_paren] at position $position.",
-                                position = position
-                            )
-                        )
-                    }
-
-                    if (nextToken == null || nextToken.type !in listOf(
+                    if (nextToken != null && nextToken.type !in listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN
                         )
                     ) {
-                        val position = nextToken?.position ?: nextTokenIndex
+                        val position = nextToken.position
 
                         this.errors.add(
                             SyntaxError(
-                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}' at position $position.",
+                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}'.",
                                 position = position
                             )
                         )
@@ -101,7 +98,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
 
                 TokenType.OPEN_PAREN -> {
                     if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN || nextToken == null) {
-                        val position = previousToken?.position ?: previousTokenIndex
+                        val position = nextToken?.position ?: nextTokenIndex
                         this.errors.add(SyntaxError("Expecting an expression.", position = position))
                     }
                 }

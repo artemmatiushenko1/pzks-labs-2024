@@ -14,10 +14,7 @@ import javax.xml.crypto.Data
 data class CompileRequestBody(val expression: String)
 
 @Serializable
-data class CompilationError(val message: String?, val position: Int?)
-
-@Serializable
-data class CompileResponseBody(val syntaxErrors: List<CompilationError>)
+data class CompilationError(val message: String?, val position: Int?, val type: String)
 
 fun Application.configureRouting() {
     routing {
@@ -25,9 +22,9 @@ fun Application.configureRouting() {
             val requestBody = call.receive<CompileRequestBody>()
             try {
                 val syntaxErrors = ExpressionCompiler().compile(requestBody.expression)
-                call.respond(CompileResponseBody(syntaxErrors = syntaxErrors.map { CompilationError(message = it.message, position = it.position) }))
+                call.respond(syntaxErrors.map { CompilationError(message = it.message, position = it.position, type = "SyntaxError") })
             } catch (e: LexicalError) {
-                call.respond(CompileResponseBody(syntaxErrors = listOf(CompilationError(message = e.message, position = e.position))))
+                call.respond(listOf(CompilationError(message = e.message, position = e.position, type = "LexicalError")))
             }
         }
     }
