@@ -1,10 +1,6 @@
 package org.example
 
 /**
- * - помилки на початку арифметичного виразу (наприклад, вираз не може
- * починатись із закритої дужки, алгебраїчних операцій * та /);
- * - помилки, пов’язані з неправильним написанням імен змінних, констант
- * та при необхідності функцій;
  * - помилки у кінці виразу (наприклад, вираз не може закінчуватись будь-
  * якою алгебраїчною операцією);
  * - помилки в середині виразу (подвійні операції, відсутність операцій
@@ -16,6 +12,8 @@ package org.example
 class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
+    //    * - помилки на початку арифметичного виразу (наприклад, вираз не може
+//    * починатись із закритої дужки, алгебраїчних операцій * та /);
     private fun validateStartToken(): SyntaxError? {
         val startToken = this.tokens.first()
         val isMulOrDivOperator = startToken.type == TokenType.MATH_OPERATOR && startToken.lexeme in listOf("/", "*")
@@ -30,8 +28,31 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
         return null
     }
 
+    private fun validateParenthesisMatch(): SyntaxError? {
+        var parenthesisCounter = 0
+        val parenthesisTokens = tokens.filter { it.type in listOf(TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN) }
+
+        for (token in parenthesisTokens) {
+            parenthesisCounter = when (token.type) {
+                TokenType.OPEN_PAREN -> parenthesisCounter.inc()
+                TokenType.CLOSE_PAREN -> parenthesisCounter.dec()
+                else -> throw IllegalArgumentException("Unexpected token '${token.lexeme}' of type ${token.type}.")
+            }
+        }
+
+        if (parenthesisCounter != 0) {
+            return SyntaxError("Parenthesis mismatch.", position = null)
+        }
+
+        return null
+    }
+
     override fun analyze(): List<SyntaxError> {
         validateStartToken()?.let {
+            this.errors.add(it)
+        }
+
+        validateParenthesisMatch()?.let {
             this.errors.add(it)
         }
 

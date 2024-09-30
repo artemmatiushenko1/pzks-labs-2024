@@ -1,3 +1,4 @@
+import net.oddpoet.expect.extension.contain
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.LexicalAnalyzerImpl
@@ -43,6 +44,15 @@ class SyntaxAnalyzerImplTest {
         @JvmStatic
         fun provideTokensWithWrongStartingToken(): List<List<Token>> {
             return listOf("/1+34+a".toTokens(), "*1+34+a".toTokens(), ")1+34+a".toTokens())
+        }
+
+        @JvmStatic
+        fun provideTokensWithMissingParenthesis(): List<List<Token>> {
+            return listOf(
+                "((a+(b)".toTokens(),
+                "((b)+(2*3-5/7)))".toTokens(),
+                ")(())()".toTokens(),
+            )
         }
     }
 
@@ -96,6 +106,19 @@ class SyntaxAnalyzerImplTest {
                     "Expression should start with one of the following [number, identifier, open_paren].",
                     position = 0
                 )
+            )
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensWithMissingParenthesis")
+    fun `returns a list with error for tokens list with missing parenthesis`(tokens: List<Token>) {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
+
+        syntaxAnalyzer.analyze().should.contain(
+            SyntaxError(
+                "Parenthesis mismatch.",
+                position = null
             )
         )
     }
