@@ -54,6 +54,15 @@ class SyntaxAnalyzerImplTest {
                 ")(())()".toTokens(),
             )
         }
+
+        @JvmStatic
+        fun provideTokensWithEmptyParenthesisPair(): List<Pair<List<Token>, Int>> {
+            return listOf(
+                "a+()".toTokens() to 3,
+                "()+3.45/d".toTokens() to 1,
+                "var+45*()-3".toTokens() to 8,
+            )
+        }
     }
 
     @Test
@@ -119,6 +128,20 @@ class SyntaxAnalyzerImplTest {
             SyntaxError(
                 "Parenthesis mismatch.",
                 position = null
+            )
+        )
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensWithEmptyParenthesisPair")
+    fun `returns a list with error for tokens list with empty parenthesis pair`(tokensToErrorPosition: Pair<List<Token>, Int>) {
+        val (tokens, errorPosition) = tokensToErrorPosition
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
+
+        syntaxAnalyzer.analyze().should.contain(
+            SyntaxError(
+                "Expecting an expression.",
+                position = errorPosition
             )
         )
     }

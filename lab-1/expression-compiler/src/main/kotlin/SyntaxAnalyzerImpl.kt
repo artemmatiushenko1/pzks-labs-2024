@@ -5,15 +5,11 @@ package org.example
  * якою алгебраїчною операцією);
  * - помилки в середині виразу (подвійні операції, відсутність операцій
  * перед або між дужками, операції* або / після відкритої дужки тощо);
- * - помилки, пов’язані з використанням дужок ( нерівна кількість відкритих
- * та закритих дужок, неправильний порядок дужок, пусті дужки).
  */
 
 class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
-    //    * - помилки на початку арифметичного виразу (наприклад, вираз не може
-//    * починатись із закритої дужки, алгебраїчних операцій * та /);
     private fun validateStartToken(): SyntaxError? {
         val startToken = this.tokens.first()
         val isMulOrDivOperator = startToken.type == TokenType.MATH_OPERATOR && startToken.lexeme in listOf("/", "*")
@@ -58,9 +54,7 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
 
         var noValidateTokenPosition: Int? = null
 
-        val iterationRange = tokens.indices.drop(1)
-
-        for (index in iterationRange) {
+        for (index in tokens.indices) {
             if (noValidateTokenPosition == index) continue
             noValidateTokenPosition = null
 
@@ -117,7 +111,9 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
                 }
 
                 TokenType.OPEN_PAREN -> {
-
+                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN) {
+                        this.errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
+                    }
                 }
 
                 TokenType.CLOSE_PAREN -> {}
