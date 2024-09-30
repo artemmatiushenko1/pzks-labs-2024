@@ -100,8 +100,9 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                 }
 
                 TokenType.OPEN_PAREN -> {
-                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN) {
-                        this.errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
+                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN || nextToken == null) {
+                        val position = previousToken?.position ?: previousTokenIndex
+                        this.errors.add(SyntaxError("Expecting an expression.", position = position))
                     }
                 }
 
