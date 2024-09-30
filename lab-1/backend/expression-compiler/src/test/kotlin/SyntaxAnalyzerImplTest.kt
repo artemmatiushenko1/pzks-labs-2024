@@ -70,6 +70,14 @@ class SyntaxAnalyzerImplTest {
                 "1(2+2)".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after '1'.", position = 1),
             )
         }
+
+        @JvmStatic
+        fun provideTokensWithWrongTokenAfterIdentifier(): List<Pair<List<Token>, SyntaxError>> {
+            return listOf(
+                "1+a 2".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after 'a'.", position = 4),
+                "1+a_(2+2)".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after 'a_'.", position = 4)
+            )
+        }
     }
 
     @Test
@@ -161,18 +169,6 @@ class SyntaxAnalyzerImplTest {
     }
 
     @Test
-    fun `returns a list with error for tokens list when number token is followed by identifier`() {
-        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1a+(2+2)".toTokens())
-
-        syntaxAnalyzer.analyze().should.contain(
-            SyntaxError(
-                "Expecting one of the following [math_operator, close_paren] after '1'.",
-                position = 1
-            )
-        )
-    }
-
-    @Test
     fun `allows number token to be followed by math operation`() {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1+a+(2+2)".toTokens())
         syntaxAnalyzer.analyze().should.beEmpty()
@@ -182,5 +178,24 @@ class SyntaxAnalyzerImplTest {
     fun `allows number token to be followed by close parenthesis`() {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "2+2)".toTokens())
         syntaxAnalyzer.analyze().should.equal(listOf(SyntaxError(message="Parenthesis mismatch.", position=null)))
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensWithWrongTokenAfterIdentifier")
+    fun `returns a list with error for when identifier is followed by wrong token`(tokensToError: Pair<List<Token>, SyntaxError>) {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1+a 2".toTokens())
+        syntaxAnalyzer.analyze().should.equal(listOf(SyntaxError("Expecting one of the following [math_operator, close_paren] after 'a'.", position = 4)))
+    }
+
+    @Test
+    fun `allows identifier token to be followed by math operation`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1+identifier+(2+2)".toTokens())
+        syntaxAnalyzer.analyze().should.beEmpty()
+    }
+
+    @Test
+    fun `allows identifier token to be followed by close parenthesis`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1+(2+identifier)".toTokens())
+        syntaxAnalyzer.analyze().should.beEmpty()
     }
 }

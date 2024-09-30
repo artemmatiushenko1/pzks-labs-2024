@@ -100,7 +100,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                     }
                 }
 
-                TokenType.NUMBER -> {
+                TokenType.NUMBER, TokenType.IDENTIFIER -> {
                     if (nextToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.MATH_OPERATOR)) {
                         this.errors.add(SyntaxError("Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.", position = nextToken.position))
                     }
