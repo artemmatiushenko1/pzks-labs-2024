@@ -1,3 +1,4 @@
+import net.oddpoet.expect.extension.beEmpty
 import net.oddpoet.expect.extension.contain
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
@@ -58,6 +59,15 @@ class SyntaxAnalyzerImplTest {
                 "()+3.45/d".toTokens() to 1,
                 "var+45*()-3".toTokens() to 8,
                 "a+45*(()".toTokens() to 7,
+            )
+        }
+
+        @JvmStatic
+        fun provideTokensWithWrongTokenAfterNumberToken(): List<Pair<List<Token>, SyntaxError>> {
+            return listOf(
+                "1+3var+2".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after '3'.", position = 3),
+                "45.6(*1".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after '45.6'.", position = 4),
+                "1(2+2)".toTokens() to SyntaxError("Expecting one of the following [math_operator, close_paren] after '1'.", position = 1),
             )
         }
     }
@@ -139,5 +149,38 @@ class SyntaxAnalyzerImplTest {
                 position = errorPosition
             )
         )
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideTokensWithWrongTokenAfterNumberToken")
+    fun `returns a list with error for tokens list when number token is followed by wrong token`(tokensToError: Pair<List<Token>, SyntaxError>) {
+        val (tokens, error) = tokensToError
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
+
+        syntaxAnalyzer.analyze().should.contain(error)
+    }
+
+    @Test
+    fun `returns a list with error for tokens list when number token is followed by identifier`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1a+(2+2)".toTokens())
+
+        syntaxAnalyzer.analyze().should.contain(
+            SyntaxError(
+                "Expecting one of the following [math_operator, close_paren] after '1'.",
+                position = 1
+            )
+        )
+    }
+
+    @Test
+    fun `allows number token to be followed by math operation`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "1+a+(2+2)".toTokens())
+        syntaxAnalyzer.analyze().should.beEmpty()
+    }
+
+    @Test
+    fun `allows number token to be followed by close parenthesis`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "2+2)".toTokens())
+        syntaxAnalyzer.analyze().should.equal(listOf(SyntaxError(message="Parenthesis mismatch.", position=null)))
     }
 }
