@@ -1,6 +1,7 @@
 import { CompilationError } from '@/lib/types';
 import { ErrorIndicator } from '../error-indicator';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
+import { Badge } from '../ui/badge';
 
 type ErrorsListProps = {
   expression: string;
@@ -15,14 +16,16 @@ const ErrorsList = (props: ErrorsListProps) => {
       <Alert
         variant="default"
         key={item.message}
-        className="gap-2 flex flex-col"
+        className="gap-2 flex flex-col relative"
       >
         <div>
           <AlertTitle>{item.type}</AlertTitle>
-          <AlertDescription>
-            {item.message}{' '}
-            {item.position !== null && <>Position: {item.position}.</>}
-          </AlertDescription>
+          <AlertDescription>{item.message} </AlertDescription>
+          {item.position !== null && (
+            <Badge className="absolute top-2 right-2" variant="secondary">
+              Position: {item.position}
+            </Badge>
+          )}
         </div>
         <ErrorIndicator expression={expression} errorAtIndex={item.position} />
       </Alert>
