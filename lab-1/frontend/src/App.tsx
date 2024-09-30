@@ -2,7 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 import { Badge } from './components/ui/badge';
 import { ExpressionForm } from './components/expression-form';
-import { CompilationError } from './types';
+import { CompilationError } from './lib/types';
 import { ErrorsList } from './components/errors-list';
 
 const App = () => {
@@ -26,9 +26,7 @@ const App = () => {
   });
 
   const handleFormSubmit = (expression: string) => {
-    if (expression) {
-      compileExpression(expression);
-    }
+    compileExpression(expression);
   };
 
   return (

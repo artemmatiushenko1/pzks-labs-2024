@@ -1,4 +1,4 @@
-import { CompilationError } from '@/types';
+import { CompilationError } from '@/lib/types';
 import { ErrorIndicator } from '../error-indicator';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 
