@@ -1,22 +1,12 @@
 package org.example
 
-enum class MathOperator(val sign: String) {
-    PLUS("+"),
-    MINUS("-"),
-    DIVIDE("/"),
-    MULTIPLY("*"),
-}
-
 internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
-    private fun isMulOrDivOperator(token: Token): Boolean = token.type == TokenType.MATH_OPERATOR &&
-            token.lexeme in listOf(MathOperator.DIVIDE.sign, MathOperator.MULTIPLY.sign)
-
     private fun validateStartToken(): SyntaxError? {
         val startToken = this.tokens.first()
 
-        if (startToken.type == TokenType.CLOSE_PAREN || isMulOrDivOperator(startToken)) {
+        if (startToken.type in listOf(TokenType.CLOSE_PAREN, TokenType.MULTIPLICATIVE_OPERATOR)) {
             return SyntaxError(
-                "Expression should start with one of the following [number, identifier, open_paren].",
+                "Expression should start with one of the following [number, identifier, open_paren, additive_operator].",
                 position = startToken.position
             )
         }
@@ -71,7 +61,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
             val nextToken = this.tokens.getOrNull(nextTokenIndex) ?: continue
 
             when (currentToken.type) {
-                TokenType.MATH_OPERATOR -> {
+                TokenType.ADDITIVE_OPERATOR, TokenType.MULTIPLICATIVE_OPERATOR -> {
                     if (nextToken.type !in listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
@@ -94,8 +84,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN,
-                            TokenType.MATH_OPERATOR,
-                        ) || isMulOrDivOperator(nextToken)
+                            TokenType.ADDITIVE_OPERATOR,
+                        )
                     ) {
                         errors.add(
                             SyntaxError(
@@ -107,7 +97,12 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                 }
 
                 TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.CLOSE_PAREN -> {
-                    if (nextToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.MATH_OPERATOR)) {
+                    if (nextToken.type !in listOf(
+                            TokenType.CLOSE_PAREN,
+                            TokenType.ADDITIVE_OPERATOR,
+                            TokenType.MULTIPLICATIVE_OPERATOR
+                        )
+                    ) {
                         errors.add(
                             SyntaxError(
                                 "Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.",
@@ -116,6 +111,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                         )
                     }
                 }
+
+                else -> continue
             }
         }
 

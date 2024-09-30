@@ -10,11 +10,12 @@ internal class LexicalAnalyzerImpl(override val expressionSource: String) : Lexi
     private val tokens: MutableList<Token> = mutableListOf()
 
     private val matchers: List<TokenMatcher> = listOf(
-        TokenMatcher(regex = Regex("^\\s"), tokenType = TokenType.MATH_OPERATOR, skip = true),
+        TokenMatcher(regex = Regex("^\\s"), tokenType = TokenType.WHITESPACE, skip = true),
         TokenMatcher(regex = Regex("^\\("), tokenType = TokenType.OPEN_PAREN),
         TokenMatcher(regex = Regex("^\\)"), tokenType = TokenType.CLOSE_PAREN),
         TokenMatcher(regex = Regex("^([0-9]*(?<=\\d)\\.)?[0-9]+"), tokenType = TokenType.NUMBER),
-        TokenMatcher(regex = Regex("^[+\\-/*]"), tokenType = TokenType.MATH_OPERATOR),
+        TokenMatcher(regex = Regex("^[+\\-]"), tokenType = TokenType.ADDITIVE_OPERATOR),
+        TokenMatcher(regex = Regex("^[/*]"), tokenType = TokenType.MULTIPLICATIVE_OPERATOR),
         TokenMatcher(regex = Regex("^_*[a-zA-Z_0-9]+"), tokenType = TokenType.IDENTIFIER),
     )
 

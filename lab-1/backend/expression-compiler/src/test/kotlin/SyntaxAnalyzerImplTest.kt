@@ -141,7 +141,7 @@ class SyntaxAnalyzerImplTest {
 
         syntaxAnalyzer.analyze().should.contain(
             SyntaxError(
-                "Expression should start with one of the following [number, identifier, open_paren].",
+                "Expression should start with one of the following [number, identifier, open_paren, additive_operator].",
                 position = 0
             )
         )
