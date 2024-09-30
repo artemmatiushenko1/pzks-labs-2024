@@ -1,8 +1,6 @@
 package org.example
 
 internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
-    private val errors: MutableList<SyntaxError> = mutableListOf()
-
     private fun validateStartToken(): SyntaxError? {
         val startToken = this.tokens.first()
         val isMulOrDivOperator = startToken.type == TokenType.MATH_OPERATOR && startToken.lexeme in listOf("/", "*")
@@ -49,20 +47,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         return null
     }
 
-    override fun analyze(): List<SyntaxError> {
-        if(tokens.isEmpty()) return this.errors
-
-        validateParenthesisMatch()?.let {
-            this.errors.add(it)
-        }
-
-        validateStartToken()?.let {
-            this.errors.add(it)
-        }
-
-        validateEndToken()?.let {
-            this.errors.add(it)
-        }
+    private fun validateGrammar(): List<SyntaxError> {
+        val errors = mutableListOf<SyntaxError>()
 
         var noValidateTokenPosition: Int? = null
 
@@ -83,7 +69,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                             TokenType.OPEN_PAREN
                         )
                     ) {
-                        this.errors.add(
+                        errors.add(
                             SyntaxError(
                                 "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}'.",
                                 position = nextToken.position
@@ -96,19 +82,32 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
 
                 TokenType.OPEN_PAREN -> {
                     if (nextToken.type == TokenType.CLOSE_PAREN) {
-                        this.errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
+                        errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
                     }
                 }
 
                 TokenType.NUMBER, TokenType.IDENTIFIER -> {
                     if (nextToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.MATH_OPERATOR)) {
-                        this.errors.add(SyntaxError("Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.", position = nextToken.position))
+                        errors.add(SyntaxError("Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.", position = nextToken.position))
                     }
                 }
 
                 else -> continue
             }
         }
+
+        return errors
+    }
+
+    override fun analyze(): List<SyntaxError> {
+        if(tokens.isEmpty()) return emptyList()
+
+        val errors = mutableListOf<SyntaxError>()
+
+        validateParenthesisMatch()?.let { errors.add(it) }
+        validateStartToken()?.let { errors.add(it) }
+        validateEndToken()?.let { errors.add(it) }
+        validateGrammar().let { errors.addAll(it) }
 
         return errors.toList()
     }
