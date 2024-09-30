@@ -6,6 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.example.ExpressionCompiler
+import org.example.LexicalError
 import org.example.SyntaxError
 import javax.xml.crypto.Data
 
@@ -13,16 +14,21 @@ import javax.xml.crypto.Data
 data class CompileRequestBody(val expression: String)
 
 @Serializable
-data class SyntaxErrorDto(val message: String?, val position: Int?)
+data class CompilationError(val message: String?, val position: Int?)
+
 @Serializable
-data class CompileResponseBody(val syntaxErrors: List<SyntaxErrorDto>)
+data class CompileResponseBody(val syntaxErrors: List<CompilationError>)
 
 fun Application.configureRouting() {
     routing {
         post("/compile") {
             val requestBody = call.receive<CompileRequestBody>()
-            val syntaxErrors = ExpressionCompiler().compile(requestBody.expression)
-            call.respond(CompileResponseBody(syntaxErrors = syntaxErrors.map { SyntaxErrorDto(message = it.message, position = it.position) }))
+            try {
+                val syntaxErrors = ExpressionCompiler().compile(requestBody.expression)
+                call.respond(CompileResponseBody(syntaxErrors = syntaxErrors.map { CompilationError(message = it.message, position = it.position) }))
+            } catch (e: LexicalError) {
+                call.respond(CompileResponseBody(syntaxErrors = listOf(CompilationError(message = e.message, position = e.position))))
+            }
         }
     }
 }
