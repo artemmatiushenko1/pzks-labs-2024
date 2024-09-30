@@ -19,25 +19,21 @@ class SyntaxAnalyzerImplTest {
         fun provideTokensWithBadTokensPrecedingOrFollowingMathOperator(): List<Pair<List<Token>, SyntaxError>> {
             return listOf(
                 "variable**2".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '*' at position 9.",
+                    "Expecting one of the following [number, identifier, open_paren] after '*'.",
                     position = 9
                 ),
                 "a*/2".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '*' at position 2.",
+                    "Expecting one of the following [number, identifier, open_paren] after '*'.",
                     position = 2
                 ),
-                "a/*".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '/' at position 2.",
+                "a/*7".toTokens() to SyntaxError(
+                    "Expecting one of the following [number, identifier, open_paren] after '/'.",
                     position = 2
                 ),
                 "2+4+-3+a".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '+' at position 4.",
+                    "Expecting one of the following [number, identifier, open_paren] after '+'.",
                     position = 4
                 ),
-//                "2+4+--+3+a".toTokens() to SyntaxError(
-//                    "Expecting one of the following [number, identifier, open_paren] after '+' at position 4.",
-//                    position = 4
-//                )
             )
         }
 
@@ -68,14 +64,14 @@ class SyntaxAnalyzerImplTest {
 
     @Test
     fun `returns a list with error when + is not followed by a correct operand`() {
-        val tokens = "2+".toTokens()
+        val tokens = "2+-a".toTokens()
 
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
 
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '+' at position 2.",
+                    "Expecting one of the following [number, identifier, open_paren] after '+'.",
                     position = 2
                 )
             )
