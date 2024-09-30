@@ -49,11 +49,11 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
     private fun validateGrammar(): List<SyntaxError> {
         val errors = mutableListOf<SyntaxError>()
 
-        var noValidateTokenPosition: Int? = null
+        var skipNextTokenValidation = false
 
         for (index in tokens.indices) {
-            if (noValidateTokenPosition == index) continue
-            noValidateTokenPosition = null
+            if (skipNextTokenValidation) continue
+            skipNextTokenValidation = false
 
             val currentToken = this.tokens[index]
 
@@ -75,7 +75,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                             )
                         )
 
-                        noValidateTokenPosition = nextTokenIndex
+                        skipNextTokenValidation = true
                     }
                 }
 
