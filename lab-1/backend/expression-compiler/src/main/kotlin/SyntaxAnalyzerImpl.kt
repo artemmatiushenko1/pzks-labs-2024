@@ -55,7 +55,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         validateParenthesisMatch()?.let {
             this.errors.add(it)
         }
-        
+
         validateStartToken()?.let {
             this.errors.add(it)
         }
@@ -97,8 +97,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                 }
 
                 TokenType.OPEN_PAREN -> {
-                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN || nextToken == null) {
-                        val position = nextToken?.position ?: nextTokenIndex
+                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN) {
+                        val position = nextToken.position
                         this.errors.add(SyntaxError("Expecting an expression.", position = position))
                     }
                 }
