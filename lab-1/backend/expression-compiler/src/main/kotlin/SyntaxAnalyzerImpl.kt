@@ -73,11 +73,11 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
             val currentToken = this.tokens[index]
 
             val nextTokenIndex = index + 1
-            val nextToken = this.tokens.getOrNull(nextTokenIndex)
+            val nextToken = this.tokens.getOrNull(nextTokenIndex) ?: continue
 
             when (currentToken.type) {
                 TokenType.MATH_OPERATOR -> {
-                    if (nextToken != null && nextToken.type !in listOf(
+                    if (nextToken.type !in listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN
@@ -95,13 +95,13 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                 }
 
                 TokenType.OPEN_PAREN -> {
-                    if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN) {
+                    if (nextToken.type == TokenType.CLOSE_PAREN) {
                         this.errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
                     }
                 }
 
                 TokenType.NUMBER -> {
-                    if (nextToken != null && nextToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.MATH_OPERATOR)) {
+                    if (nextToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.MATH_OPERATOR)) {
                         this.errors.add(SyntaxError("Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.", position = nextToken.position))
                     }
                 }
