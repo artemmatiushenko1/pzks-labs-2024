@@ -264,4 +264,19 @@ class SyntaxAnalyzerImplTest {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "((-2.34+3))+(3*2)".toTokens())
         syntaxAnalyzer.analyze().should.beEmpty()
     }
+
+    @Test
+    fun `produces correct errors`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "(-2+2)**9+(a-6/variable)-+".toTokens())
+        syntaxAnalyzer.analyze().should.equal(
+            listOf(
+                SyntaxError(
+                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    position = 25
+                ),
+                SyntaxError("Expecting one of the following [number, identifier, open_paren] after '*'.", position = 7),
+                SyntaxError("Expecting one of the following [number, identifier, open_paren] after '-'.", position = 25)
+            )
+        )
+    }
 }

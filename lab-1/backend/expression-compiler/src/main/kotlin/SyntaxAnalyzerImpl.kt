@@ -52,8 +52,10 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         var skipNextTokenValidation = false
 
         for (index in tokens.indices) {
-            if (skipNextTokenValidation) continue
-            skipNextTokenValidation = false
+            if (skipNextTokenValidation) {
+                skipNextTokenValidation = false
+                continue
+            }
 
             val currentToken = this.tokens[index]
 
