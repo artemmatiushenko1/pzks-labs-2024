@@ -1,12 +1,12 @@
 package org.example
 
-class TokenMatcher(private val regex: Regex, val skip: Boolean = false, val tokenType: TokenType) {
+internal class TokenMatcher(private val regex: Regex, val skip: Boolean = false, val tokenType: TokenType) {
     fun match(input: String): String? {
         return this.regex.find(input)?.value
     }
 }
 
-class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyzer {
+internal class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyzer {
     private val tokens: MutableList<Token> = mutableListOf()
 
     private val matchers: List<TokenMatcher> = listOf(

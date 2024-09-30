@@ -1,6 +1,6 @@
 package org.example
 
-interface LexicalAnalyzer {
+internal interface LexicalAnalyzer {
     val expressionSource: String
 
     fun tokenize(): List<Token>

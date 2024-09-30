@@ -1,5 +1,5 @@
 package org.example
 
-interface SyntaxAnalyzer {
+internal interface SyntaxAnalyzer {
     fun analyze(): List<SyntaxError>
 }

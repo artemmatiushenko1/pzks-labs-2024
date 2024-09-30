@@ -1,6 +1,6 @@
 package org.example
 
-enum class TokenType {
+internal enum class TokenType {
     IDENTIFIER, // "a", "b"
     OPEN_PAREN, // "("
     CLOSE_PAREN, // ")"

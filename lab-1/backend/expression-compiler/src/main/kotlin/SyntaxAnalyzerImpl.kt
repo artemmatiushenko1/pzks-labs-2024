@@ -1,6 +1,6 @@
 package org.example
 
-class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
+internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
     private fun validateStartToken(): SyntaxError? {
