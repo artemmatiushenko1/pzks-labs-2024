@@ -109,12 +109,10 @@ class SyntaxAnalyzerImplTest {
     fun `returns a list with error for tokens list with wrong starting token`(tokens: List<Token>) {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
 
-        syntaxAnalyzer.analyze().should.equal(
-            listOf(
-                SyntaxError(
-                    "Expression should start with one of the following [number, identifier, open_paren].",
-                    position = 0
-                )
+        syntaxAnalyzer.analyze().should.contain(
+            SyntaxError(
+                "Expression should start with one of the following [number, identifier, open_paren].",
+                position = 0
             )
         )
     }

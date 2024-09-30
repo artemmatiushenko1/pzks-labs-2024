@@ -106,18 +106,13 @@ class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
                     }
                 }
 
-                TokenType.IDENTIFIER -> {
-
-                }
-
                 TokenType.OPEN_PAREN -> {
                     if (nextToken != null && nextToken.type == TokenType.CLOSE_PAREN) {
                         this.errors.add(SyntaxError("Expecting an expression.", position = nextToken.position))
                     }
                 }
 
-                TokenType.CLOSE_PAREN -> {}
-                TokenType.NUMBER -> {}
+                else -> continue
             }
         }
 
