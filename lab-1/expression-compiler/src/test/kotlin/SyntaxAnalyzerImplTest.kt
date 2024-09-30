@@ -61,6 +61,7 @@ class SyntaxAnalyzerImplTest {
                 "a+()".toTokens() to 3,
                 "()+3.45/d".toTokens() to 1,
                 "var+45*()-3".toTokens() to 8,
+                "a+45*(()".toTokens() to 7,
             )
         }
     }

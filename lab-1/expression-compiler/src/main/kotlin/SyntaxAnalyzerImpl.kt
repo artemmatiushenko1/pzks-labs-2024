@@ -1,12 +1,5 @@
 package org.example
 
-/**
- * - помилки у кінці виразу (наприклад, вираз не може закінчуватись будь-
- * якою алгебраїчною операцією);
- * - помилки в середині виразу (подвійні операції, відсутність операцій
- * перед або між дужками, операції* або / після відкритої дужки тощо);
- */
-
 class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private val errors: MutableList<SyntaxError> = mutableListOf()
 
