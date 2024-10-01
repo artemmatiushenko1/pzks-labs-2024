@@ -78,9 +78,9 @@ class LexicalAnalyzerImplTest {
         @JvmStatic
         fun provideExpressionsWithUnknownTokens(): List<Array<Any>> {
             return listOf(
-                arrayOf("1+3*#9", "Unknown token '#'."),
-                arrayOf("3/3*3?2$", "Unknown token '?'."),
-                arrayOf(" 5 /variable+6&89", "Unknown token '&'.")
+                arrayOf("1+3*#9", "Unknown token '#'"),
+                arrayOf("3/3*3?2$", "Unknown token '?'"),
+                arrayOf(" 5 /variable+6&89", "Unknown token '&'")
             )
         }
 
