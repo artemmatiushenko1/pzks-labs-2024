@@ -1,14 +1,6 @@
 package org.example
 
-internal class TokenMatcher(private val regex: Regex, val skip: Boolean = false, val tokenType: TokenType) {
-    fun match(input: String): String? {
-        return this.regex.find(input)?.value
-    }
-}
-
 internal class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyzer {
-    private val tokens: MutableList<Token> = mutableListOf()
-
     private val matchers: List<TokenMatcher> = listOf(
         TokenMatcher(regex = Regex("^\\s"), tokenType = TokenType.WHITESPACE, skip = true),
         TokenMatcher(regex = Regex("^\\("), tokenType = TokenType.OPEN_PAREN),
@@ -36,6 +28,7 @@ internal class LexicalAnalyzerImpl(override val expressionSource: String) : Lexi
     }
 
     override fun tokenize(): List<Token> {
+        val tokens = mutableListOf<Token>()
         var position = 0
 
         while (position < expressionSource.length) {
@@ -49,11 +42,11 @@ internal class LexicalAnalyzerImpl(override val expressionSource: String) : Lexi
             if (tokenMatcher.skip) {
                 position = position.inc()
             } else {
-                this.tokens.add(token)
+                tokens.add(token)
                 position += token.lexeme.length
             }
         }
 
-        return this.tokens
+        return tokens
     }
 }
