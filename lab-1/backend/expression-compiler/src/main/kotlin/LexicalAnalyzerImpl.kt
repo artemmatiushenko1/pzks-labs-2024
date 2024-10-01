@@ -35,7 +35,7 @@ internal class LexicalAnalyzerImpl(override val expressionSource: String) : Lexi
             val restOfExpression = expressionSource.slice(position until expressionSource.length)
 
             val matchedTokenResult = this.findMatchedToken(restOfExpression, position)
-                ?: throw LexicalError("Unknown token '${expressionSource[position]}' at position $position.", position)
+                ?: throw LexicalError("Unknown token '${expressionSource[position]}'.", position)
 
             val (tokenMatcher, token) = matchedTokenResult
 
