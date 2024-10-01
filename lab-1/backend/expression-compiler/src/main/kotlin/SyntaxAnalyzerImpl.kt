@@ -95,6 +95,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                                 position = nextToken.position
                             )
                         )
+
+                        skipNextTokenValidation = true
                     }
                 }
 
@@ -111,6 +113,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                                 position = nextToken.position
                             )
                         )
+
+                        skipNextTokenValidation = true
                     }
                 }
 
@@ -128,8 +132,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
 
         validateParenthesisMatch()?.let { errors.add(it) }
         validateStartToken()?.let { errors.add(it) }
-        validateEndToken()?.let { errors.add(it) }
         validateGrammar().let { errors.addAll(it) }
+        validateEndToken()?.let { errors.add(it) }
 
         return errors.toList()
     }

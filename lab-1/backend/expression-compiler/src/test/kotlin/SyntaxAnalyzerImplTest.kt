@@ -266,6 +266,44 @@ class SyntaxAnalyzerImplTest {
     }
 
     @Test
+    fun `skips validation of wrong token after open parenthesis`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "2+(**g)-".toTokens())
+        syntaxAnalyzer.analyze().should.equal(
+            listOf(
+                SyntaxError(
+                    "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                    position = 3
+                ),
+                SyntaxError(
+                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    position = 7
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `skips validation of wrong token after number`() {
+        val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "2(*(*g))-".toTokens())
+        syntaxAnalyzer.analyze().should.equal(
+            listOf(
+                SyntaxError(
+                    "Expecting one of the following [math_operator, close_paren] after '2'.",
+                    position = 1
+                ),
+                SyntaxError(
+                    "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                    position = 4
+                ),
+                SyntaxError(
+                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    position = 8
+                )
+            )
+        )
+    }
+
+    @Test // TODO: add more test cases like this
     fun `produces correct errors`() {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "(-2+2)**9+(a-6/variable)-+".toTokens())
         syntaxAnalyzer.analyze().should.equal(
