@@ -4,6 +4,7 @@ import { Badge } from './components/ui/badge';
 import { ExpressionForm } from './components/expression-form';
 import { CompilationError } from './lib/types';
 import { ErrorsList } from './components/errors-list';
+import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
 
 const App = () => {
   const {
@@ -34,7 +35,11 @@ const App = () => {
       <div className="w-[600px] gap-3 flex flex-col">
         <ExpressionForm onSubmit={handleFormSubmit} isLoading={isCompiling} />
         {Boolean(compilationErrors?.length) && (
-          <Badge variant="destructive" className="max-w-max">
+          <Badge
+            startIcon={<CrossCircledIcon />}
+            variant="destructive"
+            className="max-w-max"
+          >
             Errors: {compilationErrors?.length}
           </Badge>
         )}
@@ -46,8 +51,11 @@ const App = () => {
         )}
         {compilationErrors?.length === 0 && (
           <Alert variant="success">
-            <AlertTitle>Compilation success!</AlertTitle>
-            <AlertDescription>Expression is valid.</AlertDescription>
+            <CheckCircledIcon />
+            <div>
+              <AlertTitle>Compilation success!</AlertTitle>
+              <AlertDescription>Expression is valid.</AlertDescription>
+            </div>
           </Alert>
         )}
       </div>
