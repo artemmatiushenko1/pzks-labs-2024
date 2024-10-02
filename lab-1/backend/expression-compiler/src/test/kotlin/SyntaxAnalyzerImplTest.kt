@@ -44,11 +44,13 @@ class SyntaxAnalyzerImplTest {
         }
 
         @JvmStatic
-        fun provideTokensWithMissingParenthesis(): List<List<Token>> {
+        fun provideTokensWithUnbalancedParenthesis(): List<List<Token>> {
             return listOf(
                 "((a+(b)".toTokens(),
                 "((b)+(2*3-5/7)))".toTokens(),
                 ")(())()".toTokens(),
+                ")(".toTokens(),
+                "()))".toTokens()
             )
         }
 
@@ -148,13 +150,13 @@ class SyntaxAnalyzerImplTest {
     }
 
     @ParameterizedTest
-    @MethodSource("provideTokensWithMissingParenthesis")
-    fun `returns a list with error for tokens list with missing parenthesis`(tokens: List<Token>) {
+    @MethodSource("provideTokensWithUnbalancedParenthesis")
+    fun `returns a list with error for tokens list with unbalanced parenthesis`(tokens: List<Token>) {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = tokens)
 
         syntaxAnalyzer.analyze().should.contain(
             SyntaxError(
-                "Parenthesis mismatch.",
+                "Parentheses mismatch.",
                 position = null
             )
         )
@@ -192,7 +194,7 @@ class SyntaxAnalyzerImplTest {
     @Test
     fun `allows number token to be followed by close parenthesis`() {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "2+2)".toTokens())
-        syntaxAnalyzer.analyze().should.equal(listOf(SyntaxError(message = "Parenthesis mismatch.", position = null)))
+        syntaxAnalyzer.analyze().should.equal(listOf(SyntaxError(message = "Parentheses mismatch.", position = null)))
     }
 
     @ParameterizedTest

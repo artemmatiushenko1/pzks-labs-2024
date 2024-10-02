@@ -28,19 +28,29 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
     }
 
     private fun validateParenthesisMatch(): SyntaxError? {
-        var parenthesisCounter = 0
+        val stack = mutableListOf<Token>()
         val parenthesisTokens = tokens.filter { it.type in listOf(TokenType.OPEN_PAREN, TokenType.CLOSE_PAREN) }
 
         for (token in parenthesisTokens) {
-            parenthesisCounter = when (token.type) {
-                TokenType.OPEN_PAREN -> parenthesisCounter.inc()
-                TokenType.CLOSE_PAREN -> parenthesisCounter.dec()
+            when (token.type) {
+                TokenType.OPEN_PAREN -> {
+                    stack.add(token)
+                }
+
+                TokenType.CLOSE_PAREN -> {
+                    val lastToken = stack.removeLastOrNull()
+
+                    if (lastToken == null || lastToken.type != TokenType.OPEN_PAREN) {
+                        return SyntaxError("Parentheses mismatch.", position = null)
+                    }
+                }
+
                 else -> throw IllegalArgumentException("Unexpected token '${token.lexeme}' of type ${token.type}.")
             }
         }
 
-        if (parenthesisCounter != 0) {
-            return SyntaxError("Parenthesis mismatch.", position = null)
+        if (stack.isNotEmpty()) {
+            return SyntaxError("Parentheses mismatch.", position = null)
         }
 
         return null
