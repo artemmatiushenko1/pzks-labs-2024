@@ -62,6 +62,10 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         var skipNextTokenValidation = false
 
         for (index in tokens.indices) {
+//            if (tokens.indices.last == index) {
+//                // TODO: call validateEndToken
+//            }
+
             if (skipNextTokenValidation) {
                 skipNextTokenValidation = false
                 continue
@@ -143,6 +147,8 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         validateParenthesisMatch()?.let { errors.add(it) }
         validateStartToken()?.let { errors.add(it) }
         validateGrammar().let { errors.addAll(it) }
+        // TODO: move validate end token to validateGrammar,
+        //  so we can identify the end of expression automatically without a need to check it explicitly
         validateEndToken()?.let { errors.add(it) }
 
         return errors.toList()
