@@ -1,9 +1,7 @@
 package org.example
 
 internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
-    private fun validateStartToken(): SyntaxError? {
-        val startToken = this.tokens.first()
-
+    private fun validateStartToken(startToken: Token): SyntaxError? {
         if (startToken.type in listOf(TokenType.CLOSE_PAREN, TokenType.MULTIPLICATIVE_OPERATOR)) {
             return SyntaxError(
                 "Expression should start with one of the following [number, identifier, open_paren, additive_operator].",
@@ -14,9 +12,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         return null
     }
 
-    private fun validateEndToken(): SyntaxError? {
-        val endToken = this.tokens.last()
-
+    private fun validateEndToken(endToken: Token): SyntaxError? {
         if (endToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             return SyntaxError(
                 "Expression should end with one of the following [number, identifier, close_paren].",
@@ -62,16 +58,20 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         var skipNextTokenValidation = false
 
         for (index in tokens.indices) {
-//            if (tokens.indices.last == index) {
-//                // TODO: call validateEndToken
-//            }
+            val currentToken = this.tokens[index]
+
+            if (tokens.indices.first == index) {
+                this.validateStartToken(currentToken)?.let { errors.add(it) }
+            }
+
+            if (tokens.indices.last == index) {
+                this.validateEndToken(currentToken)?.let { errors.add(it) }
+            }
 
             if (skipNextTokenValidation) {
                 skipNextTokenValidation = false
                 continue
             }
-
-            val currentToken = this.tokens[index]
 
             val nextTokenIndex = index + 1
             val nextToken = this.tokens.getOrNull(nextTokenIndex) ?: continue
@@ -145,11 +145,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         val errors = mutableListOf<SyntaxError>()
 
         validateParenthesisMatch()?.let { errors.add(it) }
-        validateStartToken()?.let { errors.add(it) }
         validateGrammar().let { errors.addAll(it) }
-        // TODO: move validate end token to validateGrammar,
-        //  so we can identify the end of expression automatically without a need to check it explicitly
-        validateEndToken()?.let { errors.add(it) }
 
         return errors.toList()
     }
