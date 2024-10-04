@@ -77,9 +77,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
 
         var skipNextTokenValidation = false
 
-        for (index in tokens.indices) {
-            val currentToken = this.tokens[index]
-
+        for ((index, currentToken) in tokens.withIndex()) {
             if (tokens.indices.first == index) {
                 this.validateStartToken(currentToken)?.let { errors.add(it) }
             }
@@ -93,7 +91,7 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
                 continue
             }
 
-            val nextTokenIndex = index + 1
+            val nextTokenIndex = index.inc()
             val nextToken = this.tokens.getOrNull(nextTokenIndex) ?: continue
 
             val error = when (currentToken.type) {
