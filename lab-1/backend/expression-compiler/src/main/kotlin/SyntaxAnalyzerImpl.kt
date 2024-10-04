@@ -2,9 +2,12 @@ package org.example
 
 internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private fun validateStartToken(startToken: Token): SyntaxError? {
-        if (startToken.type in listOf(TokenType.CLOSE_PAREN, TokenType.MULTIPLICATIVE_OPERATOR)) {
+        val expectedTokens =
+            listOf(TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.OPEN_PAREN, TokenType.ADDITIVE_OPERATOR)
+
+        if (startToken.type !in expectedTokens) {
             return SyntaxError(
-                "Expression should start with one of the following [number, identifier, open_paren, additive_operator].",
+                "Expression should start with one of the following [${expectedTokens.joinToString(", ")}].",
                 position = startToken.position
             )
         }
@@ -13,9 +16,11 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
     }
 
     private fun validateEndToken(endToken: Token): SyntaxError? {
+        val expectedTokens = listOf(TokenType.CLOSE_PAREN, TokenType.IDENTIFIER, TokenType.NUMBER)
+
         if (endToken.type !in listOf(TokenType.CLOSE_PAREN, TokenType.IDENTIFIER, TokenType.NUMBER)) {
             return SyntaxError(
-                "Expression should end with one of the following [number, identifier, close_paren].",
+                "Expression should end with one of the following [${expectedTokens.joinToString(", ")}].",
                 position = endToken.position
             )
         }
@@ -52,6 +57,21 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
         return null
     }
 
+    private fun verifyNextTokenExpectation(
+        currentToken: Token,
+        nextToken: Token,
+        expectedTokenTypes: List<TokenType>
+    ): SyntaxError? {
+        if (nextToken.type !in expectedTokenTypes) {
+            return SyntaxError(
+                "Expecting one of the following [${expectedTokenTypes.joinToString(", ")}] after '${currentToken.lexeme}'.",
+                position = nextToken.position
+            )
+        }
+
+        return null
+    }
+
     private fun validateGrammar(): List<SyntaxError> {
         val errors = mutableListOf<SyntaxError>()
 
@@ -76,63 +96,50 @@ internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnaly
             val nextTokenIndex = index + 1
             val nextToken = this.tokens.getOrNull(nextTokenIndex) ?: continue
 
-            when (currentToken.type) {
+            val error = when (currentToken.type) {
                 TokenType.ADDITIVE_OPERATOR, TokenType.MULTIPLICATIVE_OPERATOR -> {
-                    if (nextToken.type !in listOf(
+                    verifyNextTokenExpectation(
+                        currentToken = currentToken,
+                        nextToken = nextToken,
+                        expectedTokenTypes = listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN
                         )
-                    ) {
-                        errors.add(
-                            SyntaxError(
-                                "Expecting one of the following [number, identifier, open_paren] after '${currentToken.lexeme}'.",
-                                position = nextToken.position
-                            )
-                        )
-
-                        skipNextTokenValidation = true
-                    }
+                    )
                 }
 
                 TokenType.OPEN_PAREN -> {
-                    if (nextToken.type !in listOf(
+                    verifyNextTokenExpectation(
+                        currentToken = currentToken,
+                        nextToken = nextToken,
+                        expectedTokenTypes = listOf(
                             TokenType.IDENTIFIER,
                             TokenType.NUMBER,
                             TokenType.OPEN_PAREN,
                             TokenType.ADDITIVE_OPERATOR,
                         )
-                    ) {
-                        errors.add(
-                            SyntaxError(
-                                "Expecting one of the following [number, identifier, open_paren, math_operator] after '${currentToken.lexeme}'.",
-                                position = nextToken.position
-                            )
-                        )
-
-                        skipNextTokenValidation = true
-                    }
+                    )
                 }
 
                 TokenType.NUMBER, TokenType.IDENTIFIER, TokenType.CLOSE_PAREN -> {
-                    if (nextToken.type !in listOf(
+                    verifyNextTokenExpectation(
+                        currentToken = currentToken,
+                        nextToken = nextToken,
+                        expectedTokenTypes = listOf(
                             TokenType.CLOSE_PAREN,
                             TokenType.ADDITIVE_OPERATOR,
                             TokenType.MULTIPLICATIVE_OPERATOR
                         )
-                    ) {
-                        errors.add(
-                            SyntaxError(
-                                "Expecting one of the following [math_operator, close_paren] after '${currentToken.lexeme}'.",
-                                position = nextToken.position
-                            )
-                        )
-
-                        skipNextTokenValidation = true
-                    }
+                    )
                 }
 
-                else -> continue
+                TokenType.WHITESPACE -> null
+            }
+
+            if (error != null) {
+                errors.add(error)
+                skipNextTokenValidation = true
             }
         }
 

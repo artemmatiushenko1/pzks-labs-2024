@@ -20,19 +20,19 @@ class SyntaxAnalyzerImplTest {
         fun provideTokensWithBadTokensPrecedingOrFollowingMathOperator(): List<Pair<List<Token>, SyntaxError>> {
             return listOf(
                 "variable**2".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '*'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '*'.",
                     position = 9
                 ),
                 "a*/2".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '*'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '*'.",
                     position = 2
                 ),
                 "a/*7".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '/'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '/'.",
                     position = 2
                 ),
                 "2+4+-3+a".toTokens() to SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '+'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '+'.",
                     position = 4
                 ),
             )
@@ -68,15 +68,15 @@ class SyntaxAnalyzerImplTest {
         fun provideTokensWithWrongTokenAfterNumberToken(): List<Pair<List<Token>, SyntaxError>> {
             return listOf(
                 "1+3var+2".toTokens() to SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after '3'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after '3'.",
                     position = 3
                 ),
                 "45.6(*1".toTokens() to SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after '45.6'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after '45.6'.",
                     position = 4
                 ),
                 "1(2+2)".toTokens() to SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after '1'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after '1'.",
                     position = 1
                 ),
             )
@@ -106,7 +106,7 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '+'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '+'.",
                     position = 2
                 )
             )
@@ -143,7 +143,7 @@ class SyntaxAnalyzerImplTest {
 
         syntaxAnalyzer.analyze().should.contain(
             SyntaxError(
-                "Expression should start with one of the following [number, identifier, open_paren, additive_operator].",
+                "Expression should start with one of the following [NUMBER, IDENTIFIER, OPEN_PAREN, ADDITIVE_OPERATOR].",
                 position = 0
             )
         )
@@ -170,7 +170,7 @@ class SyntaxAnalyzerImplTest {
 
         syntaxAnalyzer.analyze().should.contain(
             SyntaxError(
-                "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN, ADDITIVE_OPERATOR] after '('.",
                 position = errorPosition
             )
         )
@@ -204,7 +204,7 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after 'a'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after 'a'.",
                     position = 4
                 )
             )
@@ -229,7 +229,7 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after ')'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after ')'.",
                     position = 8
                 )
             )
@@ -248,7 +248,7 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN, ADDITIVE_OPERATOR] after '('.",
                     position = 2
                 )
             )
@@ -273,11 +273,11 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN, ADDITIVE_OPERATOR] after '('.",
                     position = 3
                 ),
                 SyntaxError(
-                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    "Expression should end with one of the following [CLOSE_PAREN, IDENTIFIER, NUMBER].",
                     position = 7
                 )
             )
@@ -290,15 +290,15 @@ class SyntaxAnalyzerImplTest {
         syntaxAnalyzer.analyze().should.equal(
             listOf(
                 SyntaxError(
-                    "Expecting one of the following [math_operator, close_paren] after '2'.",
+                    "Expecting one of the following [CLOSE_PAREN, ADDITIVE_OPERATOR, MULTIPLICATIVE_OPERATOR] after '2'.",
                     position = 1
                 ),
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren, math_operator] after '('.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN, ADDITIVE_OPERATOR] after '('.",
                     position = 4
                 ),
                 SyntaxError(
-                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    "Expression should end with one of the following [CLOSE_PAREN, IDENTIFIER, NUMBER].",
                     position = 8
                 )
             )
@@ -310,13 +310,13 @@ class SyntaxAnalyzerImplTest {
         val syntaxAnalyzer = SyntaxAnalyzerImpl(tokens = "(-2+2)**9+(a-6/variable)-+".toTokens())
         syntaxAnalyzer.analyze().should.equal(
             listOf(
-                SyntaxError("Expecting one of the following [number, identifier, open_paren] after '*'.", position = 7),
+                SyntaxError("Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '*'.", position = 7),
                 SyntaxError(
-                    "Expecting one of the following [number, identifier, open_paren] after '-'.",
+                    "Expecting one of the following [IDENTIFIER, NUMBER, OPEN_PAREN] after '-'.",
                     position = 25
                 ),
                 SyntaxError(
-                    "Expression should end with one of the following [number, identifier, close_paren].",
+                    "Expression should end with one of the following [CLOSE_PAREN, IDENTIFIER, NUMBER].",
                     position = 25
                 ),
             )
