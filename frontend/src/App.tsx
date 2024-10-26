@@ -1,9 +1,9 @@
-import { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 import { Badge } from './components/ui/badge';
 import { ExpressionForm } from './components/expression-form';
 import { ErrorsList } from './components/errors-list';
-import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { useCompileExpression } from './queries/compile-expression.mutation';
+import { CompilationSuccessAlert } from './components/compilation-success-alert';
 
 const App = () => {
   const {
@@ -13,14 +13,10 @@ const App = () => {
     variables: submittedExpression,
   } = useCompileExpression();
 
-  const handleFormSubmit = (expression: string) => {
-    compileExpression(expression);
-  };
-
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
       <div className="w-[600px] gap-3 flex flex-col">
-        <ExpressionForm onSubmit={handleFormSubmit} isLoading={isCompiling} />
+        <ExpressionForm onSubmit={compileExpression} isLoading={isCompiling} />
         {Boolean(compilationErrors?.length) && (
           <Badge
             startIcon={<CrossCircledIcon />}
@@ -36,15 +32,7 @@ const App = () => {
             expression={submittedExpression}
           />
         )}
-        {compilationErrors?.length === 0 && (
-          <Alert variant="success">
-            <CheckCircledIcon />
-            <div>
-              <AlertTitle>Compilation success!</AlertTitle>
-              <AlertDescription>Expression is valid.</AlertDescription>
-            </div>
-          </Alert>
-        )}
+        {compilationErrors?.length === 0 && <CompilationSuccessAlert />}
       </div>
     </div>
   );
