@@ -1,10 +1,9 @@
-import { useMutation } from '@tanstack/react-query';
 import { Alert, AlertDescription, AlertTitle } from './components/ui/alert';
 import { Badge } from './components/ui/badge';
 import { ExpressionForm } from './components/expression-form';
-import { CompilationError } from './lib/types';
 import { ErrorsList } from './components/errors-list';
 import { CheckCircledIcon, CrossCircledIcon } from '@radix-ui/react-icons';
+import { useCompileExpression } from './queries/compile-expression.mutation';
 
 const App = () => {
   const {
@@ -12,19 +11,7 @@ const App = () => {
     isPending: isCompiling,
     data: compilationErrors,
     variables: submittedExpression,
-  } = useMutation({
-    mutationFn: async (expression: string) => {
-      const response = await fetch('/api/compile', {
-        method: 'POST',
-        body: JSON.stringify({ expression }),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-
-      return response.json() as Promise<CompilationError[]>;
-    },
-  });
+  } = useCompileExpression();
 
   const handleFormSubmit = (expression: string) => {
     compileExpression(expression);
