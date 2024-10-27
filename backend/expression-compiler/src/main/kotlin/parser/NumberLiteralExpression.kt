@@ -1,6 +1,6 @@
 package org.example.parser
 
-class NumberLiteralExpression(val value: String): Expression() {
+class NumberLiteralExpression(val value: String) : Expression() {
     override fun equals(other: Any?): Boolean {
         if (other is NumberLiteralExpression) {
             return this.value == other.value
@@ -11,5 +11,9 @@ class NumberLiteralExpression(val value: String): Expression() {
 
     override fun hashCode(): Int {
         return value.hashCode()
+    }
+
+    override fun toString(): String {
+        return "NumberLiteralExpression { value = ${value} }"
     }
 }

@@ -13,4 +13,8 @@ class ExpressionStatement(var expression: Expression?) {
     override fun hashCode(): Int {
         return expression.hashCode()
     }
+
+    override fun toString(): String {
+        return "ExpressionStatement -> $expression"
+    }
 }

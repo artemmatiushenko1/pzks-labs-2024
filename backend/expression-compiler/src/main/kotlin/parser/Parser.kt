@@ -19,24 +19,48 @@ import org.example.TokenType
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
+    private val _tokens = tokens.toMutableList()
+
+    private fun getCurrentToken(): Token? {
+        return this._tokens.getOrNull(this.position)
+    }
 
     private fun consume(): Token {
-       return this.tokens.toMutableList().removeFirst()
+        return this._tokens.removeFirst()
+    }
+
+    private fun parseSimpleExpression(): Expression? {
+        val currentToken = this.getCurrentToken()
+
+        val expression = when (currentToken?.type) {
+            TokenType.NUMBER -> NumberLiteralExpression(value = this.consume().lexeme)
+            TokenType.IDENTIFIER -> IdentifierExpression(value = this.consume().lexeme)
+            else -> null
+        }
+
+        return expression
     }
 
     fun parse(): ExpressionStatement {
-        val expressionStatement = ExpressionStatement(expression = null)
+        val left = this.parseSimpleExpression() ?: return ExpressionStatement(expression = null)
 
-        val currentToken = tokens[position]
+        val currentToken = this.getCurrentToken()
 
-        val expression = when (currentToken.type){
-            TokenType.NUMBER -> NumberLiteralExpression(value = this.consume().lexeme)
-            TokenType.IDENTIFIER -> IdentifierExpression(value = this.consume().lexeme)
-            else -> throw Exception("Unknown token!")
+        val expression = when (currentToken?.type) {
+            TokenType.ADDITIVE_OPERATOR -> {
+                val operator = this.consume().lexeme
+                val right = this.parseSimpleExpression()
+
+                BinaryExpression(
+                    left = left,
+                    operator = operator,
+                    right = right ?: throw Exception("Missing second operand in binary expression!")
+                )
+            }
+
+            else -> null
         }
 
-        expressionStatement.expression = expression
-
-        return expressionStatement
+        return ExpressionStatement(expression = expression ?: left)
     }
 }
