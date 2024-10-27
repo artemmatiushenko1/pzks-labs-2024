@@ -14,6 +14,6 @@ class NumberLiteralExpression(val value: String) : Expression() {
     }
 
     override fun toString(): String {
-        return "NumberLiteralExpression { value = ${value} }"
+        return "NumberLiteralExpression { v = $value }"
     }
 }

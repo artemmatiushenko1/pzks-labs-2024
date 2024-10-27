@@ -27,7 +27,7 @@ class ParserTest {
     }
 
     @Test
-    fun `parser simple binary expression`() {
+    fun `parses simple binary expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "2+3").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
@@ -37,6 +37,52 @@ class ParserTest {
                     left = NumberLiteralExpression(value = "2"),
                     operator = "+",
                     right = NumberLiteralExpression(value = "3"),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses additive expression with 3 operands`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2+a+4").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "+",
+                        right = IdentifierExpression(value = "a")
+                    ),
+                    operator = "+",
+                    right = NumberLiteralExpression(value = "4"),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses additive expression with 4 operands`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2+a+4-7.9").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        println(ast)
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = NumberLiteralExpression(value = "2"),
+                            operator = "+",
+                            right = IdentifierExpression(value = "a")
+                        ),
+                        operator = "+",
+                        right = NumberLiteralExpression(value = "4")
+                    ),
+                    operator = "-",
+                    right = NumberLiteralExpression(value = "7.9"),
                 )
             )
         )

@@ -1,6 +1,6 @@
 package org.example.parser
 
-class IdentifierExpression(val value: String): Expression() {
+class IdentifierExpression(val value: String) : Expression() {
     override fun equals(other: Any?): Boolean {
         if (other is IdentifierExpression) {
             return this.value == other.value
@@ -11,5 +11,9 @@ class IdentifierExpression(val value: String): Expression() {
 
     override fun hashCode(): Int {
         return value.hashCode()
+    }
+
+    override fun toString(): String {
+        return "IdentifierExpression { v = $value }"
     }
 }

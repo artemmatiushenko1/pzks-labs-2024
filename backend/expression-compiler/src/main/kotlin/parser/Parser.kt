@@ -42,25 +42,19 @@ class Parser(val tokens: List<Token>) {
     }
 
     fun parse(): ExpressionStatement {
-        val left = this.parseSimpleExpression() ?: return ExpressionStatement(expression = null)
+        var left = this.parseSimpleExpression() ?: return ExpressionStatement(expression = null)
 
-        val currentToken = this.getCurrentToken()
+        while (this.getCurrentToken()?.type in listOf(TokenType.ADDITIVE_OPERATOR)) {
+            val operator = this.consume().lexeme
+            val right = this.parseSimpleExpression()
 
-        val expression = when (currentToken?.type) {
-            TokenType.ADDITIVE_OPERATOR -> {
-                val operator = this.consume().lexeme
-                val right = this.parseSimpleExpression()
-
-                BinaryExpression(
-                    left = left,
-                    operator = operator,
-                    right = right ?: throw Exception("Missing second operand in binary expression!")
-                )
-            }
-
-            else -> null
+            left = BinaryExpression(
+                left = left,
+                operator = operator,
+                right = right ?: throw Exception("Missing second operand in binary expression!")
+            )
         }
 
-        return ExpressionStatement(expression = expression ?: left)
+        return ExpressionStatement(expression = left)
     }
 }

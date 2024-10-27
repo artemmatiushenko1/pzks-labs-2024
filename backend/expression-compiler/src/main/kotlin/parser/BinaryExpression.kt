@@ -1,6 +1,6 @@
 package org.example.parser
 
-class BinaryExpression(val right: Expression, val left: Expression, val operator: String): Expression() {
+class BinaryExpression(val right: Expression, val left: Expression, val operator: String) : Expression() {
     override fun equals(other: Any?): Boolean {
         if (other is BinaryExpression) {
             return this.right == other.right && this.left == other.left && this.operator == other.operator
@@ -14,5 +14,9 @@ class BinaryExpression(val right: Expression, val left: Expression, val operator
         result = 31 * result + left.hashCode()
         result = 31 * result + operator.hashCode()
         return result
+    }
+
+    override fun toString(): String {
+        return "BinaryExpression { l = $left, op = $operator, r = $right}"
     }
 }
