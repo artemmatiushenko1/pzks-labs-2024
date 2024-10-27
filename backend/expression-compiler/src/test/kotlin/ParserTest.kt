@@ -67,8 +67,6 @@ class ParserTest {
         val tokens = LexicalAnalyzerImpl(expressionSource = "2+a+4-7.9").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
-        println(ast)
-
         ast.should.equal(
             ExpressionStatement(
                 expression = BinaryExpression(
