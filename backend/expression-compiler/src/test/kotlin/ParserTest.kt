@@ -157,4 +157,76 @@ class ParserTest {
             )
         )
     }
+
+    @Test
+    fun `parses simple 3-operand expression with additive and multiplicative operators`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2+3*1").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
+                    operator = "+",
+                    right = BinaryExpression(
+                        left = NumberLiteralExpression(value = "3"),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "1")
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses simple 4-operand expression with additive and multiplicative operators`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2*3-1/5").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "3"),
+                    ),
+                    operator = "-",
+                    right = BinaryExpression(
+                        left = NumberLiteralExpression(value = "1"),
+                        operator = "/",
+                        right = NumberLiteralExpression(value = "5")
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses simple 5-operand expression with additive and multiplicative operators`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2*3-1/5.99+a").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = NumberLiteralExpression(value = "2"),
+                            operator = "*",
+                            right = NumberLiteralExpression(value = "3"),
+                        ),
+                        operator = "-",
+                        right = BinaryExpression(
+                            left = NumberLiteralExpression(value = "1"),
+                            operator = "/",
+                            right = NumberLiteralExpression(value = "5.99")
+                        )
+                    ),
+                    operator = "+",
+                    right = IdentifierExpression(value = "a")
+                )
+            )
+        )
+    }
 }

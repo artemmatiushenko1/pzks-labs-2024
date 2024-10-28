@@ -29,7 +29,7 @@ class Parser(val tokens: List<Token>) {
         return this._tokens.removeFirst()
     }
 
-    private fun parseSimpleExpression(): Expression? {
+    private fun parseTerm(): Expression? {
         val currentToken = this.getCurrentToken()
 
         val expression = when (currentToken?.type) {
@@ -41,23 +41,12 @@ class Parser(val tokens: List<Token>) {
         return expression
     }
 
-    fun parse(): ExpressionStatement {
-        var left = this.parseSimpleExpression() ?: return ExpressionStatement(expression = null)
-
-        while (this.getCurrentToken()?.type == TokenType.ADDITIVE_OPERATOR) {
-            val operator = this.consume().lexeme
-            val right = this.parseSimpleExpression()
-
-            left = BinaryExpression(
-                left = left,
-                operator = operator,
-                right = right ?: throw Exception("Missing second operand in binary expression!")
-            )
-        }
+    private fun parseMultiplicative(): Expression? {
+        var left = this.parseTerm() ?: return null
 
         while (this.getCurrentToken()?.type == TokenType.MULTIPLICATIVE_OPERATOR) {
             val operator = this.consume().lexeme
-            val right = this.parseSimpleExpression()
+            val right = this.parseTerm()
 
             left = BinaryExpression(
                 left = left,
@@ -66,6 +55,28 @@ class Parser(val tokens: List<Token>) {
             )
         }
 
-        return ExpressionStatement(expression = left)
+        return left
+    }
+
+    private fun parseAdditive(): Expression? {
+        var left = this.parseMultiplicative() ?: return null
+
+        while (this.getCurrentToken()?.type == TokenType.ADDITIVE_OPERATOR) {
+            val operator = this.consume().lexeme
+            val right = this.parseMultiplicative()
+
+            left = BinaryExpression(
+                left = left,
+                operator = operator,
+                right = right ?: throw Exception("Missing second operand in binary expression!")
+            )
+        }
+
+        return left
+    }
+
+    fun parse(): ExpressionStatement {
+        val expression = this.parseAdditive()
+        return ExpressionStatement(expression = expression)
     }
 }
