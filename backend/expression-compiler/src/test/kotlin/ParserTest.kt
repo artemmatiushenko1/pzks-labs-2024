@@ -272,4 +272,163 @@ class ParserTest {
             )
         )
     }
+
+    @Test
+    fun `parses paren expression with single numeric literal`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "(6)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = ParenExpression(
+                    expression = NumberLiteralExpression(value = "6")
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses paren binary expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "(6+4)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "6"),
+                        operator = "+",
+                        right = NumberLiteralExpression(value = "4"),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses paren binary expression multiplied by number literal`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "(6+4)/a").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "6"),
+                            operator = "+",
+                            right = NumberLiteralExpression(value = "4"),
+                        )
+                    ),
+                    operator = "/",
+                    right = IdentifierExpression(value = "a")
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses unary paren binary expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "-(6+a)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = UnaryExpression(
+                    operator = "-",
+                    argument = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "6"),
+                            operator = "+",
+                            right = IdentifierExpression(value = "a"),
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses 2 additive paren expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "-(6+a)+(1.2*b)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = UnaryExpression(
+                        operator = "-",
+                        argument = ParenExpression(
+                            expression = BinaryExpression(
+                                left = NumberLiteralExpression(value = "6"),
+                                operator = "+",
+                                right = IdentifierExpression(value = "a"),
+                            )
+                        )
+                    ),
+                    operator = "+",
+                    right = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "1.2"),
+                            operator = "*",
+                            right = IdentifierExpression(value = "b")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses nested paren expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "((2+v))").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = ParenExpression(
+                    expression = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "2"),
+                            operator = "+",
+                            right = IdentifierExpression(value = "v")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `test parses complex nested paren expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "(((-(2+v)))*3)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = ParenExpression(
+                    expression = BinaryExpression(
+                        left = ParenExpression(
+                            expression = ParenExpression(
+                                expression = UnaryExpression(
+                                    operator = "-",
+                                    argument = ParenExpression(
+                                        expression = BinaryExpression(
+                                            left = NumberLiteralExpression(
+                                                "2"
+                                            ),
+                                            operator = "+",
+                                            right = IdentifierExpression(value = "v")
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "3")
+                    )
+                )
+            )
+        )
+    }
 }

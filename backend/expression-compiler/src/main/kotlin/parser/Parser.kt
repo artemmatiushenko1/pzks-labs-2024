@@ -41,16 +41,30 @@ class Parser(val tokens: List<Token>) {
         return expression
     }
 
+    private fun parseParenExpression(): Expression? {
+        var parenExpression: Expression? = null
+
+        while (this.getCurrentToken()?.type == TokenType.OPEN_PAREN) {
+            this.consume().lexeme // consume "("
+            val expression = this.parseAdditive()
+            this.consume().lexeme // consume ")", TODO: validate we actually consume what we expect
+
+            parenExpression = ParenExpression(expression = expression ?: throw Exception("Unexpected token!"))
+        }
+
+        return parenExpression ?: this.parseTerm()
+    }
+
     private fun parseUnaryExpression(): Expression? {
         val currentToken = this.getCurrentToken()
 
         val expression = when (currentToken?.type) {
             TokenType.ADDITIVE_OPERATOR -> UnaryExpression(
                 operator = this.consume().lexeme,
-                argument = this.parseTerm() ?: throw Exception("Unexpected token!")
+                argument = this.parseParenExpression() ?: throw Exception("Unexpected token!")
             )
 
-            else -> this.parseTerm()
+            else -> this.parseParenExpression()
         }
 
         return expression
@@ -83,7 +97,7 @@ class Parser(val tokens: List<Token>) {
             left = BinaryExpression(
                 left = left,
                 operator = operator,
-                right = right ?: throw Exception("Missing second operand in binary expression!")
+                right = right ?: throw Exception("Unexpected token!")
             )
         }
 
