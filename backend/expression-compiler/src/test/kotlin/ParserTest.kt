@@ -376,6 +376,31 @@ class ParserTest {
     }
 
     @Test
+    fun `parses unary expression as right part of additive binary expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "a+-(6+a)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = IdentifierExpression(value = "a"),
+                    operator = "+",
+                    right = UnaryExpression(
+                        operator = "-",
+                        argument = ParenExpression(
+                            expression = BinaryExpression(
+                                left = NumberLiteralExpression(value = "6"),
+                                operator = "+",
+                                right = IdentifierExpression(value = "a"),
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `parses 2 additive paren expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "-(6+a)+(1.2*b)").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
@@ -407,7 +432,7 @@ class ParserTest {
     }
 
     @Test
-    fun `throws when there's a double additive operator`() {
+    fun `throws when there's a duplicate additive operator`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "a++(6+b)").tokenize()
         expect { Parser(tokens = tokens.toMutableList()).parse() }.throws(Exception::class) { it.message.should.equal("Unexpected token!") }
     }
@@ -459,7 +484,7 @@ class ParserTest {
             )
         )
     }
-    
+
     @Test
     fun `test parses complex nested paren expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "(((-(2+v)))*3)").tokenize()

@@ -90,12 +90,17 @@ class Parser(val tokens: List<Token>) {
 
         while (this.getCurrentToken()?.type == TokenType.ADDITIVE_OPERATOR) {
             val operator = this.consume(TokenType.ADDITIVE_OPERATOR).lexeme
+
+            this.getCurrentToken()?.let { currentToken ->
+                require(currentToken.lexeme != operator) { "Unexpected token!" }
+            }
+
             val right = this.parseMultiplicative()
 
             left = BinaryExpression(
                 left = left,
                 operator = operator,
-                right = right ?: throw Exception("Unexpected token!")
+                right = right ?: throw Exception("Missing second operand in binary expression!")
             )
         }
 
