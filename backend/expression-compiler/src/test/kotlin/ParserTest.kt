@@ -1,7 +1,9 @@
+import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.LexicalAnalyzerImpl
 import org.example.parser.*
+import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
 
@@ -349,6 +351,31 @@ class ParserTest {
     }
 
     @Test
+    fun `parses unary expression as right part of multiplicative binary expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "a*-(6+a)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = IdentifierExpression(value = "a"),
+                    operator = "*",
+                    right = UnaryExpression(
+                        operator = "-",
+                        argument = ParenExpression(
+                            expression = BinaryExpression(
+                                left = NumberLiteralExpression(value = "6"),
+                                operator = "+",
+                                right = IdentifierExpression(value = "a"),
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `parses 2 additive paren expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "-(6+a)+(1.2*b)").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
@@ -380,6 +407,40 @@ class ParserTest {
     }
 
     @Test
+    fun `throws when there's a double additive operator`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "a++(6+b)").tokenize()
+        expect { Parser(tokens = tokens.toMutableList()).parse() }.throws(Exception::class) { it.message.should.equal("Unexpected token!") }
+    }
+
+    @Test
+    fun `parses multiplicative binary expression with paren operands`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "(2+1)*(3.3-b)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "2"),
+                            operator = "+",
+                            right = NumberLiteralExpression(value = "1")
+                        )
+                    ),
+                    operator = "*",
+                    right = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "3.3"),
+                            operator = "-",
+                            right = IdentifierExpression(value = "b")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `parses nested paren expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "((2+v))").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
@@ -398,7 +459,7 @@ class ParserTest {
             )
         )
     }
-
+    
     @Test
     fun `test parses complex nested paren expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "(((-(2+v)))*3)").tokenize()

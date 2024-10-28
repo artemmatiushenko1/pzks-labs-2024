@@ -75,7 +75,7 @@ class Parser(val tokens: List<Token>) {
 
         while (this.getCurrentToken()?.type == TokenType.MULTIPLICATIVE_OPERATOR) {
             val operator = this.consume().lexeme
-            val right = this.parseTerm()
+            val right = this.parseUnaryExpression()
 
             left = BinaryExpression(
                 left = left,
