@@ -27,7 +27,7 @@ class ParserTest {
     }
 
     @Test
-    fun `parses simple binary expression`() {
+    fun `parses simple binary expression with addition`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "2+3").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
@@ -36,6 +36,22 @@ class ParserTest {
                 expression = BinaryExpression(
                     left = NumberLiteralExpression(value = "2"),
                     operator = "+",
+                    right = NumberLiteralExpression(value = "3"),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses simple binary expression with subtraction`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2-3").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
+                    operator = "-",
                     right = NumberLiteralExpression(value = "3"),
                 )
             )
@@ -81,6 +97,62 @@ class ParserTest {
                     ),
                     operator = "-",
                     right = NumberLiteralExpression(value = "7.9"),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses simple binary expression with multiplication`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2*4").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
+                    operator = "*",
+                    right = NumberLiteralExpression(value = "4")
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses simple binary expression with division`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2/4").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
+                    operator = "/",
+                    right = NumberLiteralExpression(value = "4")
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses multiplicative expression with 4 operands`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "2*4/6*9").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = NumberLiteralExpression(value = "2"),
+                            operator = "*",
+                            right = NumberLiteralExpression(value = "4")
+                        ),
+                        operator = "/",
+                        right = NumberLiteralExpression(value = "6")
+                    ),
+                    operator = "*",
+                    right = NumberLiteralExpression(value = "9")
                 )
             )
         )
