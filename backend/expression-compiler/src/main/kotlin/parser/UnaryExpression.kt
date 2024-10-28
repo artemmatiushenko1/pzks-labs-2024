@@ -1,0 +1,24 @@
+package org.example.parser
+
+class UnaryExpression(
+    val operator: String,
+    val argument: Expression, // TODO: rename to operand
+) : Expression() {
+    override fun equals(other: Any?): Boolean {
+        if (other is UnaryExpression) {
+            return this.operator == other.operator && this.argument == other.argument
+        }
+
+        return false
+    }
+
+    override fun hashCode(): Int {
+        var result = operator.hashCode()
+        result = 31 * result + argument.hashCode()
+        return result
+    }
+
+    override fun toString(): String {
+        return "UnaryExpression { o = $operator, a = $argument }"
+    }
+}
