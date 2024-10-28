@@ -41,8 +41,23 @@ class Parser(val tokens: List<Token>) {
         return expression
     }
 
+    private fun parseUnaryExpression(): Expression? {
+        val currentToken = this.getCurrentToken()
+
+        val expression = when (currentToken?.type) {
+            TokenType.ADDITIVE_OPERATOR -> UnaryExpression(
+                operator = this.consume().lexeme,
+                argument = this.parseTerm() ?: throw Exception("Unexpected token!")
+            )
+
+            else -> this.parseTerm()
+        }
+
+        return expression
+    }
+
     private fun parseMultiplicative(): Expression? {
-        var left = this.parseTerm() ?: return null
+        var left = this.parseUnaryExpression() ?: return null
 
         while (this.getCurrentToken()?.type == TokenType.MULTIPLICATIVE_OPERATOR) {
             val operator = this.consume().lexeme
