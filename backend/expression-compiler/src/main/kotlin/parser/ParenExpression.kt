@@ -1,6 +1,10 @@
 package org.example.parser
 
 class ParenExpression(val expression: Expression) : Expression() {
+    override fun accept(visitor: Visitor) {
+        visitor.visitParenExpression(this)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is ParenExpression) {
             return this.expression == other.expression

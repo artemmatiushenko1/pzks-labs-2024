@@ -1,7 +1,5 @@
 package org.example.parser
 
-open class Expression() {
-    fun toJson() {
-        // TODO: Not implemented
-    }
+abstract class Expression {
+    abstract fun accept(visitor: Visitor)
 }

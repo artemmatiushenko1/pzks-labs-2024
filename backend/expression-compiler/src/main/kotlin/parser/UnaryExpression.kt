@@ -4,6 +4,10 @@ class UnaryExpression(
     val operator: String,
     val argument: Expression, // TODO: rename to operand
 ) : Expression() {
+    override fun accept(visitor: Visitor) {
+        visitor.visitUnaryExpression(this)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is UnaryExpression) {
             return this.operator == other.operator && this.argument == other.argument

@@ -1,6 +1,10 @@
 package org.example.parser
 
 class IdentifierExpression(val value: String) : Expression() {
+    override fun accept(visitor: Visitor) {
+        visitor.visitIdentifierExpression(this)
+    }
+
     override fun equals(other: Any?): Boolean {
         if (other is IdentifierExpression) {
             return this.value == other.value
