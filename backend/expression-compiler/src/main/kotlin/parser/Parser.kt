@@ -11,7 +11,7 @@ import org.example.TokenType
 
   TODO:
   - Fix folders structure
-  - Create optimizer
+  - Create optimizer (constants folding, refactor sequential divisions, additions, remove unnecessary parentheses etc.)
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
