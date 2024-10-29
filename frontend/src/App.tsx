@@ -4,6 +4,7 @@ import { ErrorsList } from './components/errors-list';
 import { CrossCircledIcon } from '@radix-ui/react-icons';
 import { useCompileExpression } from './queries/compile-expression.mutation';
 import { CompilationSuccessAlert } from './components/compilation-success-alert';
+import { TreeViewer } from './components/tree-viewer';
 
 const App = () => {
   const {
@@ -13,7 +14,7 @@ const App = () => {
     variables: submittedExpression,
   } = useCompileExpression();
 
-  const { syntaxErrors: compilationErrors } = compilationResult ?? {};
+  const { syntaxErrors: compilationErrors, tree } = compilationResult ?? {};
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
@@ -36,6 +37,7 @@ const App = () => {
         )}
         {compilationErrors?.length === 0 && <CompilationSuccessAlert />}
       </div>
+      {tree && <TreeViewer tree={tree} />}
     </div>
   );
 };

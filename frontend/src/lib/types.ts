@@ -4,4 +4,9 @@ type CompilationError = {
   type: 'SyntaxError' | 'LexicalError';
 };
 
-export { type CompilationError };
+type TreeNode = {
+  value: string | null;
+  children: TreeNode[];
+};
+
+export { type CompilationError, type TreeNode };

@@ -1,4 +1,4 @@
-import { CompilationError } from '@/lib/types';
+import { CompilationError, TreeNode } from '@/lib/types';
 import { useMutation } from '@tanstack/react-query';
 
 const useCompileExpression = () => {
@@ -12,7 +12,10 @@ const useCompileExpression = () => {
         },
       });
 
-      return response.json() as Promise<{ syntaxErrors: CompilationError[] }>;
+      return response.json() as Promise<{
+        syntaxErrors: CompilationError[];
+        tree: TreeNode;
+      }>;
     },
   });
 };
