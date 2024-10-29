@@ -10,8 +10,7 @@ import org.example.TokenType
   3. Visitor pattern may be useful for doing optimisations.
 
   TODO:
-  - Implement toJson
-  - Draw tree in react
+  - Fix folders structure
   - Create optimizer
  */
 class Parser(val tokens: List<Token>) {
