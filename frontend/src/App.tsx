@@ -9,9 +9,11 @@ const App = () => {
   const {
     mutate: compileExpression,
     isPending: isCompiling,
-    data: compilationErrors,
+    data: compilationResult,
     variables: submittedExpression,
   } = useCompileExpression();
+
+  const { syntaxErrors: compilationErrors } = compilationResult ?? {};
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
@@ -26,7 +28,7 @@ const App = () => {
             Errors: {compilationErrors?.length}
           </Badge>
         )}
-        {compilationErrors && (
+        {compilationErrors && submittedExpression && (
           <ErrorsList
             errors={compilationErrors}
             expression={submittedExpression}

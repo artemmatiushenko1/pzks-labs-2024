@@ -12,7 +12,7 @@ const useCompileExpression = () => {
         },
       });
 
-      return response.json() as Promise<CompilationError[]>;
+      return response.json() as Promise<{ syntaxErrors: CompilationError[] }>;
     },
   });
 };
