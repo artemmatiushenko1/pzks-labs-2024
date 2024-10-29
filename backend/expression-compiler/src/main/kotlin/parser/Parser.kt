@@ -8,6 +8,11 @@ import org.example.TokenType
   1. Generate an AST.
   2. Perform optimisations.
   3. Visitor pattern may be useful for doing optimisations.
+
+  TODO:
+  - Implement toJson
+  - Draw tree in react
+  - Create optimizer
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
@@ -44,7 +49,7 @@ class Parser(val tokens: List<Token>) {
 
         while (this.getCurrentToken()?.type == TokenType.OPEN_PAREN) {
             this.consume(TokenType.OPEN_PAREN).lexeme
-            val expression = this.parseAdditive()
+            val expression = this.parseAdditiveExpression()
             this.consume(TokenType.CLOSE_PAREN).lexeme
 
             parenExpression = ParenExpression(expression = expression ?: throw Exception("Unexpected token!"))
@@ -68,7 +73,7 @@ class Parser(val tokens: List<Token>) {
         return expression
     }
 
-    private fun parseMultiplicative(): Expression? {
+    private fun parseMultiplicativeExpression(): Expression? {
         var left = this.parseUnaryExpression() ?: return null
 
         while (this.getCurrentToken()?.type == TokenType.MULTIPLICATIVE_OPERATOR) {
@@ -85,8 +90,8 @@ class Parser(val tokens: List<Token>) {
         return left
     }
 
-    private fun parseAdditive(): Expression? {
-        var left = this.parseMultiplicative() ?: return null
+    private fun parseAdditiveExpression(): Expression? {
+        var left = this.parseMultiplicativeExpression() ?: return null
 
         while (this.getCurrentToken()?.type == TokenType.ADDITIVE_OPERATOR) {
             val operator = this.consume(TokenType.ADDITIVE_OPERATOR).lexeme
@@ -95,7 +100,7 @@ class Parser(val tokens: List<Token>) {
                 require(currentToken.lexeme != operator) { "Unexpected token!" }
             }
 
-            val right = this.parseMultiplicative()
+            val right = this.parseMultiplicativeExpression()
 
             left = BinaryExpression(
                 left = left,
@@ -108,7 +113,7 @@ class Parser(val tokens: List<Token>) {
     }
 
     fun parse(): ExpressionStatement {
-        val expression = this.parseAdditive()
+        val expression = this.parseAdditiveExpression()
         return ExpressionStatement(expression = expression)
     }
 }
