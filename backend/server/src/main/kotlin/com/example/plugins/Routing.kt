@@ -7,11 +7,13 @@ import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.example.ExpressionCompiler
 import org.example.LexicalError
-import org.example.SyntaxError
-import javax.xml.crypto.Data
+import org.example.TreeNode
 
 @Serializable
-data class CompileRequestBody(val expression: String)
+data class CompileRequest(val expression: String)
+
+@Serializable
+data class CompileRequestResponse(val syntaxErrors: List<CompilationError>, val tree: TreeNode?)
 
 @Serializable
 data class CompilationError(val message: String?, val position: Int?, val type: String)
@@ -19,12 +21,31 @@ data class CompilationError(val message: String?, val position: Int?, val type: 
 fun Application.configureRouting() {
     routing {
         post("/compile") {
-            val requestBody = call.receive<CompileRequestBody>()
+            val requestBody = call.receive<CompileRequest>()
             try {
-                val syntaxErrors = ExpressionCompiler().compile(requestBody.expression)
-                call.respond(syntaxErrors.map { CompilationError(message = it.message, position = it.position, type = "SyntaxError") })
+                val result = ExpressionCompiler().compile(requestBody.expression)
+                call.respond(
+                    CompileRequestResponse(
+                        tree = result.tree,
+                        syntaxErrors = result.syntaxErrors.map {
+                            CompilationError(
+                                message = it.message,
+                                position = it.position,
+                                type = "SyntaxError"
+                            )
+                        }
+                    )
+                )
             } catch (e: LexicalError) {
-                call.respond(listOf(CompilationError(message = e.message, position = e.position, type = "LexicalError")))
+                call.respond(
+                    listOf(
+                        CompilationError(
+                            message = e.message,
+                            position = e.position,
+                            type = "LexicalError"
+                        )
+                    )
+                )
             }
         }
     }
