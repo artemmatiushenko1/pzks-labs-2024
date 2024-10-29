@@ -23,10 +23,10 @@ class Parser(val tokens: List<Token>) {
     }
 
     private fun consume(tokenType: TokenType): Token {
-        val tokenToRemove = this._tokens.first()
+        val tokenToRemove = this._tokens.getOrNull(0)
 
-        if (tokenToRemove.type != tokenType) {
-            throw Exception("Expected $tokenType, but got ${tokenToRemove.type}")
+        if (tokenToRemove?.type != tokenType) {
+            throw Exception("Expected $tokenType, but got ${tokenToRemove?.type}")
         }
 
         return this._tokens.removeFirst()
