@@ -27,10 +27,10 @@ class ConstantFoldingVisitor : Visitor {
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
         val operator = expression.operator
-        
+
         if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
             val evaluatedResult = when (operator) {
-                "+" -> left.value.toInt() + right.value.toInt()
+                "+" -> left.value.toInt() + right.value.toInt() // TODO: handle floats
                 "-" -> left.value.toInt() - right.value.toInt()
                 "*" -> left.value.toInt() * right.value.toInt()
                 "/" -> left.value.toInt() / right.value.toInt()
