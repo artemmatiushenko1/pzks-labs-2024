@@ -1,9 +1,8 @@
 import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
-import org.example.LexicalAnalyzerImpl
+import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.*
-import org.junit.jupiter.api.assertThrows
 import kotlin.test.Test
 
 

@@ -1,4 +1,6 @@
-package org.example.parser
+package org.example.parser.visitors
+
+import org.example.parser.*
 
 interface Visitor {
     fun visitNumberLiteralExpression(expression: NumberLiteralExpression)

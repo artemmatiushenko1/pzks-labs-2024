@@ -6,7 +6,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.serialization.Serializable
 import org.example.ExpressionCompiler
-import org.example.LexicalError
+import org.example.lexicalAnalyzer.LexicalError
 import org.example.TreeNode
 
 @Serializable

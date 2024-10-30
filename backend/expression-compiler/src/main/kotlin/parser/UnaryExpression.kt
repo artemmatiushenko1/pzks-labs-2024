@@ -1,5 +1,7 @@
 package org.example.parser
 
+import org.example.parser.visitors.Visitor
+
 class UnaryExpression(
     val operator: String,
     val argument: Expression, // TODO: rename to operand

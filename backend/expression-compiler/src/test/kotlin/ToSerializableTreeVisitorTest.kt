@@ -1,9 +1,9 @@
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
-import org.example.LexicalAnalyzerImpl
+import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.TreeNode
 import org.example.parser.Parser
-import org.example.parser.ToSerializableTreeVisitor
+import org.example.parser.visitors.ToSerializableTreeVisitor
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 

@@ -1,10 +1,10 @@
 import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
-import org.example.LexicalAnalyzerImpl
-import org.example.LexicalError
-import org.example.Token
-import org.example.TokenType
+import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
+import org.example.lexicalAnalyzer.LexicalError
+import org.example.lexicalAnalyzer.Token
+import org.example.lexicalAnalyzer.TokenType
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.Test

@@ -1,6 +1,7 @@
-package org.example.parser
+package org.example.parser.visitors
 
 import org.example.TreeNode
+import org.example.parser.*
 
 class ToSerializableTreeVisitor : Visitor {
     private val tree = TreeNode(value = null)

@@ -1,7 +1,9 @@
 package org.example
 
+import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.Parser
-import org.example.parser.ToSerializableTreeVisitor
+import org.example.parser.visitors.ToSerializableTreeVisitor
+import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
 
 class ExpressionCompiler {
     fun compile(expression: String): CompilationResult {

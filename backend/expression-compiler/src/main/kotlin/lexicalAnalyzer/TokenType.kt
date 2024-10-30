@@ -1,4 +1,4 @@
-package org.example
+package org.example.lexicalAnalyzer
 
 enum class TokenType {
     IDENTIFIER, // "a", "b", __variable

@@ -1,4 +1,4 @@
-package org.example
+package org.example.lexicalAnalyzer
 
 internal interface LexicalAnalyzer {
     val expressionSource: String

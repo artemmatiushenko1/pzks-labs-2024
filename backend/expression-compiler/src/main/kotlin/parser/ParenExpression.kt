@@ -1,5 +1,7 @@
 package org.example.parser
 
+import org.example.parser.visitors.Visitor
+
 class ParenExpression(val expression: Expression) : Expression() {
     override fun accept(visitor: Visitor) {
         visitor.visitParenExpression(this)

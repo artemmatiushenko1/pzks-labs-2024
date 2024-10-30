@@ -2,10 +2,10 @@ import net.oddpoet.expect.extension.beEmpty
 import net.oddpoet.expect.extension.contain
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
-import org.example.LexicalAnalyzerImpl
-import org.example.SyntaxAnalyzerImpl
-import org.example.SyntaxError
-import org.example.Token
+import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
+import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
+import org.example.syntaxAnalyzer.SyntaxError
+import org.example.lexicalAnalyzer.Token
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.MethodSource

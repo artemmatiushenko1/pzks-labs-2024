@@ -1,5 +1,7 @@
 package org.example.parser
 
+import org.example.parser.visitors.Visitor
+
 class BinaryExpression(val right: Expression, val left: Expression, val operator: String) : Expression() {
     override fun accept(visitor: Visitor) {
         visitor.visitBinaryExpression(this)
