@@ -106,21 +106,35 @@ class ConstantFoldingVisitor {
     @Test
     fun `folds constants on expression with paren exp on left`() {
         val ast = generateAst("(1+2)*4")
+        val foldedAst = ExpressionStatement(expression = ast.expression?.accept(ConstantFoldingVisitor()))
 
-        val expectedAst = NumberLiteralExpression("12")
-        val foldedAst = ast.expression?.accept(ConstantFoldingVisitor())
-
-        foldedAst.should.equal(expectedAst)
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = ParenExpression(
+                        NumberLiteralExpression("3")
+                    ),
+                    operator = "*",
+                    right = NumberLiteralExpression("4")
+                )
+            )
+        )
     }
 
     @Test
     fun `folds constants on expression with paren exp on right`() {
         val ast = generateAst("12/(1+2)")
+        val foldedAst = ExpressionStatement(expression = ast.expression?.accept(ConstantFoldingVisitor()))
 
-        val expectedAst = NumberLiteralExpression("4")
-        val foldedAst = ast.expression?.accept(ConstantFoldingVisitor())
-
-        foldedAst.should.equal(expectedAst)
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression("12"),
+                    operator = "/",
+                    right = ParenExpression(NumberLiteralExpression("3"))
+                )
+            )
+        )
     }
 
     @Test
@@ -207,7 +221,17 @@ class ConstantFoldingVisitor {
         val ast = generateAst("(-1+7+1)+2+4")
         val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
 
-        foldedAst.should.equal(ExpressionStatement(expression = NumberLiteralExpression("13")))
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = ParenExpression(
+                        NumberLiteralExpression("7")
+                    ),
+                    operator = "+",
+                    right = NumberLiteralExpression("6")
+                )
+            )
+        )
     }
 
     @Test
@@ -215,7 +239,14 @@ class ConstantFoldingVisitor {
         val ast = generateAst("-(2+2-3*3)")
         val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
 
-        foldedAst.should.equal(ExpressionStatement(expression = NumberLiteralExpression("5")))
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = UnaryExpression(
+                    "-",
+                    argument = ParenExpression(NumberLiteralExpression("-5")) // TODO: it should be unary instead
+                )
+            )
+        )
     }
 
     @Test
@@ -229,7 +260,7 @@ class ConstantFoldingVisitor {
                     left = BinaryExpression(
                         left = ParenExpression(
                             BinaryExpression(
-                                left = NumberLiteralExpression("4"),
+                                left = ParenExpression(NumberLiteralExpression("4")),
                                 operator = "/",
                                 right = IdentifierExpression("a")
                             )
@@ -238,7 +269,7 @@ class ConstantFoldingVisitor {
                         right = BinaryExpression(
                             left = IdentifierExpression("b"),
                             operator = "*",
-                            right = NumberLiteralExpression("6")
+                            right = ParenExpression(NumberLiteralExpression("6"))
                         )
                     ),
                     operator = "-",

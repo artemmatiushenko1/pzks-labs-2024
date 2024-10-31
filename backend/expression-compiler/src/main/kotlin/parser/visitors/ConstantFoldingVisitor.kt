@@ -23,17 +23,12 @@ class ConstantFoldingVisitor : Visitor {
             return NumberLiteralExpression(value = "$operator$value")
         }
 
-        return expression
+        return UnaryExpression(operator = operator, argument = argument)
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
         val foldResult = expression.expression.accept(this)
-
-        if (foldResult is BinaryExpression || foldResult is ParenExpression) {
-            return ParenExpression(expression = foldResult)
-        }
-
-        return foldResult
+        return ParenExpression(expression = foldResult)
     }
 
     private fun evaluateBinaryExpression(left: Int, right: Int, operator: String): Int {
