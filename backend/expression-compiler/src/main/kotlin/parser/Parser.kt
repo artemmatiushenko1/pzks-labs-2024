@@ -1,7 +1,7 @@
 package org.example.parser
 
-import org.example.Token
-import org.example.TokenType
+import org.example.lexicalAnalyzer.Token
+import org.example.lexicalAnalyzer.TokenType
 
 /*
   NOTES: 
@@ -10,9 +10,7 @@ import org.example.TokenType
   3. Visitor pattern may be useful for doing optimisations.
 
   TODO:
-  - Implement toJson
-  - Draw tree in react
-  - Create optimizer
+  - Create optimizer (constants folding, refactor sequential divisions, additions, remove unnecessary parentheses etc.)
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0

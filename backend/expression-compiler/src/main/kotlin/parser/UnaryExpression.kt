@@ -1,11 +1,13 @@
 package org.example.parser
 
+import org.example.parser.visitors.Visitor
+
 class UnaryExpression(
     val operator: String,
     val argument: Expression, // TODO: rename to operand
 ) : Expression() {
-    override fun accept(visitor: Visitor) {
-        visitor.visitUnaryExpression(this)
+    override fun accept(visitor: Visitor): Expression {
+        return visitor.visitUnaryExpression(this)
     }
 
     override fun equals(other: Any?): Boolean {

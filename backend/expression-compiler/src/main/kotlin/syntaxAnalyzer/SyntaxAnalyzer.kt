@@ -1,4 +1,4 @@
-package org.example
+package org.example.syntaxAnalyzer
 
 internal interface SyntaxAnalyzer {
     fun analyze(): List<SyntaxError>

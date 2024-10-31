@@ -1,4 +1,7 @@
-package org.example
+package org.example.syntaxAnalyzer
+
+import org.example.lexicalAnalyzer.Token
+import org.example.lexicalAnalyzer.TokenType
 
 internal class SyntaxAnalyzerImpl(private val tokens: List<Token>) : SyntaxAnalyzer {
     private fun validateStartToken(startToken: Token): SyntaxError? {

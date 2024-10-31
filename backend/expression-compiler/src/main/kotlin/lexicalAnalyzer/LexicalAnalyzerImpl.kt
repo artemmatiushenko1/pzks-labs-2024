@@ -1,4 +1,4 @@
-package org.example
+package org.example.lexicalAnalyzer
 
 internal class LexicalAnalyzerImpl(override val expressionSource: String) : LexicalAnalyzer {
     private val matchers: List<TokenMatcher> = listOf(
