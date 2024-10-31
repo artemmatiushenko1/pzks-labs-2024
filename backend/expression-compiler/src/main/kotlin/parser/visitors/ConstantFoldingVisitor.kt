@@ -7,7 +7,7 @@ import kotlin.math.absoluteValue
 //a+1*b -> a+b
 //a+b/1 -> a+b
 //a+b+c*0 -> a+b
-//a+1+2+3+4 -> a+10
+// forbid division by zero
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
@@ -16,7 +16,7 @@ class ConstantFoldingVisitor : Visitor {
 
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         val operator = expression.operator
-        val argument = expression.argument.accept(this) // TODO: test unary paren exp
+        val argument = expression.argument.accept(this)
 
         if (argument is NumberLiteralExpression) {
             val value = argument.value
