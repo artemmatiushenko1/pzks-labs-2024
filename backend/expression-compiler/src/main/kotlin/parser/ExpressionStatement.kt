@@ -1,5 +1,9 @@
 package org.example.parser
 
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.example.parser.visitors.ToSerializableTreeVisitor
+
 class ExpressionStatement(var expression: Expression?) {
 
     override fun equals(other: Any?): Boolean {
@@ -16,5 +20,11 @@ class ExpressionStatement(var expression: Expression?) {
 
     override fun toString(): String {
         return "ExpressionStatement -> $expression"
+    }
+
+    fun toSerializableTree(): String {
+        val toSerializableTreeVisitor = ToSerializableTreeVisitor()
+        this.expression?.accept(toSerializableTreeVisitor)
+        return Json.encodeToString(toSerializableTreeVisitor.getTree())
     }
 }

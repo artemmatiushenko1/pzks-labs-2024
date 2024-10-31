@@ -2,6 +2,13 @@ package org.example.parser.visitors
 
 import org.example.parser.*
 
+//a+b+0  ->  a+b
+//a+1*b -> a+b
+//a+b/1 -> a+b
+//a+b+c*0 -> a+b
+//a+1+2+3+4 -> a+10
+//
+
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
         return expression
@@ -9,7 +16,7 @@ class ConstantFoldingVisitor : Visitor {
 
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         val operator = expression.operator
-        val argument = expression.argument // TODO: test unary paren exp
+        val argument = expression.argument.accept(this) // TODO: test unary paren exp
 
         if (argument is NumberLiteralExpression) {
             val value = argument.value
@@ -20,7 +27,23 @@ class ConstantFoldingVisitor : Visitor {
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        return expression.expression.accept(this)
+        val foldResult = expression.expression.accept(this)
+
+        if (foldResult is BinaryExpression || foldResult is ParenExpression) {
+            return ParenExpression(expression = foldResult)
+        }
+
+        return foldResult
+    }
+
+    private fun evaluateBinaryExpression(left: Int, right: Int, operator: String): Int {
+        return when (operator) {
+            "+" -> left + right // TODO: handle floats
+            "-" -> left - right
+            "*" -> left * right
+            "/" -> left / right
+            else -> throw Exception("Unsupported operator $operator")
+        }
     }
 
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
@@ -29,21 +52,35 @@ class ConstantFoldingVisitor : Visitor {
         val operator = expression.operator
 
         if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
-            val evaluatedResult = when (operator) {
-                "+" -> left.value.toInt() + right.value.toInt() // TODO: handle floats
-                "-" -> left.value.toInt() - right.value.toInt()
-                "*" -> left.value.toInt() * right.value.toInt()
-                "/" -> left.value.toInt() / right.value.toInt()
-                else -> throw Exception("Unsupported operator $operator")
-            }
-
-            return NumberLiteralExpression(value = evaluatedResult.toString())
+            return NumberLiteralExpression(
+                value = evaluateBinaryExpression(
+                    left.value.toInt(),
+                    right.value.toInt(),
+                    operator
+                ).toString()
+            )
         }
 
-        return expression
+        if (left is BinaryExpression && right is NumberLiteralExpression) {
+            if (left.right is NumberLiteralExpression) {
+                return BinaryExpression(
+                    left = left.left,
+                    operator = left.operator,
+                    right = NumberLiteralExpression(
+                        evaluateBinaryExpression(
+                            left = left.right.value.toInt(),
+                            right = right.value.toInt(),
+                            operator = operator,
+                        ).toString()
+                    )
+                )
+            }
+        }
+
+        return BinaryExpression(left = left, right = right, operator = operator)
     }
 
     override fun visitIdentifierExpression(expression: IdentifierExpression): Expression {
-        TODO("Not yet implemented")
+        return expression
     }
 }
