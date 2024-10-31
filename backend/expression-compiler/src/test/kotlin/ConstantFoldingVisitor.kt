@@ -243,7 +243,40 @@ class ConstantFoldingVisitor {
             ExpressionStatement(
                 expression = UnaryExpression(
                     "-",
-                    argument = ParenExpression(NumberLiteralExpression("-5")) // TODO: it should be unary instead
+                    argument = ParenExpression(
+                        UnaryExpression(
+                            operator = "-",
+                            argument = NumberLiteralExpression("5")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `folds constants into unary expression`() {
+        val ast = generateAst("2+2+10-20")
+        val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
+
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = UnaryExpression(operator = "-", argument = NumberLiteralExpression("6"))
+            )
+        )
+    }
+
+    @Test
+    fun `folds constants into correct expression with subtraction on the right`() {
+        val ast = generateAst("(2+2)-10-20")
+        val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
+
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = ParenExpression(NumberLiteralExpression("4")),
+                    operator = "-",
+                    right = NumberLiteralExpression("30")
                 )
             )
         )

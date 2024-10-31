@@ -1,13 +1,13 @@
 package org.example.parser.visitors
 
 import org.example.parser.*
+import kotlin.math.absoluteValue
 
 //a+b+0  ->  a+b
 //a+1*b -> a+b
 //a+b/1 -> a+b
 //a+b+c*0 -> a+b
 //a+1+2+3+4 -> a+10
-//
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
@@ -47,27 +47,39 @@ class ConstantFoldingVisitor : Visitor {
         val operator = expression.operator
 
         if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
-            return NumberLiteralExpression(
-                value = evaluateBinaryExpression(
-                    left.value.toInt(),
-                    right.value.toInt(),
-                    operator
-                ).toString()
+            val evaluatedResult = evaluateBinaryExpression(
+                left.value.toInt(),
+                right.value.toInt(),
+                operator
             )
+
+            val outputExpr = if (evaluatedResult < 0) {
+                UnaryExpression(
+                    operator = "-",
+                    argument = NumberLiteralExpression(evaluatedResult.absoluteValue.toString())
+                )
+            } else {
+                NumberLiteralExpression(evaluatedResult.toString())
+            }
+
+            return outputExpr
         }
 
         if (left is BinaryExpression && right is NumberLiteralExpression) {
             if (left.right is NumberLiteralExpression) {
+                val evaluatedResult = evaluateBinaryExpression(
+                    left = if (left.operator == "+") left.right.value.toInt() else (-1 * left.right.value.toInt()),
+                    right = right.value.toInt(),
+                    operator = operator,
+                )
+
+                val outputExpr = NumberLiteralExpression(evaluatedResult.absoluteValue.toString())
+
+
                 return BinaryExpression(
                     left = left.left,
-                    operator = left.operator,
-                    right = NumberLiteralExpression(
-                        evaluateBinaryExpression(
-                            left = left.right.value.toInt(),
-                            right = right.value.toInt(),
-                            operator = operator,
-                        ).toString()
-                    )
+                    operator = if (evaluatedResult < 0) "-" else "+",
+                    right = outputExpr
                 )
             }
         }
