@@ -1,7 +1,6 @@
 package org.example.visitors
 
 import org.example.parser.*
-import org.example.syntaxAnalyzer.SyntaxError
 
 class AlgebraicSimplificationVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
@@ -32,12 +31,28 @@ class AlgebraicSimplificationVisitor : Visitor {
                         (right is NumberLiteralExpression && right.value == "0"))
     }
 
+    private fun isZeroDividedBy(left: Expression, operator: String): Boolean {
+        return operator == "/" && (left is NumberLiteralExpression && left.value == "0")
+    }
+
     private fun simplifyMultiplicationByZero(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
         val right = binaryExpression.right
 
         if (isMultiplicationByZero(left, right, operator)) {
+            return NumberLiteralExpression("0")
+        }
+
+        return BinaryExpression(left = left, right = right, operator = operator)
+    }
+
+    private fun simplifyZeroDividedBy(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val left = binaryExpression.left
+        val right = binaryExpression.right
+
+        if (isZeroDividedBy(left, operator)) {
             return NumberLiteralExpression("0")
         }
 
@@ -51,6 +66,7 @@ class AlgebraicSimplificationVisitor : Visitor {
 
         val simplifiers = listOf(
             AlgebraicSimplificationVisitor::simplifyMultiplicationByZero,
+            AlgebraicSimplificationVisitor::simplifyZeroDividedBy,
         )
 
         return simplifiers.fold(

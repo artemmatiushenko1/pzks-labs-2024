@@ -7,8 +7,6 @@ import kotlin.math.sign
 //a+b+0  ->  a+b
 //a+1*b -> a+b
 //a+b/1 -> a+b
-//a+b+c*0 -> a+b
-// forbid division by zero
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
