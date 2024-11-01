@@ -134,7 +134,7 @@ class AlgebraicSimplificationVisitorTest {
 
     @Test
     fun `simplifies complex zero divided by expression`() {
-        val ast = generateAst("0/(a*9-34/(-2))+(c+0/a-(0/9))-(0/-(a+c))") // (c+0-0)-0
+        val ast = generateAst("0/(a*9-34/(-2))+(c+0/a-(0/9))-(0/-(a+c))")
         val simplifiedAst = ExpressionStatement(ast.expression?.accept(AlgebraicSimplificationVisitor()))
 
         simplifiedAst.should.equal(
@@ -157,6 +157,48 @@ class AlgebraicSimplificationVisitorTest {
                     ),
                     operator = "-",
                     right = NumberLiteralExpression("0")
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `simplifies expression with division with 1`() {
+        val ast = generateAst("(2+3)/1-1/4/1+(-9/1)/1-((a+b)/1)") // (2+3)-1/4+(-9)-((a+b))
+        val simplifiedAst = ExpressionStatement(ast.expression?.accept(AlgebraicSimplificationVisitor()))
+
+        simplifiedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = ParenExpression(
+                                BinaryExpression(
+                                    left = NumberLiteralExpression("2"),
+                                    operator = "+",
+                                    right = NumberLiteralExpression("3")
+                                )
+                            ),
+                            operator = "-",
+                            right = BinaryExpression(
+                                left = NumberLiteralExpression("1"),
+                                operator = "/",
+                                right = NumberLiteralExpression("4")
+                            )
+                        ),
+                        operator = "+",
+                        right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    ),
+                    operator = "-",
+                    right = ParenExpression(
+                        ParenExpression(
+                            BinaryExpression(
+                                left = IdentifierExpression("a"),
+                                operator = "+",
+                                right = IdentifierExpression("b"),
+                            )
+                        )
+                    ),
                 )
             )
         )

@@ -10,7 +10,7 @@ import org.example.lexicalAnalyzer.TokenType
   3. Visitor pattern may be useful for doing optimisations.
 
   TODO:
-  - Create optimizer (refactor sequential divisions, additions, remove unnecessary parentheses etc.)
+  - Create optimizer (refactor sequential divisions, subtraction, remove unnecessary parentheses, put zero in front of unary expression etc.)
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
