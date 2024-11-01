@@ -7,24 +7,21 @@ import org.example.visitors.ConstantFoldingVisitor
 import org.example.visitors.ToSerializableTreeVisitor
 import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
 import org.example.visitors.AlgebraicSimplificationVisitor
+import sun.nio.ch.Net.accept
 
 class ExpressionCompiler {
+    private val optimizer = Optimizer()
+
     fun compile(expression: String): CompilationResult {
         val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
         val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
 
         val serializableTree = if (syntaxErrors.isEmpty()) {
             val ast = Parser(tokens = tokens).parse()
-
-            val visitors =
-                listOf(AlgebraicSimplificationVisitor(), ConstantFoldingVisitor())
-
-            val optimizedAst = visitors.fold(ast.expression) { expr, visitor ->
-                expr?.accept(visitor)
-            }
+            val optimizedAst = optimizer.optimize(ast)
 
             val visitor = ToSerializableTreeVisitor()
-            optimizedAst?.accept(visitor)
+            optimizedAst.expression?.accept(visitor)
             visitor.getTree()
         } else null
 
