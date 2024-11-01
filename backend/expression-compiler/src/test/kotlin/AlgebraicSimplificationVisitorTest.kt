@@ -1,3 +1,4 @@
+import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
@@ -5,6 +6,8 @@ import org.example.parser.*
 import org.example.visitors.AlgebraicSimplificationVisitor
 import org.example.visitors.ConstantFoldingVisitor
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.Ignore
 
 class AlgebraicSimplificationVisitorTest {

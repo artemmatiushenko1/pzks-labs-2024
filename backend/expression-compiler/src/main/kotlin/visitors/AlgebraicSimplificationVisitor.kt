@@ -1,6 +1,7 @@
 package org.example.visitors
 
 import org.example.parser.*
+import org.example.syntaxAnalyzer.SyntaxError
 
 class AlgebraicSimplificationVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
@@ -31,15 +32,33 @@ class AlgebraicSimplificationVisitor : Visitor {
                         (right is NumberLiteralExpression && right.value == "0"))
     }
 
-    override fun visitBinaryExpression(expression: BinaryExpression): Expression {
-        val operator = expression.operator
-        val left = expression.left.accept(this)
-        val right = expression.right.accept(this)
+    private fun simplifyMultiplicationByZero(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val left = binaryExpression.left
+        val right = binaryExpression.right
 
         if (isMultiplicationByZero(left, right, operator)) {
             return NumberLiteralExpression("0")
         }
 
         return BinaryExpression(left = left, right = right, operator = operator)
+    }
+
+    override fun visitBinaryExpression(expression: BinaryExpression): Expression {
+        val operator = expression.operator
+        val left = expression.left.accept(this)
+        val right = expression.right.accept(this)
+
+        val simplifiers = listOf(
+            AlgebraicSimplificationVisitor::simplifyMultiplicationByZero,
+        )
+
+        return simplifiers.fold(
+            BinaryExpression(
+                left = left,
+                right = right,
+                operator = operator
+            ) as Expression
+        ) { expr, simplify -> if (expr is BinaryExpression) simplify.invoke(this, expr) else expr }
     }
 }

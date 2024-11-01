@@ -42,10 +42,23 @@ class ConstantFoldingVisitor : Visitor {
         }
     }
 
+    private fun verifyDivisionByZero(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val right = binaryExpression.right
+
+        if (operator == "/" && right is NumberLiteralExpression && right.value == "0") {
+            throw IllegalArgumentException("Division by zero is forbidden!")
+        }
+
+        return binaryExpression
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
         val operator = expression.operator
+
+        verifyDivisionByZero(BinaryExpression(right, left, operator))
 
         if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
             val evaluatedResult = evaluateBinaryExpression(
