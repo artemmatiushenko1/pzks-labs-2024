@@ -2,7 +2,7 @@ package org.example.parser
 
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import org.example.parser.visitors.ToSerializableTreeVisitor
+import org.example.visitors.ToSerializableTreeVisitor
 
 class ExpressionStatement(var expression: Expression?) {
 

@@ -1,7 +1,8 @@
 package org.example.parser
 
-import org.example.parser.visitors.Visitor
+import org.example.visitors.Visitor
 
+// TODO: rename expression to argument
 class ParenExpression(val expression: Expression) : Expression() {
     override fun accept(visitor: Visitor): Expression {
         return visitor.visitParenExpression(this)

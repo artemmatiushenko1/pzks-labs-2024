@@ -38,11 +38,14 @@ fun Application.configureRouting() {
                 )
             } catch (e: LexicalError) {
                 call.respond(
-                    listOf(
-                        CompilationError(
-                            message = e.message,
-                            position = e.position,
-                            type = "LexicalError"
+                    CompileRequestResponse(
+                        tree = null,
+                        syntaxErrors = listOf(
+                            CompilationError(
+                                message = e.message,
+                                position = e.position,
+                                type = "LexicalError"
+                            )
                         )
                     )
                 )

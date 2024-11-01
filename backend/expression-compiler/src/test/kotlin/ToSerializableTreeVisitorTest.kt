@@ -3,7 +3,7 @@ import net.oddpoet.expect.should
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.TreeNode
 import org.example.parser.Parser
-import org.example.parser.visitors.ToSerializableTreeVisitor
+import org.example.visitors.ToSerializableTreeVisitor
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 

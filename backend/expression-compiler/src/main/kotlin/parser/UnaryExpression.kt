@@ -1,6 +1,6 @@
 package org.example.parser
 
-import org.example.parser.visitors.Visitor
+import org.example.visitors.Visitor
 
 class UnaryExpression(
     val operator: String,

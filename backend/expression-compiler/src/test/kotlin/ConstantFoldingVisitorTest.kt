@@ -1,18 +1,16 @@
+import net.oddpoet.expect.expect
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.*
-import org.example.parser.visitors.ConstantFoldingVisitor
+import org.example.visitors.AlgebraicSimplificationVisitor
+import org.example.visitors.ConstantFoldingVisitor
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.Ignore
 
-class ConstantFoldingVisitor {
-    private fun generateAst(expressionSource: String): ExpressionStatement {
-        val tokens = LexicalAnalyzerImpl(expressionSource = expressionSource).tokenize()
-        val ast = Parser(tokens = tokens).parse()
-        return ast
-    }
-
+class ConstantFoldingVisitorTest {
     @Test
     fun `folds constants on sum expression with 2 operands`() {
         val ast = generateAst("2+2")
@@ -313,15 +311,63 @@ class ConstantFoldingVisitor {
     }
 
     @Test
-    @Ignore
-    fun `eliminates binary expressions with multiplication by zero`() {
+    fun `does not fold constants that are part of multiplicative expression`() {
         val ast = generateAst("(1+n)*0+1")
         val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
 
         foldedAst.should.equal(
             ExpressionStatement(
-                expression = NumberLiteralExpression(value = "1")
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = ParenExpression(
+                            BinaryExpression(
+                                left = NumberLiteralExpression("1"),
+                                operator = "+",
+                                right = IdentifierExpression("n")
+                            )
+                        ),
+                        operator = "*",
+                        right = NumberLiteralExpression("0")
+                    ),
+                    operator = "+",
+                    right = NumberLiteralExpression("1")
+                )
             )
+        )
+    }
+
+    @Test
+    fun `does not fold constants that are part of multiplicative expression with division`() {
+        val ast = generateAst("(1+n)/7+1")
+        val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
+
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = ParenExpression(
+                            BinaryExpression(
+                                left = NumberLiteralExpression("1"),
+                                operator = "+",
+                                right = IdentifierExpression("n")
+                            )
+                        ),
+                        operator = "/",
+                        right = NumberLiteralExpression("7")
+                    ),
+                    operator = "+",
+                    right = NumberLiteralExpression("1")
+                )
+            )
+        )
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["(a*0)+(b*0)/0", "2/0", "((a*0)+(b*0))/0", "(a*0)/0+(b*0)", "-(3)/0", "-3/0"])
+    fun `forbids division by zero`(expressionSource: String) {
+        val ast = generateAst(expressionSource)
+        expect { ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor())) }.throws(
+            IllegalArgumentException::class
         )
     }
 }

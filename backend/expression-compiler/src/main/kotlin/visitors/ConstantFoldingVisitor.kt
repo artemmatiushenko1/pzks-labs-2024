@@ -1,13 +1,7 @@
-package org.example.parser.visitors
+package org.example.visitors
 
 import org.example.parser.*
 import kotlin.math.absoluteValue
-
-//a+b+0  ->  a+b
-//a+1*b -> a+b
-//a+b/1 -> a+b
-//a+b+c*0 -> a+b
-// forbid division by zero
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
@@ -41,10 +35,23 @@ class ConstantFoldingVisitor : Visitor {
         }
     }
 
+    private fun verifyDivisionByZero(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val right = binaryExpression.right
+
+        if (operator == "/" && right is NumberLiteralExpression && right.value == "0") {
+            throw IllegalArgumentException("Division by zero is forbidden!")
+        }
+
+        return binaryExpression
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
         val operator = expression.operator
+
+        verifyDivisionByZero(BinaryExpression(right, left, operator))
 
         if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
             val evaluatedResult = evaluateBinaryExpression(
@@ -66,9 +73,16 @@ class ConstantFoldingVisitor : Visitor {
         }
 
         if (left is BinaryExpression && right is NumberLiteralExpression) {
-            if (left.right is NumberLiteralExpression) {
+            // TODO: create enum for math operators
+            if (left.right is NumberLiteralExpression && left.operator !in listOf("*", "/")) {
                 val evaluatedResult = evaluateBinaryExpression(
-                    left = if (left.operator == "+") left.right.value.toInt() else (-1 * left.right.value.toInt()),
+                    left = left.right.value.toInt().let {
+                        if (left.operator == "-") {
+                            it.unaryMinus()
+                        } else {
+                            it
+                        }
+                    },
                     right = right.value.toInt(),
                     operator = operator,
                 )

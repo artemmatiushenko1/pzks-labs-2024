@@ -3,21 +3,25 @@ package org.example
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.ExpressionStatement
 import org.example.parser.Parser
-import org.example.parser.visitors.ConstantFoldingVisitor
-import org.example.parser.visitors.ToSerializableTreeVisitor
+import org.example.visitors.ConstantFoldingVisitor
+import org.example.visitors.ToSerializableTreeVisitor
 import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
+import org.example.visitors.AlgebraicSimplificationVisitor
+import sun.nio.ch.Net.accept
 
 class ExpressionCompiler {
+    private val optimizer = Optimizer()
+
     fun compile(expression: String): CompilationResult {
         val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
         val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
 
         val serializableTree = if (syntaxErrors.isEmpty()) {
             val ast = Parser(tokens = tokens).parse()
-            val foldedAst = ast.expression?.accept(ConstantFoldingVisitor())
+            val optimizedAst = optimizer.optimize(ast)
 
             val visitor = ToSerializableTreeVisitor()
-            foldedAst?.accept(visitor)
+            optimizedAst.expression?.accept(visitor)
             visitor.getTree()
         } else null
 

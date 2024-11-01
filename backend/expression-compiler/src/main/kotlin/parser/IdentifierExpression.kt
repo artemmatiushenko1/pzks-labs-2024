@@ -1,6 +1,6 @@
 package org.example.parser
 
-import org.example.parser.visitors.Visitor
+import org.example.visitors.Visitor
 
 class IdentifierExpression(val value: String) : Expression() {
     override fun accept(visitor: Visitor): Expression {

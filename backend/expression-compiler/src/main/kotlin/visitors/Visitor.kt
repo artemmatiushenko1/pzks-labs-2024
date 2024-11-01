@@ -1,4 +1,4 @@
-package org.example.parser.visitors
+package org.example.visitors
 
 import org.example.parser.*
 
