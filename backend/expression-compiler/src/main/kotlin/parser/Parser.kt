@@ -13,6 +13,7 @@ import org.example.lexicalAnalyzer.TokenType
   - refactor sequential divisions,
   - refactor sequential subtraction,
   - put zero in front of unary expression etc.
+  - handle division by zero error on frontend
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
