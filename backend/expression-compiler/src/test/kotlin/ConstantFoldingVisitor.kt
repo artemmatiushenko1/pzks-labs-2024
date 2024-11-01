@@ -2,7 +2,7 @@ import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.*
-import org.example.parser.visitors.ConstantFoldingVisitor
+import org.example.visitors.ConstantFoldingVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.Ignore
 

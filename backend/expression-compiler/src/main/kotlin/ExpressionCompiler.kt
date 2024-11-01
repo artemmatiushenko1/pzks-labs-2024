@@ -3,8 +3,8 @@ package org.example
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.ExpressionStatement
 import org.example.parser.Parser
-import org.example.parser.visitors.ConstantFoldingVisitor
-import org.example.parser.visitors.ToSerializableTreeVisitor
+import org.example.visitors.ConstantFoldingVisitor
+import org.example.visitors.ToSerializableTreeVisitor
 import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
 
 class ExpressionCompiler {
