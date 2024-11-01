@@ -2,6 +2,7 @@ package org.example.visitors
 
 import org.example.parser.*
 import kotlin.math.absoluteValue
+import kotlin.math.sign
 
 //a+b+0  ->  a+b
 //a+1*b -> a+b
@@ -66,9 +67,16 @@ class ConstantFoldingVisitor : Visitor {
         }
 
         if (left is BinaryExpression && right is NumberLiteralExpression) {
-            if (left.right is NumberLiteralExpression) {
+            // TODO: create enum for math operators
+            if (left.right is NumberLiteralExpression && left.operator !in listOf("*", "/")) {
                 val evaluatedResult = evaluateBinaryExpression(
-                    left = if (left.operator == "+") left.right.value.toInt() else (-1 * left.right.value.toInt()),
+                    left = left.right.value.toInt().let {
+                        if (left.operator == "-") {
+                            it.unaryMinus()
+                        } else {
+                            it
+                        }
+                    },
                     right = right.value.toInt(),
                     operator = operator,
                 )
