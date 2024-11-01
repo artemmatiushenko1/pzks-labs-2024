@@ -6,12 +6,6 @@ import org.example.visitors.AlgebraicSimplificationVisitor
 import org.junit.jupiter.api.Test
 
 class AlgebraicSimplificationVisitorTest {
-    private fun generateAst(expressionSource: String): ExpressionStatement {
-        val tokens = LexicalAnalyzerImpl(expressionSource = expressionSource).tokenize()
-        val ast = Parser(tokens = tokens).parse()
-        return ast
-    }
-
     @Test
     fun `simplifies expressions with multiplication by 0 with 0 on the right`() {
         val ast = generateAst("(2+n)*0+1")

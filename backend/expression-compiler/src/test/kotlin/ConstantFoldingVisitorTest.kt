@@ -11,12 +11,6 @@ import org.junit.jupiter.params.provider.ValueSource
 import kotlin.test.Ignore
 
 class ConstantFoldingVisitorTest {
-    private fun generateAst(expressionSource: String): ExpressionStatement {
-        val tokens = LexicalAnalyzerImpl(expressionSource = expressionSource).tokenize()
-        val ast = Parser(tokens = tokens).parse()
-        return ast
-    }
-
     @Test
     fun `folds constants on sum expression with 2 operands`() {
         val ast = generateAst("2+2")
