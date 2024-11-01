@@ -3,17 +3,13 @@ package org.example.visitors
 import org.example.parser.*
 
 class AlgebraicSimplificationVisitor : Visitor {
-    override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
-        return expression
-    }
-
-    override fun visitIdentifierExpression(expression: IdentifierExpression): Expression {
-        return expression
-    }
-
-    override fun visitUnaryExpression(expression: UnaryExpression): Expression {
-        return expression
-    }
+    private val simplifiers = listOf(
+        AlgebraicSimplificationVisitor::simplifyMultiplicationByZero,
+        AlgebraicSimplificationVisitor::simplifyZeroDividedBy,
+        AlgebraicSimplificationVisitor::simplifyDivisionByOne,
+        AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
+        AlgebraicSimplificationVisitor::simplifyAdditiveWithZero,
+    )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
         val simplifiedExpression = expression.expression.accept(this)
@@ -53,6 +49,19 @@ class AlgebraicSimplificationVisitor : Visitor {
         return null
     }
 
+    private fun isAdditiveWithZero(left: Expression, right: Expression, operator: String): Expression? {
+        if (operator !in listOf("+", "-")) return null
+
+        val isLeftZero = left is NumberLiteralExpression && left.value == "0"
+        val isRightZero = right is NumberLiteralExpression && right.value == "0"
+
+        return when {
+            operator == "+" && (isLeftZero || isRightZero) -> if (isLeftZero) right else left
+            operator == "-" && isRightZero -> left
+            else -> null
+        }
+    }
+
     private fun simplifyMultiplicationByZero(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -82,11 +91,7 @@ class AlgebraicSimplificationVisitor : Visitor {
         val left = binaryExpression.left
         val right = binaryExpression.right
 
-        if (isDivisionByOne(right, operator)) {
-            return left
-        }
-
-        return binaryExpression
+        return left.takeIf { isDivisionByOne(right, operator) } ?: binaryExpression
     }
 
     private fun simplifyMultiplicationByOne(binaryExpression: BinaryExpression): Expression {
@@ -97,17 +102,18 @@ class AlgebraicSimplificationVisitor : Visitor {
         return isMultiplicationByOne(left, right, operator) ?: binaryExpression
     }
 
+    private fun simplifyAdditiveWithZero(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val left = binaryExpression.left
+        val right = binaryExpression.right
+
+        return isAdditiveWithZero(left, right, operator) ?: binaryExpression
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val operator = expression.operator
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
-
-        val simplifiers = listOf(
-            AlgebraicSimplificationVisitor::simplifyMultiplicationByZero,
-            AlgebraicSimplificationVisitor::simplifyZeroDividedBy,
-            AlgebraicSimplificationVisitor::simplifyDivisionByOne,
-            AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
-        )
 
         return simplifiers.fold(
             BinaryExpression(
@@ -116,5 +122,17 @@ class AlgebraicSimplificationVisitor : Visitor {
                 operator = operator
             ) as Expression
         ) { expr, simplify -> if (expr is BinaryExpression) simplify.invoke(this, expr) else expr }
+    }
+
+    override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
+        return expression
+    }
+
+    override fun visitIdentifierExpression(expression: IdentifierExpression): Expression {
+        return expression
+    }
+
+    override fun visitUnaryExpression(expression: UnaryExpression): Expression {
+        return expression
     }
 }

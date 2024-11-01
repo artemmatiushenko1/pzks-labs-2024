@@ -19,11 +19,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression("0"),
-                    operator = "+",
-                    right = NumberLiteralExpression("1")
-                )
+                expression = NumberLiteralExpression("1")
             )
         )
     }
@@ -35,11 +31,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression("0"),
-                    operator = "+",
-                    right = NumberLiteralExpression("8")
-                )
+                expression = NumberLiteralExpression("8")
             )
         )
     }
@@ -63,11 +55,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = IdentifierExpression("n"),
-                    operator = "+",
-                    right = NumberLiteralExpression("0")
-                )
+                expression = IdentifierExpression("n")
             )
         )
     }
@@ -103,15 +91,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = BinaryExpression(
-                        left = NumberLiteralExpression("0"),
-                        operator = "+",
-                        right = NumberLiteralExpression("0")
-                    ),
-                    operator = "+",
-                    right = IdentifierExpression("c")
-                )
+                expression = IdentifierExpression("c")
             )
         )
     }
@@ -123,11 +103,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression("0"),
-                    operator = "+",
-                    right = IdentifierExpression("c")
-                )
+                expression = IdentifierExpression("c")
             )
         )
     }
@@ -139,25 +115,7 @@ class AlgebraicSimplificationVisitorTest {
 
         simplifiedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = BinaryExpression(
-                        left = NumberLiteralExpression("0"),
-                        operator = "+",
-                        right = ParenExpression(
-                            BinaryExpression(
-                                left = BinaryExpression(
-                                    left = IdentifierExpression("c"),
-                                    operator = "+",
-                                    right = NumberLiteralExpression("0")
-                                ),
-                                operator = "-",
-                                right = NumberLiteralExpression("0")
-                            )
-                        )
-                    ),
-                    operator = "-",
-                    right = NumberLiteralExpression("0")
-                )
+                expression = ParenExpression(IdentifierExpression("c"))
             )
         )
     }
@@ -238,6 +196,52 @@ class AlgebraicSimplificationVisitorTest {
                                 left = IdentifierExpression("a"),
                                 operator = "+",
                                 right = IdentifierExpression("b"),
+                            )
+                        )
+                    ),
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `simplifies additive expressions with 0 as operand`() {
+        val ast = generateAst("(2+3)+0-(0+4)/a+(-9-0)+0-(0-(a+b)+0)") // (2+3)-(4)/a+(-9)-(0-(a+b))
+        val simplifiedAst = ExpressionStatement(ast.expression?.accept(AlgebraicSimplificationVisitor()))
+
+        simplifiedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = ParenExpression(
+                                BinaryExpression(
+                                    left = NumberLiteralExpression("2"),
+                                    operator = "+",
+                                    right = NumberLiteralExpression("3")
+                                )
+                            ),
+                            operator = "-",
+                            right = BinaryExpression(
+                                left = ParenExpression(NumberLiteralExpression("4")),
+                                operator = "/",
+                                right = IdentifierExpression("a")
+                            )
+                        ),
+                        operator = "+",
+                        right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    ),
+                    operator = "-",
+                    right = ParenExpression(
+                        BinaryExpression(
+                            left = NumberLiteralExpression("0"),
+                            operator = "-",
+                            right = ParenExpression(
+                                BinaryExpression(
+                                    left = IdentifierExpression("a"),
+                                    operator = "+",
+                                    right = IdentifierExpression("b"),
+                                )
                             )
                         )
                     ),

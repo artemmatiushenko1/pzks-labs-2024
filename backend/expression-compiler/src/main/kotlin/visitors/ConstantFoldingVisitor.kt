@@ -2,10 +2,6 @@ package org.example.visitors
 
 import org.example.parser.*
 import kotlin.math.absoluteValue
-import kotlin.math.sign
-
-//a+b+0  ->  a+b
-//a+1*b -> a+b
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
