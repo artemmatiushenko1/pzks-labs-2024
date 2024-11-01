@@ -6,7 +6,6 @@ import kotlin.math.sign
 
 //a+b+0  ->  a+b
 //a+1*b -> a+b
-//a+b/1 -> a+b
 
 class ConstantFoldingVisitor : Visitor {
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {

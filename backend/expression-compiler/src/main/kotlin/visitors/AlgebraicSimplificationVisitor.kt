@@ -39,6 +39,20 @@ class AlgebraicSimplificationVisitor : Visitor {
         return operator == "/" && (right is NumberLiteralExpression && right.value == "1")
     }
 
+    private fun isMultiplicationByOne(left: Expression, right: Expression, operator: String): Expression? {
+        if (operator != "*") return null
+
+        if (left is NumberLiteralExpression && left.value == "1") {
+            return right
+        }
+
+        if (right is NumberLiteralExpression && right.value == "1") {
+            return left
+        }
+
+        return null
+    }
+
     private fun simplifyMultiplicationByZero(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -75,6 +89,14 @@ class AlgebraicSimplificationVisitor : Visitor {
         return binaryExpression
     }
 
+    private fun simplifyMultiplicationByOne(binaryExpression: BinaryExpression): Expression {
+        val operator = binaryExpression.operator
+        val left = binaryExpression.left
+        val right = binaryExpression.right
+
+        return isMultiplicationByOne(left, right, operator) ?: binaryExpression
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val operator = expression.operator
         val left = expression.left.accept(this)
@@ -84,6 +106,7 @@ class AlgebraicSimplificationVisitor : Visitor {
             AlgebraicSimplificationVisitor::simplifyMultiplicationByZero,
             AlgebraicSimplificationVisitor::simplifyZeroDividedBy,
             AlgebraicSimplificationVisitor::simplifyDivisionByOne,
+            AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
         )
 
         return simplifiers.fold(

@@ -203,4 +203,46 @@ class AlgebraicSimplificationVisitorTest {
             )
         )
     }
+
+    @Test
+    fun `simplifies multiplication by 1`() {
+        val ast = generateAst("(2+3)*1-1*4/a+(-9*1)*1-((a+b)*1)") // (2+3)-4/a+(-9)-((a+b))
+        val simplifiedAst = ExpressionStatement(ast.expression?.accept(AlgebraicSimplificationVisitor()))
+
+        simplifiedAst.should.equal(
+            ExpressionStatement(
+                expression = BinaryExpression(
+                    left = BinaryExpression(
+                        left = BinaryExpression(
+                            left = ParenExpression(
+                                BinaryExpression(
+                                    left = NumberLiteralExpression("2"),
+                                    operator = "+",
+                                    right = NumberLiteralExpression("3")
+                                )
+                            ),
+                            operator = "-",
+                            right = BinaryExpression(
+                                left = NumberLiteralExpression("4"),
+                                operator = "/",
+                                right = IdentifierExpression("a")
+                            )
+                        ),
+                        operator = "+",
+                        right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    ),
+                    operator = "-",
+                    right = ParenExpression(
+                        ParenExpression(
+                            BinaryExpression(
+                                left = IdentifierExpression("a"),
+                                operator = "+",
+                                right = IdentifierExpression("b"),
+                            )
+                        )
+                    ),
+                )
+            )
+        )
+    }
 }
