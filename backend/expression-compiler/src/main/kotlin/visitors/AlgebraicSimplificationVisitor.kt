@@ -12,13 +12,13 @@ class AlgebraicSimplificationVisitor : Visitor {
     )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        val simplifiedExpression = expression.expression.accept(this)
+        val simplifiedExpression = expression.argument.accept(this)
 
         if (simplifiedExpression is NumberLiteralExpression && simplifiedExpression.value == "0") {
             return simplifiedExpression
         }
 
-        return ParenExpression(expression = simplifiedExpression)
+        return ParenExpression(argument = simplifiedExpression)
     }
 
     private fun isMultiplicationByZero(left: Expression, right: Expression, operator: String): Boolean {

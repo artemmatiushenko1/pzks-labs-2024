@@ -1,6 +1,7 @@
 package org.example.visitors
 
 import org.example.parser.*
+import sun.nio.ch.Net.accept
 import kotlin.math.absoluteValue
 
 class ConstantFoldingVisitor : Visitor {
@@ -17,13 +18,13 @@ class ConstantFoldingVisitor : Visitor {
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        val foldResult = expression.expression.accept(this)
+        val foldResult = expression.argument.accept(this)
 
         if (foldResult is NumberLiteralExpression) {
             return foldResult
         }
 
-        return ParenExpression(expression = foldResult)
+        return ParenExpression(argument = foldResult)
     }
 
     private fun evaluateBinaryExpression(left: Int, right: Int, operator: String): Int {

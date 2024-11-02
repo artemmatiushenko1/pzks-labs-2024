@@ -2,25 +2,24 @@ package org.example.parser
 
 import org.example.visitors.Visitor
 
-// TODO: rename expression to argument
-class ParenExpression(val expression: Expression) : Expression() {
+class ParenExpression(val argument: Expression) : Expression() {
     override fun accept(visitor: Visitor): Expression {
         return visitor.visitParenExpression(this)
     }
 
     override fun equals(other: Any?): Boolean {
         if (other is ParenExpression) {
-            return this.expression == other.expression
+            return this.argument == other.argument
         }
 
         return false
     }
 
     override fun hashCode(): Int {
-        return expression.hashCode()
+        return argument.hashCode()
     }
 
     override fun toString(): String {
-        return "ParenExpression { e = $expression }"
+        return "ParenExpression { a = $argument }"
     }
 }

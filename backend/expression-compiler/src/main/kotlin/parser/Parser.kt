@@ -12,10 +12,8 @@ import org.example.lexicalAnalyzer.TokenType
   TODO:
   - refactor sequential divisions,
   - refactor sequential subtraction,
-  - put zero in front of unary expression etc.
-  - handle division by zero error on frontend
-  - get rid of ExpressionStatement
-  - rename expression in paren expression
+  - put zero in front of unary expression,
+  - handle division by zero error on frontend,
  */
 class Parser(val tokens: List<Token>) {
     private val position = 0
@@ -55,7 +53,7 @@ class Parser(val tokens: List<Token>) {
             val expression = this.parseAdditiveExpression()
             this.consume(TokenType.CLOSE_PAREN).lexeme
 
-            parenExpression = ParenExpression(expression = expression ?: throw Exception("Unexpected token!"))
+            parenExpression = ParenExpression(argument = expression ?: throw Exception("Unexpected token!"))
         }
 
         return parenExpression ?: this.parseTerm()

@@ -257,7 +257,7 @@ class ParserTest {
 
         ast.should.equal(
             ParenExpression(
-                expression = NumberLiteralExpression(value = "6")
+                argument = NumberLiteralExpression(value = "6")
             )
         )
     }
@@ -269,7 +269,7 @@ class ParserTest {
 
         ast.should.equal(
             ParenExpression(
-                expression = BinaryExpression(
+                argument = BinaryExpression(
                     left = NumberLiteralExpression(value = "6"),
                     operator = "+",
                     right = NumberLiteralExpression(value = "4"),
@@ -286,7 +286,7 @@ class ParserTest {
         ast.should.equal(
             BinaryExpression(
                 left = ParenExpression(
-                    expression = BinaryExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "6"),
                         operator = "+",
                         right = NumberLiteralExpression(value = "4"),
@@ -307,7 +307,7 @@ class ParserTest {
             UnaryExpression(
                 operator = "-",
                 argument = ParenExpression(
-                    expression = BinaryExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "6"),
                         operator = "+",
                         right = IdentifierExpression(value = "a"),
@@ -329,7 +329,7 @@ class ParserTest {
                 right = UnaryExpression(
                     operator = "-",
                     argument = ParenExpression(
-                        expression = BinaryExpression(
+                        argument = BinaryExpression(
                             left = NumberLiteralExpression(value = "6"),
                             operator = "+",
                             right = IdentifierExpression(value = "a"),
@@ -352,7 +352,7 @@ class ParserTest {
                 right = UnaryExpression(
                     operator = "-",
                     argument = ParenExpression(
-                        expression = BinaryExpression(
+                        argument = BinaryExpression(
                             left = NumberLiteralExpression(value = "6"),
                             operator = "+",
                             right = IdentifierExpression(value = "a"),
@@ -373,7 +373,7 @@ class ParserTest {
                 left = UnaryExpression(
                     operator = "-",
                     argument = ParenExpression(
-                        expression = BinaryExpression(
+                        argument = BinaryExpression(
                             left = NumberLiteralExpression(value = "6"),
                             operator = "+",
                             right = IdentifierExpression(value = "a"),
@@ -382,7 +382,7 @@ class ParserTest {
                 ),
                 operator = "+",
                 right = ParenExpression(
-                    expression = BinaryExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "1.2"),
                         operator = "*",
                         right = IdentifierExpression(value = "b")
@@ -406,7 +406,7 @@ class ParserTest {
         ast.should.equal(
             BinaryExpression(
                 left = ParenExpression(
-                    expression = BinaryExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "2"),
                         operator = "+",
                         right = NumberLiteralExpression(value = "1")
@@ -414,7 +414,7 @@ class ParserTest {
                 ),
                 operator = "*",
                 right = ParenExpression(
-                    expression = BinaryExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "3.3"),
                         operator = "-",
                         right = IdentifierExpression(value = "b")
@@ -431,8 +431,8 @@ class ParserTest {
 
         ast.should.equal(
             ParenExpression(
-                expression = ParenExpression(
-                    expression = BinaryExpression(
+                argument = ParenExpression(
+                    argument = BinaryExpression(
                         left = NumberLiteralExpression(value = "2"),
                         operator = "+",
                         right = IdentifierExpression(value = "v")
@@ -449,13 +449,13 @@ class ParserTest {
 
         ast.should.equal(
             ParenExpression(
-                expression = BinaryExpression(
+                argument = BinaryExpression(
                     left = ParenExpression(
-                        expression = ParenExpression(
-                            expression = UnaryExpression(
+                        argument = ParenExpression(
+                            argument = UnaryExpression(
                                 operator = "-",
                                 argument = ParenExpression(
-                                    expression = BinaryExpression(
+                                    argument = BinaryExpression(
                                         left = NumberLiteralExpression(
                                             "2"
                                         ),
