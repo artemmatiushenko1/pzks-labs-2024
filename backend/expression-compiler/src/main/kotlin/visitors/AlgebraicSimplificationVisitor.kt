@@ -9,6 +9,7 @@ class AlgebraicSimplificationVisitor : Visitor {
         AlgebraicSimplificationVisitor::simplifyDivisionByOne,
         AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
         AlgebraicSimplificationVisitor::simplifyAdditiveWithZero,
+        AlgebraicSimplificationVisitor::simplifySelfDivision,
     )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
@@ -108,6 +109,14 @@ class AlgebraicSimplificationVisitor : Visitor {
         val right = binaryExpression.right
 
         return isAdditiveWithZero(left, right, operator) ?: binaryExpression
+    }
+
+    private fun simplifySelfDivision(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.left == binaryExpression.right && binaryExpression.operator == "/") {
+            return NumberLiteralExpression("1")
+        }
+
+        return binaryExpression
     }
 
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {

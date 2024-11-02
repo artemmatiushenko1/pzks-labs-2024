@@ -205,4 +205,11 @@ class AlgebraicSimplificationVisitorTest {
             )
         )
     }
+
+    @Test
+    fun `returns 1 for division of two equal expressions`() {
+        val ast = generateAst("(2/b)/(2/b)")
+        val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
+        simplifiedAst.should.equal(NumberLiteralExpression("1"))
+    }
 }
