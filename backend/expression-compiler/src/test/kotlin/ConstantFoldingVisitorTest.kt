@@ -108,13 +108,7 @@ class ConstantFoldingVisitorTest {
 
         foldedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = ParenExpression(
-                        NumberLiteralExpression("3")
-                    ),
-                    operator = "*",
-                    right = NumberLiteralExpression("4")
-                )
+                expression = NumberLiteralExpression("12")
             )
         )
     }
@@ -126,11 +120,7 @@ class ConstantFoldingVisitorTest {
 
         foldedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression("12"),
-                    operator = "/",
-                    right = ParenExpression(NumberLiteralExpression("3"))
-                )
+                expression = NumberLiteralExpression("4")
             )
         )
     }
@@ -221,13 +211,7 @@ class ConstantFoldingVisitorTest {
 
         foldedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = ParenExpression(
-                        NumberLiteralExpression("7")
-                    ),
-                    operator = "+",
-                    right = NumberLiteralExpression("6")
-                )
+                expression = NumberLiteralExpression("13")
             )
         )
     }
@@ -245,6 +229,28 @@ class ConstantFoldingVisitorTest {
                         UnaryExpression(
                             operator = "-",
                             argument = NumberLiteralExpression("5")
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `folds constants in paren unary paren expression`() {
+        val ast = generateAst("(-(2+2-3*3))")
+        val foldedAst = ExpressionStatement(ast.expression?.accept(ConstantFoldingVisitor()))
+
+        foldedAst.should.equal(
+            ExpressionStatement(
+                expression = ParenExpression(
+                    UnaryExpression(
+                        operator = "-",
+                        argument = ParenExpression(
+                            UnaryExpression(
+                                operator = "-",
+                                argument = NumberLiteralExpression("5")
+                            )
                         )
                     )
                 )
@@ -271,11 +277,7 @@ class ConstantFoldingVisitorTest {
 
         foldedAst.should.equal(
             ExpressionStatement(
-                expression = BinaryExpression(
-                    left = ParenExpression(NumberLiteralExpression("4")),
-                    operator = "-",
-                    right = NumberLiteralExpression("30")
-                )
+                expression = UnaryExpression(operator = "-", argument = NumberLiteralExpression("26"))
             )
         )
     }
@@ -291,7 +293,7 @@ class ConstantFoldingVisitorTest {
                     left = BinaryExpression(
                         left = ParenExpression(
                             BinaryExpression(
-                                left = ParenExpression(NumberLiteralExpression("4")),
+                                left = NumberLiteralExpression("4"),
                                 operator = "/",
                                 right = IdentifierExpression("a")
                             )
@@ -300,7 +302,7 @@ class ConstantFoldingVisitorTest {
                         right = BinaryExpression(
                             left = IdentifierExpression("b"),
                             operator = "*",
-                            right = ParenExpression(NumberLiteralExpression("6"))
+                            right = NumberLiteralExpression("6")
                         )
                     ),
                     operator = "-",

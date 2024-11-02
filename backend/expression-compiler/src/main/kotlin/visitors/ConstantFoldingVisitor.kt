@@ -11,17 +11,18 @@ class ConstantFoldingVisitor : Visitor {
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         val operator = expression.operator
         val argument = expression.argument.accept(this)
-
-        if (argument is NumberLiteralExpression) {
-            val value = argument.value
-            return NumberLiteralExpression(value = "$operator$value")
-        }
+        // TODO: we also can try to open parens like -(-4)
 
         return UnaryExpression(operator = operator, argument = argument)
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
         val foldResult = expression.expression.accept(this)
+
+        if (foldResult is NumberLiteralExpression) {
+            return foldResult
+        }
+
         return ParenExpression(expression = foldResult)
     }
 
@@ -46,6 +47,22 @@ class ConstantFoldingVisitor : Visitor {
         return binaryExpression
     }
 
+    private fun getNumberLiteralOrUnaryNumberLiteralValue(expression: Expression): String {
+        if (expression is NumberLiteralExpression) {
+            return expression.value
+        }
+
+        if (expression is UnaryExpression && expression.argument is NumberLiteralExpression) {
+            return "${expression.operator}${expression.argument.value}"
+        }
+
+        throw IllegalArgumentException("Expression should be either NumberLiteralExpression or UnaryExpression with NumberLiteralExpression argument.")
+    }
+
+    private fun isNumberOrUnaryNumberLiteral(expression: Expression): Boolean {
+        return expression is NumberLiteralExpression || (expression is UnaryExpression && expression.argument is NumberLiteralExpression)
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
@@ -53,10 +70,13 @@ class ConstantFoldingVisitor : Visitor {
 
         verifyDivisionByZero(BinaryExpression(right, left, operator))
 
-        if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
+        if (isNumberOrUnaryNumberLiteral(left) && isNumberOrUnaryNumberLiteral(right)) {
+            val leftValue = getNumberLiteralOrUnaryNumberLiteralValue(left).toInt()
+            val rightValue = getNumberLiteralOrUnaryNumberLiteralValue(right).toInt()
+
             val evaluatedResult = evaluateBinaryExpression(
-                left.value.toInt(),
-                right.value.toInt(),
+                leftValue,
+                rightValue,
                 operator
             )
 
