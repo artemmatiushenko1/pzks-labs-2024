@@ -10,21 +10,21 @@ class ParserTest {
     @Test
     fun `returns empty expression statement when there are no tokens provided`() {
         val ast = Parser(tokens = mutableListOf()).parse()
-        ast.should.equal(ExpressionStatement(expression = null))
+        ast.should.equal(null)
     }
 
     @Test
     fun `parses number literal expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "345").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
-        ast.should.equal(ExpressionStatement(expression = NumberLiteralExpression(value = "345")))
+        ast.should.equal(NumberLiteralExpression(value = "345"))
     }
 
     @Test
     fun `parses identifier expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "a").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
-        ast.should.equal(ExpressionStatement(expression = IdentifierExpression(value = "a")))
+        ast.should.equal(IdentifierExpression(value = "a"))
     }
 
     @Test
@@ -33,12 +33,10 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression(value = "2"),
-                    operator = "+",
-                    right = NumberLiteralExpression(value = "3"),
-                )
+            BinaryExpression(
+                left = NumberLiteralExpression(value = "2"),
+                operator = "+",
+                right = NumberLiteralExpression(value = "3"),
             )
         )
     }
@@ -49,12 +47,10 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression(value = "2"),
-                    operator = "-",
-                    right = NumberLiteralExpression(value = "3"),
-                )
+            BinaryExpression(
+                left = NumberLiteralExpression(value = "2"),
+                operator = "-",
+                right = NumberLiteralExpression(value = "3"),
             )
         )
     }
@@ -65,16 +61,14 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = BinaryExpression(
-                        left = NumberLiteralExpression(value = "2"),
-                        operator = "+",
-                        right = IdentifierExpression(value = "a")
-                    ),
+            BinaryExpression(
+                left = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
                     operator = "+",
-                    right = NumberLiteralExpression(value = "4"),
-                )
+                    right = IdentifierExpression(value = "a")
+                ),
+                operator = "+",
+                right = NumberLiteralExpression(value = "4"),
             )
         )
     }
@@ -85,20 +79,18 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
+            BinaryExpression(
+                left = BinaryExpression(
                     left = BinaryExpression(
-                        left = BinaryExpression(
-                            left = NumberLiteralExpression(value = "2"),
-                            operator = "+",
-                            right = IdentifierExpression(value = "a")
-                        ),
+                        left = NumberLiteralExpression(value = "2"),
                         operator = "+",
-                        right = NumberLiteralExpression(value = "4")
+                        right = IdentifierExpression(value = "a")
                     ),
-                    operator = "-",
-                    right = NumberLiteralExpression(value = "7.9"),
-                )
+                    operator = "+",
+                    right = NumberLiteralExpression(value = "4")
+                ),
+                operator = "-",
+                right = NumberLiteralExpression(value = "7.9"),
             )
         )
     }
@@ -109,12 +101,10 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression(value = "2"),
-                    operator = "*",
-                    right = NumberLiteralExpression(value = "4")
-                )
+            BinaryExpression(
+                left = NumberLiteralExpression(value = "2"),
+                operator = "*",
+                right = NumberLiteralExpression(value = "4")
             )
         )
     }
@@ -125,12 +115,10 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression(value = "2"),
-                    operator = "/",
-                    right = NumberLiteralExpression(value = "4")
-                )
+            BinaryExpression(
+                left = NumberLiteralExpression(value = "2"),
+                operator = "/",
+                right = NumberLiteralExpression(value = "4")
             )
         )
     }
@@ -141,20 +129,18 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
+            BinaryExpression(
+                left = BinaryExpression(
                     left = BinaryExpression(
-                        left = BinaryExpression(
-                            left = NumberLiteralExpression(value = "2"),
-                            operator = "*",
-                            right = NumberLiteralExpression(value = "4")
-                        ),
-                        operator = "/",
-                        right = NumberLiteralExpression(value = "6")
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "4")
                     ),
-                    operator = "*",
-                    right = NumberLiteralExpression(value = "9")
-                )
+                    operator = "/",
+                    right = NumberLiteralExpression(value = "6")
+                ),
+                operator = "*",
+                right = NumberLiteralExpression(value = "9")
             )
         )
     }
@@ -165,15 +151,13 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = NumberLiteralExpression(value = "2"),
-                    operator = "+",
-                    right = BinaryExpression(
-                        left = NumberLiteralExpression(value = "3"),
-                        operator = "*",
-                        right = NumberLiteralExpression(value = "1")
-                    )
+            BinaryExpression(
+                left = NumberLiteralExpression(value = "2"),
+                operator = "+",
+                right = BinaryExpression(
+                    left = NumberLiteralExpression(value = "3"),
+                    operator = "*",
+                    right = NumberLiteralExpression(value = "1")
                 )
             )
         )
@@ -185,19 +169,17 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = BinaryExpression(
-                        left = NumberLiteralExpression(value = "2"),
-                        operator = "*",
-                        right = NumberLiteralExpression(value = "3"),
-                    ),
-                    operator = "-",
-                    right = BinaryExpression(
-                        left = NumberLiteralExpression(value = "1"),
-                        operator = "/",
-                        right = NumberLiteralExpression(value = "5")
-                    )
+            BinaryExpression(
+                left = BinaryExpression(
+                    left = NumberLiteralExpression(value = "2"),
+                    operator = "*",
+                    right = NumberLiteralExpression(value = "3"),
+                ),
+                operator = "-",
+                right = BinaryExpression(
+                    left = NumberLiteralExpression(value = "1"),
+                    operator = "/",
+                    right = NumberLiteralExpression(value = "5")
                 )
             )
         )
@@ -209,24 +191,22 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
+            BinaryExpression(
+                left = BinaryExpression(
                     left = BinaryExpression(
-                        left = BinaryExpression(
-                            left = NumberLiteralExpression(value = "2"),
-                            operator = "*",
-                            right = NumberLiteralExpression(value = "3"),
-                        ),
-                        operator = "-",
-                        right = BinaryExpression(
-                            left = NumberLiteralExpression(value = "1"),
-                            operator = "/",
-                            right = NumberLiteralExpression(value = "5.99")
-                        )
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "3"),
                     ),
-                    operator = "+",
-                    right = IdentifierExpression(value = "a")
-                )
+                    operator = "-",
+                    right = BinaryExpression(
+                        left = NumberLiteralExpression(value = "1"),
+                        operator = "/",
+                        right = NumberLiteralExpression(value = "5.99")
+                    )
+                ),
+                operator = "+",
+                right = IdentifierExpression(value = "a")
             )
         )
     }
@@ -237,11 +217,9 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = UnaryExpression(
-                    operator = "-",
-                    argument = NumberLiteralExpression(value = "1")
-                )
+            UnaryExpression(
+                operator = "-",
+                argument = NumberLiteralExpression(value = "1")
             )
         )
     }
@@ -252,24 +230,22 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
+            BinaryExpression(
+                left = BinaryExpression(
                     left = BinaryExpression(
-                        left = BinaryExpression(
-                            left = UnaryExpression(operator = "-", argument = NumberLiteralExpression("2")),
-                            operator = "*",
-                            right = NumberLiteralExpression(value = "3"),
-                        ),
-                        operator = "-",
-                        right = BinaryExpression(
-                            left = NumberLiteralExpression(value = "1"),
-                            operator = "/",
-                            right = NumberLiteralExpression(value = "5.99")
-                        )
+                        left = UnaryExpression(operator = "-", argument = NumberLiteralExpression("2")),
+                        operator = "*",
+                        right = NumberLiteralExpression(value = "3"),
                     ),
-                    operator = "+",
-                    right = IdentifierExpression(value = "a")
-                )
+                    operator = "-",
+                    right = BinaryExpression(
+                        left = NumberLiteralExpression(value = "1"),
+                        operator = "/",
+                        right = NumberLiteralExpression(value = "5.99")
+                    )
+                ),
+                operator = "+",
+                right = IdentifierExpression(value = "a")
             )
         )
     }
@@ -280,10 +256,8 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = ParenExpression(
-                    expression = NumberLiteralExpression(value = "6")
-                )
+            ParenExpression(
+                expression = NumberLiteralExpression(value = "6")
             )
         )
     }
@@ -294,13 +268,11 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = ParenExpression(
-                    expression = BinaryExpression(
-                        left = NumberLiteralExpression(value = "6"),
-                        operator = "+",
-                        right = NumberLiteralExpression(value = "4"),
-                    )
+            ParenExpression(
+                expression = BinaryExpression(
+                    left = NumberLiteralExpression(value = "6"),
+                    operator = "+",
+                    right = NumberLiteralExpression(value = "4"),
                 )
             )
         )
@@ -312,18 +284,16 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = ParenExpression(
-                        expression = BinaryExpression(
-                            left = NumberLiteralExpression(value = "6"),
-                            operator = "+",
-                            right = NumberLiteralExpression(value = "4"),
-                        )
-                    ),
-                    operator = "/",
-                    right = IdentifierExpression(value = "a")
-                )
+            BinaryExpression(
+                left = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "6"),
+                        operator = "+",
+                        right = NumberLiteralExpression(value = "4"),
+                    )
+                ),
+                operator = "/",
+                right = IdentifierExpression(value = "a")
             )
         )
     }
@@ -334,8 +304,29 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = UnaryExpression(
+            UnaryExpression(
+                operator = "-",
+                argument = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "6"),
+                        operator = "+",
+                        right = IdentifierExpression(value = "a"),
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `parses unary expression as right part of multiplicative binary expression`() {
+        val tokens = LexicalAnalyzerImpl(expressionSource = "a*-(6+a)").tokenize()
+        val ast = Parser(tokens = tokens.toMutableList()).parse()
+
+        ast.should.equal(
+            BinaryExpression(
+                left = IdentifierExpression(value = "a"),
+                operator = "*",
+                right = UnaryExpression(
                     operator = "-",
                     argument = ParenExpression(
                         expression = BinaryExpression(
@@ -350,48 +341,21 @@ class ParserTest {
     }
 
     @Test
-    fun `parses unary expression as right part of multiplicative binary expression`() {
-        val tokens = LexicalAnalyzerImpl(expressionSource = "a*-(6+a)").tokenize()
-        val ast = Parser(tokens = tokens.toMutableList()).parse()
-
-        ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = IdentifierExpression(value = "a"),
-                    operator = "*",
-                    right = UnaryExpression(
-                        operator = "-",
-                        argument = ParenExpression(
-                            expression = BinaryExpression(
-                                left = NumberLiteralExpression(value = "6"),
-                                operator = "+",
-                                right = IdentifierExpression(value = "a"),
-                            )
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
     fun `parses unary expression as right part of additive binary expression`() {
         val tokens = LexicalAnalyzerImpl(expressionSource = "a+-(6+a)").tokenize()
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = IdentifierExpression(value = "a"),
-                    operator = "+",
-                    right = UnaryExpression(
-                        operator = "-",
-                        argument = ParenExpression(
-                            expression = BinaryExpression(
-                                left = NumberLiteralExpression(value = "6"),
-                                operator = "+",
-                                right = IdentifierExpression(value = "a"),
-                            )
+            BinaryExpression(
+                left = IdentifierExpression(value = "a"),
+                operator = "+",
+                right = UnaryExpression(
+                    operator = "-",
+                    argument = ParenExpression(
+                        expression = BinaryExpression(
+                            left = NumberLiteralExpression(value = "6"),
+                            operator = "+",
+                            right = IdentifierExpression(value = "a"),
                         )
                     )
                 )
@@ -405,25 +369,23 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = UnaryExpression(
-                        operator = "-",
-                        argument = ParenExpression(
-                            expression = BinaryExpression(
-                                left = NumberLiteralExpression(value = "6"),
-                                operator = "+",
-                                right = IdentifierExpression(value = "a"),
-                            )
-                        )
-                    ),
-                    operator = "+",
-                    right = ParenExpression(
+            BinaryExpression(
+                left = UnaryExpression(
+                    operator = "-",
+                    argument = ParenExpression(
                         expression = BinaryExpression(
-                            left = NumberLiteralExpression(value = "1.2"),
-                            operator = "*",
-                            right = IdentifierExpression(value = "b")
+                            left = NumberLiteralExpression(value = "6"),
+                            operator = "+",
+                            right = IdentifierExpression(value = "a"),
                         )
+                    )
+                ),
+                operator = "+",
+                right = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "1.2"),
+                        operator = "*",
+                        right = IdentifierExpression(value = "b")
                     )
                 )
             )
@@ -442,22 +404,20 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = BinaryExpression(
-                    left = ParenExpression(
-                        expression = BinaryExpression(
-                            left = NumberLiteralExpression(value = "2"),
-                            operator = "+",
-                            right = NumberLiteralExpression(value = "1")
-                        )
-                    ),
-                    operator = "*",
-                    right = ParenExpression(
-                        expression = BinaryExpression(
-                            left = NumberLiteralExpression(value = "3.3"),
-                            operator = "-",
-                            right = IdentifierExpression(value = "b")
-                        )
+            BinaryExpression(
+                left = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "+",
+                        right = NumberLiteralExpression(value = "1")
+                    )
+                ),
+                operator = "*",
+                right = ParenExpression(
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "3.3"),
+                        operator = "-",
+                        right = IdentifierExpression(value = "b")
                     )
                 )
             )
@@ -470,14 +430,12 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
+            ParenExpression(
                 expression = ParenExpression(
-                    expression = ParenExpression(
-                        expression = BinaryExpression(
-                            left = NumberLiteralExpression(value = "2"),
-                            operator = "+",
-                            right = IdentifierExpression(value = "v")
-                        )
+                    expression = BinaryExpression(
+                        left = NumberLiteralExpression(value = "2"),
+                        operator = "+",
+                        right = IdentifierExpression(value = "v")
                     )
                 )
             )
@@ -490,28 +448,26 @@ class ParserTest {
         val ast = Parser(tokens = tokens.toMutableList()).parse()
 
         ast.should.equal(
-            ExpressionStatement(
-                expression = ParenExpression(
-                    expression = BinaryExpression(
-                        left = ParenExpression(
-                            expression = ParenExpression(
-                                expression = UnaryExpression(
-                                    operator = "-",
-                                    argument = ParenExpression(
-                                        expression = BinaryExpression(
-                                            left = NumberLiteralExpression(
-                                                "2"
-                                            ),
-                                            operator = "+",
-                                            right = IdentifierExpression(value = "v")
-                                        )
+            ParenExpression(
+                expression = BinaryExpression(
+                    left = ParenExpression(
+                        expression = ParenExpression(
+                            expression = UnaryExpression(
+                                operator = "-",
+                                argument = ParenExpression(
+                                    expression = BinaryExpression(
+                                        left = NumberLiteralExpression(
+                                            "2"
+                                        ),
+                                        operator = "+",
+                                        right = IdentifierExpression(value = "v")
                                     )
                                 )
                             )
-                        ),
-                        operator = "*",
-                        right = NumberLiteralExpression(value = "3")
-                    )
+                        )
+                    ),
+                    operator = "*",
+                    right = NumberLiteralExpression(value = "3")
                 )
             )
         )

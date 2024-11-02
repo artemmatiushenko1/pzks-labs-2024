@@ -1,6 +1,6 @@
 package org.example
 
-import org.example.parser.ExpressionStatement
+import org.example.parser.Expression
 import org.example.visitors.AlgebraicSimplificationVisitor
 import org.example.visitors.ConstantFoldingVisitor
 import org.example.visitors.RedundantParensRemovalVisitor
@@ -12,11 +12,11 @@ class Optimizer {
         RedundantParensRemovalVisitor()
     )
 
-    fun optimize(ast: ExpressionStatement): ExpressionStatement {
-        val optimizedExpression = visitors.fold(ast.expression) { expr, visitor ->
-            expr?.accept(visitor)
+    fun optimize(ast: Expression): Expression {
+        val optimizedExpression = visitors.fold(ast) { it, visitor ->
+            it.accept(visitor)
         }
 
-        return ExpressionStatement(expression = optimizedExpression)
+        return optimizedExpression
     }
 }

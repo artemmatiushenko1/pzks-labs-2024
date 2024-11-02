@@ -8,7 +8,7 @@ class RedundantParensRemovalVisitorTest {
     @Test
     fun `removes redundant parens`() {
         val ast = generateAst("(2+2)+(((a-3)))")
-        val simplifiedExpr = ast.expression?.accept(RedundantParensRemovalVisitor())
+        val simplifiedExpr = ast?.accept(RedundantParensRemovalVisitor())
 
         simplifiedExpr.should.equal(
             BinaryExpression(
@@ -34,7 +34,7 @@ class RedundantParensRemovalVisitorTest {
     @Test
     fun `removes redundant parens from unary expression`() {
         val ast = generateAst("-((a+b))")
-        val simplifiedExpr = ast.expression?.accept(RedundantParensRemovalVisitor())
+        val simplifiedExpr = ast?.accept(RedundantParensRemovalVisitor())
 
         simplifiedExpr.should.equal(
             UnaryExpression(
@@ -53,7 +53,7 @@ class RedundantParensRemovalVisitorTest {
     @Test
     fun `removes redundant parens from number literal expression`() {
         val ast = generateAst("(2)+(4)")
-        val simplifiedExpr = ast.expression?.accept(RedundantParensRemovalVisitor())
+        val simplifiedExpr = ast?.accept(RedundantParensRemovalVisitor())
 
         simplifiedExpr.should.equal(
             BinaryExpression(
@@ -67,7 +67,7 @@ class RedundantParensRemovalVisitorTest {
     @Test
     fun `removes redundant parens from identifier expression`() {
         val ast = generateAst("((a))+(((b)))")
-        val simplifiedExpr = ast.expression?.accept(RedundantParensRemovalVisitor())
+        val simplifiedExpr = ast?.accept(RedundantParensRemovalVisitor())
 
         simplifiedExpr.should.equal(
             BinaryExpression(

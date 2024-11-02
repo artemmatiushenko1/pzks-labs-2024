@@ -115,8 +115,8 @@ class Parser(val tokens: List<Token>) {
         return left
     }
 
-    fun parse(): ExpressionStatement {
+    fun parse(): Expression? {
         val expression = this.parseAdditiveExpression()
-        return ExpressionStatement(expression = expression)
+        return expression
     }
 }
