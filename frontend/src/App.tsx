@@ -14,7 +14,7 @@ const App = () => {
     variables: submittedExpression,
   } = useCompileExpression();
 
-  const { syntaxErrors: compilationErrors, tree } = compilationResult ?? {};
+  const { errors: compilationErrors, tree } = compilationResult ?? {};
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">

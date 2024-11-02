@@ -42,7 +42,7 @@ class ConstantFoldingVisitor : Visitor {
         val right = binaryExpression.right
 
         if (operator == "/" && right is NumberLiteralExpression && right.value == "0") {
-            throw IllegalArgumentException("Division by zero is forbidden!")
+            throw Exception("Division by zero is forbidden!")
         }
 
         return binaryExpression

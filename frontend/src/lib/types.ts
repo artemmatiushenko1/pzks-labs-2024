@@ -1,7 +1,7 @@
 type CompilationError = {
   message: string;
   position: number;
-  type: 'SyntaxError' | 'LexicalError';
+  type: 'SyntaxError' | 'LexicalError' | 'Exception';
 };
 
 type TreeNode = {
