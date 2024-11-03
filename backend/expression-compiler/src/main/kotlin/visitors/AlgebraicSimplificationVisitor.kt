@@ -11,6 +11,7 @@ class AlgebraicSimplificationVisitor : Visitor {
         AlgebraicSimplificationVisitor::simplifyAdditiveWithZero,
         AlgebraicSimplificationVisitor::simplifySelfDivision,
         AlgebraicSimplificationVisitor::transformSequentialDivision,
+        AlgebraicSimplificationVisitor::transformSequentialSubtraction,
     )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
@@ -132,11 +133,29 @@ class AlgebraicSimplificationVisitor : Visitor {
             return BinaryExpression(
                 left = binaryExpression.left.left,
                 operator = binaryExpression.operator,
-                right =
-                ParenExpression(
+                right = ParenExpression(
                     BinaryExpression(
                         left = binaryExpression.left.right,
                         operator = "*",
+                        right = binaryExpression.right
+                    )
+                ),
+            )
+        }
+
+        return binaryExpression
+    }
+
+    // a-b-c = a-(b+c)
+    private fun transformSequentialSubtraction(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.operator == "-" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "-")) {
+            return BinaryExpression(
+                left = binaryExpression.left.left,
+                operator = binaryExpression.operator,
+                right = ParenExpression(
+                    BinaryExpression(
+                        left = binaryExpression.left.right,
+                        operator = "+",
                         right = binaryExpression.right
                     )
                 ),
