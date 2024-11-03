@@ -238,18 +238,38 @@ class AlgebraicSimplificationVisitorTest {
     @Test
     fun `eliminates nested unary expression if they have the same operator`() {
         val ast = generateAst("-(-5)")
-        val foldedAst = ast?.accept(AlgebraicSimplificationVisitor())
+        val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
 
-        foldedAst.should.equal(ParenExpression(NumberLiteralExpression("5")))
+        simplifiedAst.should.equal(ParenExpression(NumberLiteralExpression("5")))
+    }
+
+    @Test
+    fun `converts unary to binary expression by backfilling zero`() {
+        val ast = generateAst("-(b+c)")
+        val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
+
+        simplifiedAst.should.equal(
+            BinaryExpression(
+                left = NumberLiteralExpression("0"),
+                operator = "-",
+                right = ParenExpression(
+                    BinaryExpression(
+                        left = IdentifierExpression("b"),
+                        operator = "+",
+                        right = IdentifierExpression("c")
+                    )
+                )
+            )
+        )
     }
 
     @Test
     @Ignore
     fun `eliminates unary expression if it has + operator`() {
         val ast = generateAst("+(3-5)")
-        val foldedAst = ast?.accept(AlgebraicSimplificationVisitor())
+        val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
 
-        foldedAst.should.equal(
+        simplifiedAst.should.equal(
             ParenExpression(
                 BinaryExpression(
                     left = NumberLiteralExpression("3"),

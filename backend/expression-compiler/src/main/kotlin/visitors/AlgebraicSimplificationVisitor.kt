@@ -188,6 +188,7 @@ class AlgebraicSimplificationVisitor : Visitor {
     }
 
     // -(-5) = (5)
+    // -(b+c) = 0-(b+c)
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         if (expression.argument is ParenExpression) {
             val parenArgument = expression.argument.argument
@@ -197,6 +198,10 @@ class AlgebraicSimplificationVisitor : Visitor {
             }
         }
 
-        return expression
+        return BinaryExpression(
+            left = NumberLiteralExpression("0"),
+            operator = expression.operator,
+            right = expression.argument
+        )
     }
 }
