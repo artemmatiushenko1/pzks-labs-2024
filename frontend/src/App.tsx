@@ -14,7 +14,11 @@ const App = () => {
     variables: submittedExpression,
   } = useCompileExpression();
 
-  const { errors: compilationErrors, tree } = compilationResult ?? {};
+  const {
+    errors: compilationErrors,
+    optimizedTree,
+    optimizedExpressionString,
+  } = compilationResult ?? {};
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
@@ -37,7 +41,14 @@ const App = () => {
         )}
         {compilationErrors?.length === 0 && <CompilationSuccessAlert />}
       </div>
-      {tree && <TreeViewer tree={tree} />}
+      {optimizedExpressionString && (
+        <div>
+          <p className="text-start">
+            Optimized expression: {optimizedExpressionString}
+          </p>
+        </div>
+      )}
+      {optimizedTree && <TreeViewer tree={optimizedTree} />}
     </div>
   );
 };

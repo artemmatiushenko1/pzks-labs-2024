@@ -13,21 +13,13 @@ import org.example.TreeNode
 @Serializable
 data class CompileRequest(val expression: String)
 
-@Serializable
-data class CompileResponse(val errors: List<CompilationError>, val tree: TreeNode?)
-
 fun Application.configureRouting() {
     routing {
         post("/compile") {
             val requestBody = call.receive<CompileRequest>()
             val result = ExpressionCompiler().compile(requestBody.expression)
 
-            call.respond(
-                CompileResponse(
-                    tree = result.tree,
-                    errors = result.errors
-                )
-            )
+            call.respond(result)
         }
     }
 }

@@ -212,4 +212,24 @@ class AlgebraicSimplificationVisitorTest {
         val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
         simplifiedAst.should.equal(NumberLiteralExpression("1"))
     }
+
+    @Test
+    fun `replaces division with multiplication in expression with sequential division`() {
+        val ast = generateAst("a/b/c") // a/(b*c) -> c*(a/b)
+        val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
+
+        simplifiedAst.should.equal(
+            BinaryExpression(
+                left = IdentifierExpression("a"),
+                operator = "/",
+                right = ParenExpression(
+                    BinaryExpression(
+                        left = IdentifierExpression("b"),
+                        operator = "*",
+                        right = IdentifierExpression("c")
+                    )
+                )
+            )
+        )
+    }
 }

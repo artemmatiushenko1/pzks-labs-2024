@@ -10,6 +10,7 @@ class AlgebraicSimplificationVisitor : Visitor {
         AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
         AlgebraicSimplificationVisitor::simplifyAdditiveWithZero,
         AlgebraicSimplificationVisitor::simplifySelfDivision,
+        AlgebraicSimplificationVisitor::transformSequentialDivision,
     )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
@@ -114,6 +115,25 @@ class AlgebraicSimplificationVisitor : Visitor {
     private fun simplifySelfDivision(binaryExpression: BinaryExpression): Expression {
         if (binaryExpression.left == binaryExpression.right && binaryExpression.operator == "/") {
             return NumberLiteralExpression("1")
+        }
+
+        return binaryExpression
+    }
+
+    private fun transformSequentialDivision(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.operator == "/" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "/")) {
+            return BinaryExpression(
+                left = binaryExpression.left.left,
+                operator = binaryExpression.operator,
+                right =
+                ParenExpression(
+                    BinaryExpression(
+                        left = binaryExpression.left.right,
+                        operator = "*",
+                        right = binaryExpression.right
+                    )
+                ),
+            )
         }
 
         return binaryExpression

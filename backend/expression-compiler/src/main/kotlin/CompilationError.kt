@@ -1,3 +1,6 @@
 package org.example
 
-data class CompilationResult(val errors: List<CompilationError>, val tree: TreeNode?)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CompilationError(val message: String?, val position: Int?, val type: String)

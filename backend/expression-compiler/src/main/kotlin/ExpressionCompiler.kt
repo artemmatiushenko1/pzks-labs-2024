@@ -1,31 +1,40 @@
 package org.example
 
-import kotlinx.serialization.Serializable
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.lexicalAnalyzer.LexicalError
+import org.example.parser.Expression
 import org.example.parser.Parser
 import org.example.visitors.ToSerializableTreeVisitor
 import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
-
-@Serializable
-data class CompilationError(val message: String?, val position: Int?, val type: String)
+import org.example.visitors.ToStringVisitor
 
 class ExpressionCompiler {
     private val optimizer = Optimizer()
+
+    private fun getCompiledExpressionString(ast: Expression?): String {
+        val visitor = ToStringVisitor()
+        ast?.accept(visitor)
+        return visitor.getExpressionString()
+    }
+
+    private fun getSerializableTree(ast: Expression?): TreeNode {
+        val visitor = ToSerializableTreeVisitor()
+        ast?.accept(visitor)
+        return visitor.getTree()
+    }
 
     fun compile(expression: String): CompilationResult {
         try {
             val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
             val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
 
-            val serializableTree = if (syntaxErrors.isEmpty()) {
-                Parser(tokens = tokens).parse()?.let {
-                    val optimizedAst = optimizer.optimize(it)
-                    val visitor = ToSerializableTreeVisitor()
-                    optimizedAst.accept(visitor)
-                    visitor.getTree()
-                }
+            val ast = if (syntaxErrors.isEmpty()) {
+                Parser(tokens = tokens).parse()
             } else null
+
+            val optimizedAst = ast?.let {
+                optimizer.optimize(it)
+            }
 
             return CompilationResult(
                 errors = syntaxErrors.map {
@@ -35,7 +44,10 @@ class ExpressionCompiler {
                         type = "SyntaxError"
                     )
                 },
-                tree = serializableTree
+                originalTree = getSerializableTree(ast),
+                optimizedTree = getSerializableTree(optimizedAst),
+                originalExpressionString = getCompiledExpressionString(ast),
+                optimizedExpressionString = getCompiledExpressionString(optimizedAst),
             ) // TODO: also send unoptimised tree
         } catch (e: Exception) {
             return when (e) {
@@ -46,8 +58,7 @@ class ExpressionCompiler {
                             position = e.position,
                             type = "LexicalError"
                         )
-                    ),
-                    tree = null
+                    )
                 )
 
                 else -> CompilationResult(
@@ -57,8 +68,7 @@ class ExpressionCompiler {
                             position = null,
                             type = "Exception"
                         )
-                    ),
-                    tree = null
+                    )
                 )
             }
         }

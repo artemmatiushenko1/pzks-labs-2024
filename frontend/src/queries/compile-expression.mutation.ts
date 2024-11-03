@@ -14,7 +14,10 @@ const useCompileExpression = () => {
 
       return response.json() as Promise<{
         errors: CompilationError[];
-        tree: TreeNode;
+        originalTree: TreeNode;
+        optimizedTree: TreeNode;
+        originalExpressionString: string;
+        optimizedExpressionString: string;
       }>;
     },
   });

@@ -2,7 +2,7 @@ package org.example.parser
 
 import org.example.visitors.Visitor
 
-class BinaryExpression(val right: Expression, var left: Expression, val operator: String) : Expression() {
+class BinaryExpression(val right: Expression, val left: Expression, val operator: String) : Expression() {
     override fun accept(visitor: Visitor): Expression {
         return visitor.visitBinaryExpression(this)
     }
