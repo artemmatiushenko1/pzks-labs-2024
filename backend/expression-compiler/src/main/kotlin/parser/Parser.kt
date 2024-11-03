@@ -64,7 +64,8 @@ class Parser(val tokens: List<Token>) {
         val expression = when (currentToken?.type) {
             TokenType.ADDITIVE_OPERATOR -> UnaryExpression(
                 operator = this.consume(TokenType.ADDITIVE_OPERATOR).lexeme,
-                argument = this.parseParenExpression() ?: throw Exception("Unexpected token!")
+                argument = this.parseParenExpression()
+                    ?: throw Exception("Unexpected token ${currentToken.lexeme} at ${currentToken.position}!")
             )
 
             else -> this.parseParenExpression()

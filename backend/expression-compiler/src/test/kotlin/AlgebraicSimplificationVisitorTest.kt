@@ -3,7 +3,9 @@ import net.oddpoet.expect.should
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.parser.*
 import org.example.visitors.AlgebraicSimplificationVisitor
+import org.example.visitors.ConstantFoldingVisitor
 import org.junit.jupiter.api.Test
+import kotlin.test.Ignore
 
 class AlgebraicSimplificationVisitorTest {
     @Test
@@ -228,6 +230,31 @@ class AlgebraicSimplificationVisitorTest {
                         operator = "*",
                         right = IdentifierExpression("c")
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `eliminates nested unary expression if they have the same operator`() {
+        val ast = generateAst("-(-5)")
+        val foldedAst = ast?.accept(AlgebraicSimplificationVisitor())
+
+        foldedAst.should.equal(ParenExpression(NumberLiteralExpression("5")))
+    }
+
+    @Test
+    @Ignore
+    fun `eliminates unary expression if it has + operator`() {
+        val ast = generateAst("+(3-5)")
+        val foldedAst = ast?.accept(AlgebraicSimplificationVisitor())
+
+        foldedAst.should.equal(
+            ParenExpression(
+                BinaryExpression(
+                    left = NumberLiteralExpression("3"),
+                    operator = "-",
+                    right = NumberLiteralExpression("5")
                 )
             )
         )

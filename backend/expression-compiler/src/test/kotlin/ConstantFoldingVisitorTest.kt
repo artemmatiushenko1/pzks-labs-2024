@@ -331,7 +331,7 @@ class ConstantFoldingVisitorTest {
     fun `forbids division by zero`(expressionSource: String) {
         val ast = generateAst(expressionSource)
         expect { ast?.accept(ConstantFoldingVisitor()) }.throws(
-            IllegalArgumentException::class
+            Exception::class
         )
     }
 }

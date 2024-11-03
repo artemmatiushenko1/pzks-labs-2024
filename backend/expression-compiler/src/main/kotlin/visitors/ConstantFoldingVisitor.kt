@@ -12,7 +12,6 @@ class ConstantFoldingVisitor : Visitor {
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         val operator = expression.operator
         val argument = expression.argument.accept(this)
-        // TODO: we also can try to open parens like -(-4)
 
         return UnaryExpression(operator = operator, argument = argument)
     }

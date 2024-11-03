@@ -161,7 +161,18 @@ class AlgebraicSimplificationVisitor : Visitor {
         return expression
     }
 
+    /**
+     * Eliminates nested unary expr their operators are the same: -(-5) = (5)
+     */
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
+        if (expression.argument is ParenExpression) {
+            val parenArgument = expression.argument.argument
+
+            if (parenArgument is UnaryExpression && (expression.operator == parenArgument.operator)) {
+                return ParenExpression(argument = parenArgument.argument)
+            }
+        }
+
         return expression
     }
 }

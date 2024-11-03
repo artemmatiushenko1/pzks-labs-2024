@@ -1,6 +1,5 @@
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
-import org.example.visitors.AlgebraicSimplificationVisitor
 import org.example.visitors.ToStringVisitor
 import org.junit.jupiter.api.Test
 
