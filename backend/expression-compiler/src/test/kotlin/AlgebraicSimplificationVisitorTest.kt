@@ -6,6 +6,7 @@ import org.example.visitors.AlgebraicSimplificationVisitor
 import org.example.visitors.ConstantFoldingVisitor
 import org.junit.jupiter.api.Test
 import kotlin.test.Ignore
+import kotlin.test.assertEquals
 
 class AlgebraicSimplificationVisitorTest {
     @Test
@@ -108,7 +109,13 @@ class AlgebraicSimplificationVisitorTest {
                         )
                     ),
                     operator = "+",
-                    right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    right = ParenExpression(
+                        BinaryExpression(
+                            left = NumberLiteralExpression("0"),
+                            operator = "-",
+                            right = NumberLiteralExpression("9")
+                        )
+                    )
                 ),
                 operator = "-",
                 right = ParenExpression(
@@ -148,7 +155,13 @@ class AlgebraicSimplificationVisitorTest {
                         )
                     ),
                     operator = "+",
-                    right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    right = ParenExpression(
+                        BinaryExpression(
+                            left = NumberLiteralExpression("0"),
+                            operator = "-",
+                            right = NumberLiteralExpression("9")
+                        )
+                    )
                 ),
                 operator = "-",
                 right = ParenExpression(
@@ -169,7 +182,7 @@ class AlgebraicSimplificationVisitorTest {
         val ast = generateAst("(2+3)+0-(0+4)/a+(-9-0)+0-(0-(a+b)+0)") // (2+3)-(4)/a+(-9)-(0-(a+b))
         val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
 
-        simplifiedAst.should.equal(
+        assertEquals(
             BinaryExpression(
                 left = BinaryExpression(
                     left = BinaryExpression(
@@ -188,7 +201,13 @@ class AlgebraicSimplificationVisitorTest {
                         )
                     ),
                     operator = "+",
-                    right = ParenExpression(UnaryExpression(operator = "-", NumberLiteralExpression("9")))
+                    right = ParenExpression(
+                        BinaryExpression(
+                            left = NumberLiteralExpression("0"),
+                            operator = "-",
+                            right = NumberLiteralExpression("9")
+                        )
+                    )
                 ),
                 operator = "-",
                 right = ParenExpression(
@@ -204,7 +223,8 @@ class AlgebraicSimplificationVisitorTest {
                         )
                     )
                 ),
-            )
+            ),
+            simplifiedAst
         )
     }
 
@@ -217,19 +237,17 @@ class AlgebraicSimplificationVisitorTest {
 
     @Test
     fun `replaces division with multiplication in expression with sequential division`() {
-        val ast = generateAst("a/b/c") // a/(b*c) -> c*(a/b)
+        val ast = generateAst("a/b/c") // a/(b*c)
         val simplifiedAst = ast?.accept(AlgebraicSimplificationVisitor())
 
         simplifiedAst.should.equal(
             BinaryExpression(
                 left = IdentifierExpression("a"),
                 operator = "/",
-                right = ParenExpression(
-                    BinaryExpression(
-                        left = IdentifierExpression("b"),
-                        operator = "*",
-                        right = IdentifierExpression("c")
-                    )
+                right = BinaryExpression(
+                    left = IdentifierExpression("b"),
+                    operator = "*",
+                    right = IdentifierExpression("c")
                 )
             )
         )

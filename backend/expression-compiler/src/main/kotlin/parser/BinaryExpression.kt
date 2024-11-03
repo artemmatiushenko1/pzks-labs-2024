@@ -2,7 +2,23 @@ package org.example.parser
 
 import org.example.visitors.Visitor
 
-class BinaryExpression(val right: Expression, val left: Expression, val operator: String) : Expression() {
+open class BinaryExpression(val right: Expression, val left: Expression, val operator: String) : Expression() {
+    fun isAddition(): Boolean {
+        return operator == "+"
+    }
+
+    fun isMultiplication(): Boolean {
+        return operator == "*"
+    }
+
+    fun isDivision(): Boolean {
+        return operator == "/"
+    }
+
+    fun isSubtraction(): Boolean {
+        return operator == "-"
+    }
+
     override fun accept(visitor: Visitor): Expression {
         return visitor.visitBinaryExpression(this)
     }

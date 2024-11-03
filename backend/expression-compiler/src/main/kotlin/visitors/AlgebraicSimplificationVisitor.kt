@@ -65,7 +65,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         }
     }
 
-    // 0*(a+1) = 0
     private fun simplifyMultiplicationByZero(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -78,7 +77,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return BinaryExpression(left = left, right = right, operator = operator)
     }
 
-    // 0/(a+1) = 0
     private fun simplifyZeroDividedBy(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -91,7 +89,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return BinaryExpression(left = left, right = right, operator = operator)
     }
 
-    // (a+1)/1 = (a+1)
     private fun simplifyDivisionByOne(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -100,7 +97,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return left.takeIf { isDivisionByOne(right, operator) } ?: binaryExpression
     }
 
-    // 1*(a+1) = (a+1)
     private fun simplifyMultiplicationByOne(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -109,7 +105,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return isMultiplicationByOne(left, right, operator) ?: binaryExpression
     }
 
-    // 0+(a+1) = (a+1)
     private fun simplifyAdditiveWithZero(binaryExpression: BinaryExpression): Expression {
         val operator = binaryExpression.operator
         val left = binaryExpression.left
@@ -118,7 +113,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return isAdditiveWithZero(left, right, operator) ?: binaryExpression
     }
 
-    // a/a = 1
     private fun simplifySelfDivision(binaryExpression: BinaryExpression): Expression {
         if (binaryExpression.left == binaryExpression.right && binaryExpression.operator == "/") {
             return NumberLiteralExpression("1")
@@ -127,38 +121,32 @@ class AlgebraicSimplificationVisitor : Visitor {
         return binaryExpression
     }
 
-    // a/b/c = a/(b*c)
     private fun transformSequentialDivision(binaryExpression: BinaryExpression): Expression {
         if (binaryExpression.operator == "/" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "/")) {
             return BinaryExpression(
                 left = binaryExpression.left.left,
                 operator = binaryExpression.operator,
-                right = ParenExpression(
-                    BinaryExpression(
-                        left = binaryExpression.left.right,
-                        operator = "*",
-                        right = binaryExpression.right
-                    )
-                ),
+                right = BinaryExpression(
+                    left = binaryExpression.left.right,
+                    operator = "*",
+                    right = binaryExpression.right
+                )
             )
         }
 
         return binaryExpression
     }
 
-    // a-b-c = a-(b+c)
     private fun transformSequentialSubtraction(binaryExpression: BinaryExpression): Expression {
         if (binaryExpression.operator == "-" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "-")) {
             return BinaryExpression(
                 left = binaryExpression.left.left,
                 operator = binaryExpression.operator,
-                right = ParenExpression(
-                    BinaryExpression(
-                        left = binaryExpression.left.right,
-                        operator = "+",
-                        right = binaryExpression.right
-                    )
-                ),
+                right = BinaryExpression(
+                    left = binaryExpression.left.right,
+                    operator = "+",
+                    right = binaryExpression.right
+                )
             )
         }
 
@@ -187,8 +175,6 @@ class AlgebraicSimplificationVisitor : Visitor {
         return expression
     }
 
-    // -(-5) = (5)
-    // -(b+c) = 0-(b+c)
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
         if (expression.argument is ParenExpression) {
             val parenArgument = expression.argument.argument

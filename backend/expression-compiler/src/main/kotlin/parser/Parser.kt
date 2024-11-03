@@ -3,17 +3,6 @@ package org.example.parser
 import org.example.lexicalAnalyzer.Token
 import org.example.lexicalAnalyzer.TokenType
 
-/*
-  NOTES: 
-  1. Generate an AST.
-  2. Perform optimisations.
-  3. Visitor pattern may be useful for doing optimisations.
-
-  TODO:
-  - balance tree
-  - remove redundant parens a-((b+c)+d) -> a -(b+c+d)
-  ((b+c)+d)-a -> (b+c+d)-a
- */
 class Parser(val tokens: List<Token>) {
     private val position = 0
     private val _tokens = tokens.toMutableList()

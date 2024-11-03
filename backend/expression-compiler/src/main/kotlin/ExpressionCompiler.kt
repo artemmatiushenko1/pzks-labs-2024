@@ -36,19 +36,25 @@ class ExpressionCompiler {
                 optimizer.optimize(it)
             }
 
+            if (syntaxErrors.isNotEmpty()) {
+                return CompilationResult(
+                    errors = syntaxErrors.map {
+                        CompilationError(
+                            message = it.message,
+                            position = it.position,
+                            type = "SyntaxError"
+                        )
+                    },
+                )
+            }
+
             return CompilationResult(
-                errors = syntaxErrors.map {
-                    CompilationError(
-                        message = it.message,
-                        position = it.position,
-                        type = "SyntaxError"
-                    )
-                },
+                errors = emptyList(),
                 originalTree = getSerializableTree(ast),
                 optimizedTree = getSerializableTree(optimizedAst),
                 originalExpressionString = getCompiledExpressionString(ast),
                 optimizedExpressionString = getCompiledExpressionString(optimizedAst),
-            ) // TODO: also send unoptimised tree
+            )
         } catch (e: Exception) {
             return when (e) {
                 is LexicalError -> CompilationResult(
