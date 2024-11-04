@@ -4,10 +4,10 @@ import org.example.parser.*
 
 class RedundantParensRemovalVisitor : Visitor {
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        val argument = expression.expression
+        val argument = expression.argument
 
         if (argument is NumberLiteralExpression || argument is IdentifierExpression) {
-            return expression.expression
+            return argument
         }
 
         return if (argument is ParenExpression) {

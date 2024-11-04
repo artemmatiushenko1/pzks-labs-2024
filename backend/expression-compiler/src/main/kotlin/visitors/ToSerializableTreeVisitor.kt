@@ -37,7 +37,7 @@ class ToSerializableTreeVisitor : Visitor {
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        expression.expression.accept(this)
+        expression.argument.accept(this)
 
         return expression
     }

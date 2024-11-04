@@ -4,7 +4,7 @@ import org.example.visitors.Visitor
 
 class UnaryExpression(
     val operator: String,
-    val argument: Expression, // TODO: rename to operand
+    val argument: Expression,
 ) : Expression() {
     override fun accept(visitor: Visitor): Expression {
         return visitor.visitUnaryExpression(this)

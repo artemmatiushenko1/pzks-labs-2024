@@ -3,17 +3,6 @@ package org.example.parser
 import org.example.lexicalAnalyzer.Token
 import org.example.lexicalAnalyzer.TokenType
 
-/*
-  NOTES: 
-  1. Generate an AST.
-  2. Perform optimisations.
-  3. Visitor pattern may be useful for doing optimisations.
-
-  TODO:
-  - refactor sequential divisions,
-  - refactor sequential subtraction,
-  - put zero in front of unary expression etc.
- */
 class Parser(val tokens: List<Token>) {
     private val position = 0
     private val _tokens = tokens.toMutableList()
@@ -52,7 +41,7 @@ class Parser(val tokens: List<Token>) {
             val expression = this.parseAdditiveExpression()
             this.consume(TokenType.CLOSE_PAREN).lexeme
 
-            parenExpression = ParenExpression(expression = expression ?: throw Exception("Unexpected token!"))
+            parenExpression = ParenExpression(argument = expression ?: throw Exception("Unexpected token!"))
         }
 
         return parenExpression ?: this.parseTerm()
@@ -64,7 +53,8 @@ class Parser(val tokens: List<Token>) {
         val expression = when (currentToken?.type) {
             TokenType.ADDITIVE_OPERATOR -> UnaryExpression(
                 operator = this.consume(TokenType.ADDITIVE_OPERATOR).lexeme,
-                argument = this.parseParenExpression() ?: throw Exception("Unexpected token!")
+                argument = this.parseParenExpression()
+                    ?: throw Exception("Unexpected token ${currentToken.lexeme} at ${currentToken.position}!")
             )
 
             else -> this.parseParenExpression()
@@ -112,8 +102,8 @@ class Parser(val tokens: List<Token>) {
         return left
     }
 
-    fun parse(): ExpressionStatement {
+    fun parse(): Expression? {
         val expression = this.parseAdditiveExpression()
-        return ExpressionStatement(expression = expression)
+        return expression
     }
 }

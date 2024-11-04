@@ -4,6 +4,7 @@ import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
 import org.example.TreeNode
 import org.example.parser.Parser
 import org.example.visitors.ToSerializableTreeVisitor
+import sun.nio.ch.Net.accept
 import kotlin.test.Test
 import kotlin.test.assertNotNull
 
@@ -14,8 +15,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -31,8 +31,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -48,8 +47,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -71,8 +69,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -96,8 +93,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -117,8 +113,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 
@@ -138,8 +133,7 @@ class ToSerializableTreeVisitorTest {
         val ast = Parser(tokens = tokens).parse()
 
         val visitor = ToSerializableTreeVisitor()
-        assertNotNull(ast.expression)
-        ast.expression!!.accept(visitor)
+        ast?.accept(visitor)
 
         val actualTree = visitor.getTree()
 

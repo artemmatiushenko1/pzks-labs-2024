@@ -1,6 +1,7 @@
 package org.example.visitors
 
 import org.example.parser.*
+import sun.nio.ch.Net.accept
 import kotlin.math.absoluteValue
 
 class ConstantFoldingVisitor : Visitor {
@@ -12,17 +13,17 @@ class ConstantFoldingVisitor : Visitor {
         val operator = expression.operator
         val argument = expression.argument.accept(this)
 
-        if (argument is NumberLiteralExpression) {
-            val value = argument.value
-            return NumberLiteralExpression(value = "$operator$value")
-        }
-
         return UnaryExpression(operator = operator, argument = argument)
     }
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        val foldResult = expression.expression.accept(this)
-        return ParenExpression(expression = foldResult)
+        val foldResult = expression.argument.accept(this)
+
+        if (foldResult is NumberLiteralExpression) {
+            return foldResult
+        }
+
+        return ParenExpression(argument = foldResult)
     }
 
     private fun evaluateBinaryExpression(left: Int, right: Int, operator: String): Int {
@@ -40,10 +41,26 @@ class ConstantFoldingVisitor : Visitor {
         val right = binaryExpression.right
 
         if (operator == "/" && right is NumberLiteralExpression && right.value == "0") {
-            throw IllegalArgumentException("Division by zero is forbidden!")
+            throw Exception("Division by zero is forbidden!")
         }
 
         return binaryExpression
+    }
+
+    private fun getNumberLiteralOrUnaryNumberLiteralValue(expression: Expression): String {
+        if (expression is NumberLiteralExpression) {
+            return expression.value
+        }
+
+        if (expression is UnaryExpression && expression.argument is NumberLiteralExpression) {
+            return "${expression.operator}${expression.argument.value}"
+        }
+
+        throw IllegalArgumentException("Expression should be either NumberLiteralExpression or UnaryExpression with NumberLiteralExpression argument.")
+    }
+
+    private fun isNumberOrUnaryNumberLiteral(expression: Expression): Boolean {
+        return expression is NumberLiteralExpression || (expression is UnaryExpression && expression.argument is NumberLiteralExpression)
     }
 
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
@@ -53,10 +70,13 @@ class ConstantFoldingVisitor : Visitor {
 
         verifyDivisionByZero(BinaryExpression(right, left, operator))
 
-        if (left is NumberLiteralExpression && right is NumberLiteralExpression) {
+        if (isNumberOrUnaryNumberLiteral(left) && isNumberOrUnaryNumberLiteral(right)) {
+            val leftValue = getNumberLiteralOrUnaryNumberLiteralValue(left).toInt()
+            val rightValue = getNumberLiteralOrUnaryNumberLiteralValue(right).toInt()
+
             val evaluatedResult = evaluateBinaryExpression(
-                left.value.toInt(),
-                right.value.toInt(),
+                leftValue,
+                rightValue,
                 operator
             )
 

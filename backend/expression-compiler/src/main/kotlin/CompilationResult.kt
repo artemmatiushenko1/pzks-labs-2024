@@ -1,5 +1,13 @@
 package org.example
 
-import org.example.syntaxAnalyzer.SyntaxError
+import kotlinx.serialization.Serializable
 
-data class CompilationResult(val syntaxErrors: List<SyntaxError>, val tree: TreeNode?)
+@Serializable
+data class CompilationResult(
+    val errors: List<CompilationError>,
+    val tree: TreeNode? = null,
+    val optimizedTree: TreeNode? = null,
+    val originalTree: TreeNode? = null,
+    val originalExpressionString: String? = null,
+    val optimizedExpressionString: String? = null
+)

@@ -13,8 +13,11 @@ const useCompileExpression = () => {
       });
 
       return response.json() as Promise<{
-        syntaxErrors: CompilationError[];
-        tree: TreeNode;
+        errors: CompilationError[];
+        originalTree: TreeNode | null;
+        optimizedTree: TreeNode | null;
+        originalExpressionString: string | null;
+        optimizedExpressionString: string | null;
       }>;
     },
   });

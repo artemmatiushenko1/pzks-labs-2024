@@ -9,16 +9,19 @@ class AlgebraicSimplificationVisitor : Visitor {
         AlgebraicSimplificationVisitor::simplifyDivisionByOne,
         AlgebraicSimplificationVisitor::simplifyMultiplicationByOne,
         AlgebraicSimplificationVisitor::simplifyAdditiveWithZero,
+        AlgebraicSimplificationVisitor::simplifySelfDivision,
+        AlgebraicSimplificationVisitor::transformSequentialDivision,
+        AlgebraicSimplificationVisitor::transformSequentialSubtraction,
     )
 
     override fun visitParenExpression(expression: ParenExpression): Expression {
-        val simplifiedExpression = expression.expression.accept(this)
+        val simplifiedExpression = expression.argument.accept(this)
 
         if (simplifiedExpression is NumberLiteralExpression && simplifiedExpression.value == "0") {
             return simplifiedExpression
         }
 
-        return ParenExpression(expression = simplifiedExpression)
+        return ParenExpression(argument = simplifiedExpression)
     }
 
     private fun isMultiplicationByZero(left: Expression, right: Expression, operator: String): Boolean {
@@ -110,6 +113,46 @@ class AlgebraicSimplificationVisitor : Visitor {
         return isAdditiveWithZero(left, right, operator) ?: binaryExpression
     }
 
+    private fun simplifySelfDivision(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.left == binaryExpression.right && binaryExpression.operator == "/") {
+            return NumberLiteralExpression("1")
+        }
+
+        return binaryExpression
+    }
+
+    private fun transformSequentialDivision(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.operator == "/" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "/")) {
+            return BinaryExpression(
+                left = binaryExpression.left.left,
+                operator = binaryExpression.operator,
+                right = BinaryExpression(
+                    left = binaryExpression.left.right,
+                    operator = "*",
+                    right = binaryExpression.right
+                )
+            )
+        }
+
+        return binaryExpression
+    }
+
+    private fun transformSequentialSubtraction(binaryExpression: BinaryExpression): Expression {
+        if (binaryExpression.operator == "-" && (binaryExpression.left is BinaryExpression && binaryExpression.left.operator == "-")) {
+            return BinaryExpression(
+                left = binaryExpression.left.left,
+                operator = binaryExpression.operator,
+                right = BinaryExpression(
+                    left = binaryExpression.left.right,
+                    operator = "+",
+                    right = binaryExpression.right
+                )
+            )
+        }
+
+        return binaryExpression
+    }
+
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         val operator = expression.operator
         val left = expression.left.accept(this)
@@ -133,6 +176,18 @@ class AlgebraicSimplificationVisitor : Visitor {
     }
 
     override fun visitUnaryExpression(expression: UnaryExpression): Expression {
-        return expression
+        if (expression.argument is ParenExpression) {
+            val parenArgument = expression.argument.argument
+
+            if (parenArgument is UnaryExpression && (expression.operator == parenArgument.operator)) {
+                return ParenExpression(argument = parenArgument.argument)
+            }
+        }
+
+        return BinaryExpression(
+            left = NumberLiteralExpression("0"),
+            operator = expression.operator,
+            right = expression.argument
+        )
     }
 }

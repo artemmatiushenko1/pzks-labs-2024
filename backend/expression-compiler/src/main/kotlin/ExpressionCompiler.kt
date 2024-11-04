@@ -1,33 +1,82 @@
 package org.example
 
 import org.example.lexicalAnalyzer.LexicalAnalyzerImpl
-import org.example.parser.ExpressionStatement
+import org.example.lexicalAnalyzer.LexicalError
+import org.example.parser.Expression
 import org.example.parser.Parser
-import org.example.visitors.ConstantFoldingVisitor
 import org.example.visitors.ToSerializableTreeVisitor
 import org.example.syntaxAnalyzer.SyntaxAnalyzerImpl
-import org.example.visitors.AlgebraicSimplificationVisitor
-import sun.nio.ch.Net.accept
+import org.example.visitors.ToStringVisitor
 
 class ExpressionCompiler {
     private val optimizer = Optimizer()
 
+    private fun getCompiledExpressionString(ast: Expression?): String {
+        val visitor = ToStringVisitor()
+        ast?.accept(visitor)
+        return visitor.getExpressionString()
+    }
+
+    private fun getSerializableTree(ast: Expression?): TreeNode {
+        val visitor = ToSerializableTreeVisitor()
+        ast?.accept(visitor)
+        return visitor.getTree()
+    }
+
     fun compile(expression: String): CompilationResult {
-        val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
-        val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
+        try {
+            val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
+            val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
 
-        val serializableTree = if (syntaxErrors.isEmpty()) {
-            val ast = Parser(tokens = tokens).parse()
-            val optimizedAst = optimizer.optimize(ast)
+            val ast = if (syntaxErrors.isEmpty()) {
+                Parser(tokens = tokens).parse()
+            } else null
 
-            val visitor = ToSerializableTreeVisitor()
-            optimizedAst.expression?.accept(visitor)
-            visitor.getTree()
-        } else null
+            val optimizedAst = ast?.let {
+                optimizer.optimize(it)
+            }
 
-        return CompilationResult(
-            syntaxErrors = syntaxErrors,
-            tree = serializableTree
-        ) // TODO: also send unoptimised tree
+            if (syntaxErrors.isNotEmpty()) {
+                return CompilationResult(
+                    errors = syntaxErrors.map {
+                        CompilationError(
+                            message = it.message,
+                            position = it.position,
+                            type = "SyntaxError"
+                        )
+                    },
+                )
+            }
+
+            return CompilationResult(
+                errors = emptyList(),
+                originalTree = getSerializableTree(ast),
+                optimizedTree = getSerializableTree(optimizedAst),
+                originalExpressionString = getCompiledExpressionString(ast),
+                optimizedExpressionString = getCompiledExpressionString(optimizedAst),
+            )
+        } catch (e: Exception) {
+            return when (e) {
+                is LexicalError -> CompilationResult(
+                    errors = listOf(
+                        CompilationError(
+                            message = e.message,
+                            position = e.position,
+                            type = "LexicalError"
+                        )
+                    )
+                )
+
+                else -> CompilationResult(
+                    errors = listOf(
+                        CompilationError(
+                            message = e.message,
+                            position = null,
+                            type = "Exception"
+                        )
+                    )
+                )
+            }
+        }
     }
 }
