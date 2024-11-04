@@ -37,13 +37,13 @@ const TreeViewer = (props: TreeViewerProps) => {
   };
 
   return (
-    <div style={{ width: '500px', height: '500px' }}>
+    <div style={{ width: '600px', height: '500px' }}>
       <Tree
         depthFactor={80}
         collapsible={false}
         orientation="vertical"
         rootNodeClassName="node-root"
-        translate={{ x: 250, y: 100 }}
+        translate={{ x: 300, y: 100 }}
         renderCustomNodeElement={renderCustomNode}
         separation={{ siblings: 0.8, nonSiblings: 1 }}
         data={convertTreeToReactD3TreeFormat(tree.children[0])}
