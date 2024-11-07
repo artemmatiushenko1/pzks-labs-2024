@@ -31,26 +31,6 @@ class BalanceVisitor : Visitor {
         return y
     }
 
-    private fun rotateLeft(x: BinaryExpression): BinaryExpression {
-        if (x.right !is BinaryExpression) return x
-
-        val y = x.right
-        val t2 = y.left
-
-        if (
-            (x.isAddition() && x.right.isAddition()) ||
-            (x.isMultiplication() && x.right.isMultiplication())
-        ) {
-            return BinaryExpression(
-                left = BinaryExpression(left = x.left, operator = x.operator, right = t2),
-                operator = x.operator,
-                right = y.right
-            )
-        }
-
-        return x
-    }
-
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
         var currentExpression = expression
 
@@ -58,12 +38,6 @@ class BalanceVisitor : Visitor {
             val newCurrent = rotateRight(currentExpression)
             if (currentExpression == newCurrent) break
             currentExpression = newCurrent
-        }
-
-        while (getHeight(currentExpression.right) > getHeight(currentExpression.left) + 1) {
-            val rotatedExpression = rotateLeft(currentExpression)
-            if (currentExpression == rotatedExpression) break
-            currentExpression = rotatedExpression
         }
 
         return BinaryExpression(

@@ -1,13 +1,10 @@
 package org.example
 
 import org.example.parser.Expression
-import org.example.visitors.AlgebraicSimplificationVisitor
-import org.example.visitors.BalanceVisitor
-import org.example.visitors.ConstantFoldingVisitor
-import org.example.visitors.RedundantParensRemovalVisitor
+import org.example.visitors.*
 
 class Optimizer {
-    private val visitors = listOf(
+    private val visitors: List<Visitor> = listOf(
         AlgebraicSimplificationVisitor(),
         ConstantFoldingVisitor(),
         RedundantParensRemovalVisitor(),

@@ -7,8 +7,18 @@ class ToSerializableTreeVisitor : Visitor {
     private val tree = TreeNode(value = null)
     private var currentParent = tree
 
+    private fun formatNumberLiteralValue(value: String): String {
+        val number = value.toDoubleOrNull()
+
+        return if (number != null && number == number.toInt().toDouble()) {
+            number.toInt().toString()
+        } else {
+            value
+        }
+    }
+
     override fun visitNumberLiteralExpression(expression: NumberLiteralExpression): Expression {
-        val numberLiteralNode = TreeNode(value = expression.value)
+        val numberLiteralNode = TreeNode(value = formatNumberLiteralValue(expression.value))
         currentParent.addNode(numberLiteralNode)
 
         return expression

@@ -26,7 +26,7 @@ class ConstantFoldingVisitor : Visitor {
         return ParenExpression(argument = foldResult)
     }
 
-    private fun evaluateBinaryExpression(left: Int, right: Int, operator: String): Int {
+    private fun evaluateBinaryExpression(left: Double, right: Double, operator: String): Double {
         return when (operator) {
             "+" -> left + right // TODO: handle floats
             "-" -> left - right
@@ -71,8 +71,8 @@ class ConstantFoldingVisitor : Visitor {
         verifyDivisionByZero(BinaryExpression(right, left, operator))
 
         if (isNumberOrUnaryNumberLiteral(left) && isNumberOrUnaryNumberLiteral(right)) {
-            val leftValue = getNumberLiteralOrUnaryNumberLiteralValue(left).toInt()
-            val rightValue = getNumberLiteralOrUnaryNumberLiteralValue(right).toInt()
+            val leftValue = getNumberLiteralOrUnaryNumberLiteralValue(left).toDouble()
+            val rightValue = getNumberLiteralOrUnaryNumberLiteralValue(right).toDouble()
 
             val evaluatedResult = evaluateBinaryExpression(
                 leftValue,
@@ -96,14 +96,14 @@ class ConstantFoldingVisitor : Visitor {
             // TODO: create enum for math operators
             if (left.right is NumberLiteralExpression && left.operator !in listOf("*", "/")) {
                 val evaluatedResult = evaluateBinaryExpression(
-                    left = left.right.value.toInt().let {
+                    left = left.right.value.toDouble().let {
                         if (left.operator == "-") {
                             it.unaryMinus()
                         } else {
                             it
                         }
                     },
-                    right = right.value.toInt(),
+                    right = right.value.toDouble(),
                     operator = operator,
                 )
 
