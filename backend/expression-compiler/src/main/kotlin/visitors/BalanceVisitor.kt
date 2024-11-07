@@ -11,24 +11,52 @@ class BalanceVisitor : Visitor {
         else -> 0
     }
 
-    private fun rotateRight(y: BinaryExpression): BinaryExpression {
-        if (y.left !is BinaryExpression) return y
+    private fun rotateRight(expression: BinaryExpression): BinaryExpression {
+        if (expression.left !is BinaryExpression) return expression
 
-        val x = y.left
-        val t2 = x.right
+        val leftSubExpression = expression.left
+        val rightOfLeftSubExpression = leftSubExpression.right
 
         if (
-            (y.isAddition() && y.left.isAddition()) ||
-            (y.isMultiplication() && y.left.isMultiplication())
+            (expression.isAddition() && leftSubExpression.isAddition()) ||
+            (expression.isMultiplication() && leftSubExpression.isMultiplication())
         ) {
             return BinaryExpression(
-                left = x.left,
-                operator = x.operator,
-                right = BinaryExpression(left = t2, operator = x.operator, right = y.right)
+                left = leftSubExpression.left,
+                operator = leftSubExpression.operator,
+                right = BinaryExpression(
+                    left = rightOfLeftSubExpression,
+                    operator = leftSubExpression.operator,
+                    right = expression.right
+                )
             )
         }
 
-        return y
+        return expression
+    }
+
+    private fun rotateLeft(expression: BinaryExpression): BinaryExpression {
+        if (expression.right !is BinaryExpression) return expression
+
+        val rightSubExpression = expression.right
+        val leftOfRightSubExpression = rightSubExpression.left
+
+        if (
+            (expression.isAddition() && expression.right.isAddition()) ||
+            (expression.isMultiplication() && expression.right.isMultiplication())
+        ) {
+            return BinaryExpression(
+                left = BinaryExpression(
+                    left = expression.left,
+                    operator = expression.operator,
+                    right = leftOfRightSubExpression
+                ),
+                operator = expression.operator,
+                right = rightSubExpression.right
+            )
+        }
+
+        return expression
     }
 
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {
@@ -38,6 +66,12 @@ class BalanceVisitor : Visitor {
             val newCurrent = rotateRight(currentExpression)
             if (currentExpression == newCurrent) break
             currentExpression = newCurrent
+        }
+
+        while (getHeight(currentExpression.right) > getHeight(currentExpression.left) + 1) {
+            val rotatedExpression = rotateLeft(currentExpression)
+            if (currentExpression == rotatedExpression) break
+            currentExpression = rotatedExpression
         }
 
         return BinaryExpression(
