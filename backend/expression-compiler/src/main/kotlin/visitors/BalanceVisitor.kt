@@ -11,44 +11,52 @@ class BalanceVisitor : Visitor {
         else -> 0
     }
 
-    private fun rotateRight(y: BinaryExpression): BinaryExpression {
-        if (y.left !is BinaryExpression) return y
+    private fun rotateRight(expression: BinaryExpression): BinaryExpression {
+        if (expression.left !is BinaryExpression) return expression
 
-        val x = y.left
-        val t2 = x.right
+        val leftSubExpression = expression.left
+        val rightOfLeftSubExpression = leftSubExpression.right
 
         if (
-            (y.isAddition() && y.left.isAddition()) ||
-            (y.isMultiplication() && y.left.isMultiplication())
+            (expression.isAddition() && leftSubExpression.isAddition()) ||
+            (expression.isMultiplication() && leftSubExpression.isMultiplication())
         ) {
             return BinaryExpression(
-                left = x.left,
-                operator = x.operator,
-                right = BinaryExpression(left = t2, operator = x.operator, right = y.right)
+                left = leftSubExpression.left,
+                operator = leftSubExpression.operator,
+                right = BinaryExpression(
+                    left = rightOfLeftSubExpression,
+                    operator = leftSubExpression.operator,
+                    right = expression.right
+                )
             )
         }
 
-        return y
+        return expression
     }
 
-    private fun rotateLeft(x: BinaryExpression): BinaryExpression {
-        if (x.right !is BinaryExpression) return x
+    private fun rotateLeft(expression: BinaryExpression): BinaryExpression {
+        if (expression.right !is BinaryExpression) return expression
 
-        val y = x.right
-        val t2 = y.left
+        val rightSubExpression = expression.right
+        val leftOfRightSubExpression = rightSubExpression.left
 
         if (
-            (x.isAddition() && x.right.isAddition()) ||
-            (x.isMultiplication() && x.right.isMultiplication())
+            (expression.isAddition() && expression.right.isAddition()) ||
+            (expression.isMultiplication() && expression.right.isMultiplication())
         ) {
             return BinaryExpression(
-                left = BinaryExpression(left = x.left, operator = x.operator, right = t2),
-                operator = x.operator,
-                right = y.right
+                left = BinaryExpression(
+                    left = expression.left,
+                    operator = expression.operator,
+                    right = leftOfRightSubExpression
+                ),
+                operator = expression.operator,
+                right = rightSubExpression.right
             )
         }
 
-        return x
+        return expression
     }
 
     override fun visitBinaryExpression(expression: BinaryExpression): Expression {

@@ -8,10 +8,6 @@ import kotlinx.serialization.json.*
 data class TreeNode(val value: String?) {
     val children: MutableList<TreeNode> = mutableListOf()
 
-    /**
-     * Adds node to children list.
-     * @return this.
-     */
     fun addNode(node: TreeNode): TreeNode {
         children.add(node)
         return this

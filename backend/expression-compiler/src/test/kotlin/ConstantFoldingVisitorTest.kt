@@ -15,7 +15,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on sum expression with 2 operands`() {
         val ast = generateAst("2+2")
 
-        val expectedAst = NumberLiteralExpression("4")
+        val expectedAst = NumberLiteralExpression("4.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -25,7 +25,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on subtraction expression with 2 operands`() {
         val ast = generateAst("4-2")
 
-        val expectedAst = NumberLiteralExpression("2")
+        val expectedAst = NumberLiteralExpression("2.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -35,7 +35,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on multiplication expression with 2 operands`() {
         val ast = generateAst("4*2")
 
-        val expectedAst = NumberLiteralExpression("8")
+        val expectedAst = NumberLiteralExpression("8.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -45,7 +45,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on division expression with 2 operands`() {
         val ast = generateAst("10/5")
 
-        val expectedAst = NumberLiteralExpression("2")
+        val expectedAst = NumberLiteralExpression("2.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -55,7 +55,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on sum expression with 3 operands`() {
         val ast = generateAst("2+2+10")
 
-        val expectedAst = NumberLiteralExpression("14")
+        val expectedAst = NumberLiteralExpression("14.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -65,7 +65,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on subtraction expression with 3 operands`() {
         val ast = generateAst("15-2-10")
 
-        val expectedAst = NumberLiteralExpression("3")
+        val expectedAst = NumberLiteralExpression("3.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -75,7 +75,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on multiplication expression with 3 operands`() {
         val ast = generateAst("2*2*2")
 
-        val expectedAst = NumberLiteralExpression("8")
+        val expectedAst = NumberLiteralExpression("8.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -85,7 +85,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on division expression with 3 operands`() {
         val ast = generateAst("8/2/2")
 
-        val expectedAst = NumberLiteralExpression("2")
+        val expectedAst = NumberLiteralExpression("2.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -95,7 +95,7 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on expression with unary number literal expression`() {
         val ast = generateAst("-1+2*4")
 
-        val expectedAst = NumberLiteralExpression("7")
+        val expectedAst = NumberLiteralExpression("7.0")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(expectedAst)
@@ -106,7 +106,7 @@ class ConstantFoldingVisitorTest {
         val ast = generateAst("(1+2)*4")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
-        foldedAst.should.equal(NumberLiteralExpression("12"))
+        foldedAst.should.equal(NumberLiteralExpression("12.0"))
     }
 
     @Test
@@ -114,7 +114,7 @@ class ConstantFoldingVisitorTest {
         val ast = generateAst("12/(1+2)")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
-        foldedAst.should.equal(NumberLiteralExpression("4"))
+        foldedAst.should.equal(NumberLiteralExpression("4.0"))
     }
 
     @Test
@@ -129,7 +129,7 @@ class ConstantFoldingVisitorTest {
         val ast = generateAst("1+7+2+1+88")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
-        foldedAst.should.equal(NumberLiteralExpression(value = "99"))
+        foldedAst.should.equal(NumberLiteralExpression(value = "99.0"))
     }
 
     @Test
@@ -141,7 +141,7 @@ class ConstantFoldingVisitorTest {
             BinaryExpression(
                 left = IdentifierExpression("a"),
                 operator = "+",
-                right = NumberLiteralExpression("14")
+                right = NumberLiteralExpression("14.0")
             )
         )
     }
@@ -153,7 +153,7 @@ class ConstantFoldingVisitorTest {
 
         foldedAst.should.equal(
             BinaryExpression(
-                left = NumberLiteralExpression("10"),
+                left = NumberLiteralExpression("10.0"),
                 operator = "+",
                 right = IdentifierExpression("a")
             ),
@@ -168,12 +168,12 @@ class ConstantFoldingVisitorTest {
         foldedAst.should.equal(
             BinaryExpression(
                 left = BinaryExpression(
-                    left = NumberLiteralExpression("3"),
+                    left = NumberLiteralExpression("3.0"),
                     operator = "+",
                     right = IdentifierExpression("a")
                 ),
                 operator = "+",
-                right = NumberLiteralExpression("10")
+                right = NumberLiteralExpression("10.0")
             )
         )
     }
@@ -182,14 +182,14 @@ class ConstantFoldingVisitorTest {
     fun `folds constants on sequential addition with unary number expression on the start`() {
         val ast = generateAst("-1+7+2")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
-        foldedAst.should.equal(NumberLiteralExpression("8"))
+        foldedAst.should.equal(NumberLiteralExpression("8.0"))
     }
 
     @Test
     fun `folds constants on sequential addition with paren expression`() {
         val ast = generateAst("(-1+7+1)+2+4")
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
-        foldedAst.should.equal(NumberLiteralExpression("13"))
+        foldedAst.should.equal(NumberLiteralExpression("13.0"))
     }
 
     @Test
@@ -203,7 +203,7 @@ class ConstantFoldingVisitorTest {
                 argument = ParenExpression(
                     UnaryExpression(
                         operator = "-",
-                        argument = NumberLiteralExpression("5")
+                        argument = NumberLiteralExpression("5.0")
                     )
                 )
             )
@@ -222,7 +222,7 @@ class ConstantFoldingVisitorTest {
                     argument = ParenExpression(
                         UnaryExpression(
                             operator = "-",
-                            argument = NumberLiteralExpression("5")
+                            argument = NumberLiteralExpression("5.0")
                         )
                     )
                 )
@@ -236,7 +236,7 @@ class ConstantFoldingVisitorTest {
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(
-            UnaryExpression(operator = "-", argument = NumberLiteralExpression("6"))
+            UnaryExpression(operator = "-", argument = NumberLiteralExpression("6.0"))
         )
     }
 
@@ -246,7 +246,7 @@ class ConstantFoldingVisitorTest {
         val foldedAst = ast?.accept(ConstantFoldingVisitor())
 
         foldedAst.should.equal(
-            UnaryExpression(operator = "-", argument = NumberLiteralExpression("26"))
+            UnaryExpression(operator = "-", argument = NumberLiteralExpression("26.0"))
         )
     }
 
@@ -260,7 +260,7 @@ class ConstantFoldingVisitorTest {
                 left = BinaryExpression(
                     left = ParenExpression(
                         BinaryExpression(
-                            left = NumberLiteralExpression("4"),
+                            left = NumberLiteralExpression("4.0"),
                             operator = "/",
                             right = IdentifierExpression("a")
                         )
@@ -269,11 +269,11 @@ class ConstantFoldingVisitorTest {
                     right = BinaryExpression(
                         left = IdentifierExpression("b"),
                         operator = "*",
-                        right = NumberLiteralExpression("6")
+                        right = NumberLiteralExpression("6.0")
                     )
                 ),
                 operator = "-",
-                right = NumberLiteralExpression("8")
+                right = NumberLiteralExpression("8.0")
             )
         )
     }
