@@ -12,10 +12,7 @@ const TreeViewer = (props: TreeViewerProps) => {
   const renderCustomNode: RenderCustomNodeElementFn = ({
     nodeDatum,
     toggleNode,
-    ...rest
   }) => {
-    console.log({ nodeDatum, toggleNode, rest });
-
     return (
       <g>
         <circle
