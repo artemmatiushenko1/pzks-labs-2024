@@ -10,16 +10,16 @@ import org.example.ExpressionCompiler
 import org.example.lexicalAnalyzer.LexicalError
 import org.example.TreeNode
 
-@Serializable
-data class CompileRequest(val expression: String)
-
 fun Application.configureRouting() {
     routing {
         post("/compile") {
             val requestBody = call.receive<CompileRequest>()
-            val result = ExpressionCompiler().compile(requestBody.expression)
+            call.respond(compile(requestBody))
+        }
 
-            call.respond(result)
+        post("/evaluate") {
+            val requestBody = call.receive<EvaluateExpressionRequest>()
+            call.respond(evaluateExpression(requestBody))
         }
     }
 }

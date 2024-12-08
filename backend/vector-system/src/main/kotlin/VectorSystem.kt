@@ -14,8 +14,8 @@ class VectorSystem(
 ) {
     private var time = 1;
     private val completedInstructionIds = mutableSetOf<Int>()
-
     private val history = mutableListOf<HistoryEntry>()
+
     private val processingUnits: List<ProcessingUnit> = listOf(
         ProcessingUnit(id = "P[+,-]1", types = listOf(InstructionType.SUM, InstructionType.SUBTRACTION)),
         ProcessingUnit(
