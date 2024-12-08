@@ -5,7 +5,7 @@ import kotlin.test.assertNotNull
 
 class VectorSystemTest {
     @Test
-    fun `processes instructions`() {
+    fun `processes tasks`() {
         val expression = generateAst("(2+a)-(4*v)")
         assertNotNull(expression)
 

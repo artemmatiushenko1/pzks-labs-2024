@@ -1,14 +1,10 @@
 package org.example
 
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-
 class ProcessingUnit(
     val id: String,
-    val types: List<InstructionType>,
+    val types: List<TaskType>,
     var state: State = State.IDLE,
-    var instruction: Instruction? = null,
+    var task: Task? = null,
     var timeLeft: Int = 0,
     var dependenciesToRead: Int = 0,
 ) {
@@ -26,7 +22,7 @@ class ProcessingUnit(
 
     fun write() {
         this.state = State.WRITING
-        this.instruction = null
+        this.task = null
         this.idle()
     }
 
@@ -34,10 +30,10 @@ class ProcessingUnit(
         this.state = State.IDLE
     }
 
-    fun assignInstruction(instruction: Instruction) {
-        this.instruction = instruction
-        this.timeLeft = instruction.type.duration
-        this.dependenciesToRead = instruction.dependencies.count()
+    fun assignTask(task: Task) {
+        this.task = task
+        this.timeLeft = task.type.duration
+        this.dependenciesToRead = task.dependencies.count()
         this.read()
     }
 }

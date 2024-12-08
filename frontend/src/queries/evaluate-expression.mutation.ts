@@ -16,7 +16,7 @@ const useEvaluateExpression = () => {
         entries: {
           time: number;
           processingUnitId: string;
-          instruction: string;
+          taskId: string;
           state: ProcessingUnitState;
         }[];
       }>;

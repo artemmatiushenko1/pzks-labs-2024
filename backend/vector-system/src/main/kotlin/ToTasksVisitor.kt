@@ -3,9 +3,9 @@ package org.example
 import org.example.parser.*
 import org.example.visitors.Visitor
 
-class ToInstructionsVisitor : Visitor {
-    private val instructions = mutableListOf<Instruction>()
-    private val expressionToInstructionMap = mutableMapOf<Expression, Instruction>()
+class ToTasksVisitor : Visitor {
+    private val tasks = mutableListOf<Task>()
+    private val expressionToTaskMap = mutableMapOf<Expression, Task>()
 
     private var currentId = 1
 
@@ -29,34 +29,34 @@ class ToInstructionsVisitor : Visitor {
         val left = expression.left.accept(this)
         val right = expression.right.accept(this)
 
-        val instructionType = when (expression.operator) {
-            InstructionType.SUM.operator -> InstructionType.SUM
-            InstructionType.SUBTRACTION.operator -> InstructionType.SUBTRACTION
-            InstructionType.MULTIPLICATION.operator -> InstructionType.MULTIPLICATION
-            InstructionType.DIVISION.operator -> InstructionType.DIVISION
+        val taskType = when (expression.operator) {
+            TaskType.SUM.operator -> TaskType.SUM
+            TaskType.SUBTRACTION.operator -> TaskType.SUBTRACTION
+            TaskType.MULTIPLICATION.operator -> TaskType.MULTIPLICATION
+            TaskType.DIVISION.operator -> TaskType.DIVISION
             else -> {
                 throw IllegalArgumentException("Unknown operator!")
             }
         }
 
-        val instruction = Instruction(
+        val task = Task(
             id = currentId,
-            type = instructionType,
+            type = taskType,
             dependencies = listOfNotNull(
-                expressionToInstructionMap[left],
-                expressionToInstructionMap[right]
+                expressionToTaskMap[left],
+                expressionToTaskMap[right]
             )
         )
 
-        instructions.add(instruction)
-        expressionToInstructionMap[expression] = instruction
+        tasks.add(task)
+        expressionToTaskMap[expression] = task
 
         currentId += 1
 
         return expression
     }
 
-    fun getInstructions(): List<Instruction> {
-        return this.instructions
+    fun getTasks(): List<Task> {
+        return this.tasks
     }
 }

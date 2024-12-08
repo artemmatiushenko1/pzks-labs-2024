@@ -5,7 +5,7 @@ import org.example.parser.Expression
 data class HistoryEntry(
     val processingUnitId: String,
     val state: ProcessingUnit.State,
-    val instruction: Instruction,
+    val task: Task,
     val time: Int = 1,
 )
 
@@ -13,31 +13,27 @@ class VectorSystem(
     private val expression: Expression,
 ) {
     private var time = 1;
-    private val completedInstructionIds = mutableSetOf<Int>()
+    private val completedTaskIds = mutableSetOf<Int>()
     private val history = mutableListOf<HistoryEntry>()
     private var isReadWriteBlocked = false // TODO: handle read write block
 
     private val processingUnits: List<ProcessingUnit> = listOf(
-        ProcessingUnit(id = "P[+,-]1", types = listOf(InstructionType.SUM, InstructionType.SUBTRACTION)),
+        ProcessingUnit(id = "P[+,-]1", types = listOf(TaskType.SUM, TaskType.SUBTRACTION)),
         ProcessingUnit(
             id = "P[*,/]1",
-            types = listOf(InstructionType.MULTIPLICATION, InstructionType.DIVISION),
+            types = listOf(TaskType.MULTIPLICATION, TaskType.DIVISION),
         ),
         ProcessingUnit(
             id = "P[*,/]2",
-            types = listOf(InstructionType.MULTIPLICATION, InstructionType.DIVISION),
+            types = listOf(TaskType.MULTIPLICATION, TaskType.DIVISION),
         )
     )
 
-    private fun produceInstructions(): List<Instruction> {
-        val toInstructionsVisitor = ToInstructionsVisitor()
-        expression.accept(toInstructionsVisitor)
-        val instructions = toInstructionsVisitor.getInstructions()
-        return instructions
-    }
-
-    fun setProcessingUnits(callback: (system: VectorSystem) -> Unit) {
-        callback(this)
+    private fun produceTasks(): List<Task> {
+        val toTasksVisitor = ToTasksVisitor()
+        expression.accept(toTasksVisitor)
+        val tasks = toTasksVisitor.getTasks()
+        return tasks
     }
 
     fun getHistory(): List<HistoryEntry> {
@@ -45,13 +41,13 @@ class VectorSystem(
     }
 
     private fun nextTick() {
-        val activeUnits = processingUnits.filter { it.instruction != null }
+        val activeUnits = processingUnits.filter { it.task != null }
 
         for (activeUnit in activeUnits) {
             val historyEntry = HistoryEntry(
                 processingUnitId = activeUnit.id,
                 state = activeUnit.state,
-                instruction = activeUnit.instruction!!,
+                task = activeUnit.task!!,
                 time = time
             )
 
@@ -81,9 +77,9 @@ class VectorSystem(
                 }
 
                 ProcessingUnit.State.WRITING -> {
-                    completedInstructionIds.add(activeUnit.instruction!!.id)
+                    completedTaskIds.add(activeUnit.task!!.id)
                     activeUnit.state = ProcessingUnit.State.IDLE
-                    activeUnit.instruction = null
+                    activeUnit.task = null
                     activeUnit.timeLeft = 0
                 }
 
@@ -94,23 +90,22 @@ class VectorSystem(
         time++
     }
 
-    fun addHistoryEntry(entry: HistoryEntry) {
+    private fun addHistoryEntry(entry: HistoryEntry) {
         this.history.add(entry)
     }
 
     fun process() {
-        val instructions = produceInstructions().toMutableList()
+        val tasks = produceTasks().toMutableList()
 
-        while (instructions.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.instruction != null }) {
-            val instruction = instructions.firstOrNull()
+        while (tasks.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.task != null }) {
+            val task = tasks.firstOrNull()
 
-            if (instruction == null) {
+            if (task == null) {
                 this.nextTick()
                 continue
             }
 
-            val areAllDependenciesCompleted =
-                instruction.dependencies.all { it.id in completedInstructionIds }
+            val areAllDependenciesCompleted = task.dependencies.all { it.id in completedTaskIds }
 
             if (!areAllDependenciesCompleted) {
                 this.nextTick() // TODO: maybe try the next task that is not blocked?
@@ -118,13 +113,12 @@ class VectorSystem(
             }
 
             val availableProcessingUnit = processingUnits.firstOrNull {
-                it.instruction == null && instruction.type in it.types
+                it.task == null && task.type in it.types
             }
 
             if (availableProcessingUnit != null) {
-                instructions.remove(instruction)
-
-                availableProcessingUnit.assignInstruction(instruction)
+                tasks.remove(task)
+                availableProcessingUnit.assignTask(task)
             }
 
             this.nextTick()
