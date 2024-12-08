@@ -3,7 +3,7 @@ import org.example.generateAst
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 
-class VectorySystemTest {
+class VectorSystemTest {
     @Test
     fun `processes instructions`() {
         val expression = generateAst("(2+a)-(4*v)")
