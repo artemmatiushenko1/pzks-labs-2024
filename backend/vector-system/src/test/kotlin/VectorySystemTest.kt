@@ -17,7 +17,7 @@ class VectorySystemTest {
     }
 
     @Test
-    fun `handles cocurrent write`() {
+    fun `handles concurrent write`() {
         val expression = generateAst("(a*b)*(c*d+a*(b-c))")
         assertNotNull(expression)
 
@@ -25,6 +25,6 @@ class VectorySystemTest {
 
         system.process()
 
-        println(system.getHistory().joinToString("\n") { it.toString() })
+//        println(system.getHistory().joinToString("\n") { it.toString() })
     }
 }

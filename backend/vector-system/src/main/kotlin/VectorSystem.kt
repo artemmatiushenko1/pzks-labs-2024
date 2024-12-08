@@ -15,6 +15,7 @@ class VectorSystem(
     private var time = 1;
     private val completedInstructionIds = mutableSetOf<Int>()
     private val history = mutableListOf<HistoryEntry>()
+    private var isReadWriteBlocked = false // TODO: handle read write block
 
     private val processingUnits: List<ProcessingUnit> = listOf(
         ProcessingUnit(id = "P[+,-]1", types = listOf(InstructionType.SUM, InstructionType.SUBTRACTION)),
@@ -54,7 +55,9 @@ class VectorSystem(
                 time = time
             )
 
-            this.addHistoryEntry(historyEntry)
+            if (activeUnit.state != ProcessingUnit.State.IDLE) {
+                this.addHistoryEntry(historyEntry)
+            }
 
             val newTimeLeft = activeUnit.timeLeft - 1
 
@@ -98,7 +101,7 @@ class VectorSystem(
     fun process() {
         val instructions = produceInstructions().toMutableList()
 
-        while (instructions.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE }) {
+        while (instructions.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.instruction != null }) {
             val instruction = instructions.firstOrNull()
 
             if (instruction == null) {
@@ -110,7 +113,7 @@ class VectorSystem(
                 instruction.dependencies.all { it.id in completedInstructionIds }
 
             if (!areAllDependenciesCompleted) {
-                this.nextTick()
+                this.nextTick() // TODO: maybe try the next task that is not blocked?
                 continue
             }
 
