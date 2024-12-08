@@ -42,7 +42,7 @@ class ToInstructionsVisitor : Visitor {
         val instruction = Instruction(
             id = currentId,
             type = instructionType,
-            parentInstructions = listOfNotNull(
+            dependencies = listOfNotNull(
                 expressionToInstructionMap[left],
                 expressionToInstructionMap[right]
             )
