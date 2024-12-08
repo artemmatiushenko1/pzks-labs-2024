@@ -10,6 +10,9 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
+    implementation(project(":expression-compiler"))
+
     testImplementation("org.jetbrains.kotlin:kotlin-test")
 }
 

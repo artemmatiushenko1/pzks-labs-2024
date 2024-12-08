@@ -23,6 +23,21 @@ class ExpressionCompiler {
         return visitor.getTree()
     }
 
+    fun produceOptimizedAst(expression: String): Expression? {
+        val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
+        val syntaxErrors = SyntaxAnalyzerImpl(tokens = tokens).analyze()
+
+        val ast = if (syntaxErrors.isEmpty()) {
+            Parser(tokens = tokens).parse()
+        } else null
+
+        val optimizedAst = ast?.let {
+            optimizer.optimize(it)
+        }
+
+        return optimizedAst
+    }
+
     fun compile(expression: String): CompilationResult {
         try {
             val tokens = LexicalAnalyzerImpl(expressionSource = expression).tokenize()
