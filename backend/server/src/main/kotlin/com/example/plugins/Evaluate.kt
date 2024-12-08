@@ -31,7 +31,7 @@ fun evaluateExpression(request: EvaluateExpressionRequest): EvaluateExpressionRe
         EvaluateExpressionResponse(entries = history.map {
             SerializableHistoryEntry(
                 processingUnitId = it.processingUnitId,
-                taskId = it.task.toString(),
+                taskId = it.task.getPrettyId(),
                 time = it.time,
                 state = it.state
             )

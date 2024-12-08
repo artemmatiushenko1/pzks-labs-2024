@@ -6,7 +6,7 @@ class ToTasksTreeVisitorTest {
     @Test
     fun `returns tasks`() {
         val visitor = ToTasksVisitor()
-        val expression = ExpressionCompiler().produceOptimizedAst("a+b+c+d+e+f+k+l")
+        val expression = ExpressionCompiler().produceOptimizedAst("(a*b)*(c*d+a*(b-c))")
         expression?.accept(visitor)
 
         println(visitor.getTasks())

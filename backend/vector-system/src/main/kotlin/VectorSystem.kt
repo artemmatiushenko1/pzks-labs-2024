@@ -70,10 +70,15 @@ class VectorSystem(
 
                 ProcessingUnit.State.PROCESSING -> {
                     if (newTimeLeft == 0) {
-                        activeUnit.state = ProcessingUnit.State.WRITING
-                    } else {
-                        activeUnit.timeLeft = newTimeLeft
+                        if (!isReadWriteBlocked) {
+                            this.isReadWriteBlocked = true
+                            activeUnit.state = ProcessingUnit.State.WRITING
+                        } else {
+                            activeUnit.state = ProcessingUnit.State.IDLE
+                        }
                     }
+
+                    activeUnit.timeLeft = newTimeLeft
                 }
 
                 ProcessingUnit.State.WRITING -> {
@@ -83,7 +88,11 @@ class VectorSystem(
                     activeUnit.timeLeft = 0
                 }
 
-                else -> throw Exception("Invalid state!")
+                ProcessingUnit.State.IDLE -> {
+                    if (!isReadWriteBlocked && activeUnit.timeLeft == 0 && activeUnit.task != null) {
+                        activeUnit.state = ProcessingUnit.State.WRITING
+                    }
+                }
             }
         }
 
@@ -99,6 +108,8 @@ class VectorSystem(
 
         while (tasks.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.task != null }) {
             val task = tasks.firstOrNull()
+
+            this.isReadWriteBlocked = false
 
             if (task == null) {
                 this.nextTick()
@@ -117,8 +128,17 @@ class VectorSystem(
             }
 
             if (availableProcessingUnit != null) {
-                tasks.remove(task)
-                availableProcessingUnit.assignTask(task)
+                val isReadWriteBlocked = processingUnits.any {
+                    it.state in listOf(
+                        ProcessingUnit.State.WRITING,
+                        ProcessingUnit.State.READING
+                    )
+                }
+
+                if (!isReadWriteBlocked) {
+                    tasks.remove(task)
+                    availableProcessingUnit.assignTask(task)
+                }
             }
 
             this.nextTick()
