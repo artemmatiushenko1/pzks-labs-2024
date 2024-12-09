@@ -1,4 +1,4 @@
-import { ProcessingUnitState } from '@/lib/types';
+import { HistoryEntry } from '@/lib/types';
 import { useMutation } from '@tanstack/react-query';
 
 const useEvaluateExpression = () => {
@@ -13,12 +13,7 @@ const useEvaluateExpression = () => {
       });
 
       return response.json() as Promise<{
-        entries: {
-          time: number;
-          processingUnitId: string;
-          taskId: string;
-          state: ProcessingUnitState;
-        }[];
+        entries: HistoryEntry[];
       }>;
     },
   });

@@ -16,4 +16,16 @@ enum ProcessingUnitState {
   WRITING = 'WRITING',
 }
 
-export { type CompilationError, type TreeNode, ProcessingUnitState };
+type HistoryEntry = {
+  time: number;
+  processingUnitId: string;
+  taskId: string;
+  state: ProcessingUnitState;
+};
+
+export {
+  type CompilationError,
+  type TreeNode,
+  ProcessingUnitState,
+  type HistoryEntry,
+};

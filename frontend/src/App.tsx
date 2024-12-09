@@ -34,7 +34,7 @@ const App = () => {
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
-      <div className="w-[600px] gap-3 flex flex-col">
+      <div className="w-[700px] gap-3 flex flex-col">
         <ExpressionForm onSubmit={compileExpression} isLoading={isCompiling} />
         {Boolean(compilationErrors?.length) && (
           <Badge
@@ -60,13 +60,7 @@ const App = () => {
             <GanttChartIcon />
             Evaluate
           </Button>
-          <GanttChart
-            data={(evaluationResult?.entries ?? []).map((item) => ({
-              ...item,
-              startTime: item.time - 1,
-              endTime: item.time,
-            }))}
-          />
+          <GanttChart entries={evaluationResult?.entries ?? []} />
         </>
       )}
     </div>

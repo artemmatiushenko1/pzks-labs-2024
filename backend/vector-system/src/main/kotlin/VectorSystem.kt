@@ -61,9 +61,7 @@ class VectorSystem(
                 time = time
             )
 
-            if (unit.state != ProcessingUnit.State.IDLE) {
-                this.addHistoryEntry(historyEntry)
-            }
+            this.addHistoryEntry(historyEntry)
         }
 
         val activeUnits = processingUnits.filter { it.task != null }
