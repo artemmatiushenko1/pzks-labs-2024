@@ -10,6 +10,10 @@ import { Button } from './components/ui/button';
 import { useEvaluateExpression } from './queries/evaluate-expression.mutation';
 import { GanttChartIcon } from 'lucide-react';
 
+// TODO:
+// 1. Display benchmark data.
+// 2. Create protocol
+
 const App = () => {
   const {
     mutate: compileExpression,
