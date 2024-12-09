@@ -104,19 +104,21 @@ class VectorSystem(
     }
 
     fun process() {
-        val tasks = produceTasks().toMutableList()
+        val tasksQueue = produceTasks().toMutableList()
 
-        while (tasks.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.task != null }) {
-            val task = tasks.firstOrNull()
+        while (tasksQueue.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.task != null }) {
+            val readyTask = tasksQueue.firstOrNull { task ->
+                task.dependencies.all { dependency -> dependency.id in completedTaskIds }
+            }
 
             this.isReadWriteBlocked = false
 
-            if (task == null) {
+            if (readyTask == null) {
                 this.nextTick()
                 continue
             }
 
-            val areAllDependenciesCompleted = task.dependencies.all { it.id in completedTaskIds }
+            val areAllDependenciesCompleted = readyTask.dependencies.all { it.id in completedTaskIds }
 
             if (!areAllDependenciesCompleted) {
                 this.nextTick() // TODO: maybe try the next task that is not blocked?
@@ -124,7 +126,7 @@ class VectorSystem(
             }
 
             val availableProcessingUnit = processingUnits.firstOrNull {
-                it.task == null && task.type in it.types
+                it.task == null && readyTask.type in it.types
             }
 
             if (availableProcessingUnit != null) {
@@ -136,8 +138,8 @@ class VectorSystem(
                 }
 
                 if (!isReadWriteBlocked) {
-                    tasks.remove(task)
-                    availableProcessingUnit.assignTask(task)
+                    tasksQueue.remove(readyTask)
+                    availableProcessingUnit.assignTask(readyTask)
                 }
             }
 
