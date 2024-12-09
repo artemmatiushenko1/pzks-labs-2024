@@ -11,7 +11,7 @@ data class EvaluateExpressionRequest(val expression: String)
 @Serializable
 data class SerializableHistoryEntry(
     val processingUnitId: String,
-    val taskId: String,
+    val taskId: String?,
     val time: Int,
     val state: ProcessingUnit.State
 )
@@ -31,7 +31,7 @@ fun evaluateExpression(request: EvaluateExpressionRequest): EvaluateExpressionRe
         EvaluateExpressionResponse(entries = history.map {
             SerializableHistoryEntry(
                 processingUnitId = it.processingUnitId,
-                taskId = it.task.getPrettyId(),
+                taskId = it.task?.getPrettyId(),
                 time = it.time,
                 state = it.state
             )
