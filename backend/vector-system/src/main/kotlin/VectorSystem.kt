@@ -2,34 +2,17 @@ package org.example
 
 import org.example.parser.Expression
 
-data class HistoryEntry(
-    val processingUnitId: String,
-    val state: ProcessingUnit.State,
-    val task: Task?,
-    val time: Int = 1,
-)
-
 class VectorSystem(
     private val expression: Expression,
 ) {
     private var time = 1;
-
     private val history = mutableListOf<HistoryEntry>()
     private var isReadWriteBlocked = false // TODO: handle read write block
+    private lateinit var processingUnits: List<ProcessingUnit>
 
-    private val processingUnits: List<ProcessingUnit> = listOf(
-        ProcessingUnit(id = "P[+,-]1", types = listOf(TaskType.SUM, TaskType.SUBTRACTION), system = this),
-        ProcessingUnit(
-            id = "P[*,/]1",
-            types = listOf(TaskType.MULTIPLICATION, TaskType.DIVISION),
-            system = this,
-        ),
-        ProcessingUnit(
-            id = "P[*,/]2",
-            types = listOf(TaskType.MULTIPLICATION, TaskType.DIVISION),
-            system = this,
-        )
-    )
+    fun setProcessingUnits(getProcessingUnits: (system: VectorSystem) -> List<ProcessingUnit>) {
+        this.processingUnits = getProcessingUnits(this)
+    }
 
     fun getIsReadWriteBlocked(): Boolean = this.isReadWriteBlocked
 
@@ -78,7 +61,7 @@ class VectorSystem(
         time++
     }
 
-    fun process() {
+    fun evaluate() {
         val tasksQueue = produceTasks().toMutableList()
 
         while (tasksQueue.isNotEmpty() || processingUnits.any { it.state != ProcessingUnit.State.IDLE || it.task != null }) {

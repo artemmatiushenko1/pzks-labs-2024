@@ -11,7 +11,7 @@ class VectorSystemTest {
 
         val system = VectorSystem(expression = expression)
 
-        system.process()
+        system.evaluate()
 
         println(system.getHistory().joinToString("\n") { it.toString() })
     }
@@ -23,7 +23,7 @@ class VectorSystemTest {
 
         val system = VectorSystem(expression = expression)
 
-        system.process()
+        system.evaluate()
 
 //        println(system.getHistory().joinToString("\n") { it.toString() })
     }

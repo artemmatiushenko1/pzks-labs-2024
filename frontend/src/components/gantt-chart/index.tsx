@@ -12,6 +12,8 @@ const STATE_TO_COLOR = {
   [ProcessingUnitState.WRITING]: '#3498db',
 };
 
+const getColorByState = (state: ProcessingUnitState) => STATE_TO_COLOR[state];
+
 const GanttChart = (props: GanttChartProps) => {
   const { entries } = props;
 
@@ -34,17 +36,39 @@ const GanttChart = (props: GanttChartProps) => {
   };
 
   return (
-    <Bar
-      {...config}
-      axis={{ y: { title: 'Time' }, x: { title: 'Processing Unit' } }}
-      height={300}
-      width={900}
-      style={{
-        width: 30,
-        minHeight: 50,
-        fill: ({ state }: HistoryEntry) => STATE_TO_COLOR[state],
-      }}
-    />
+    <>
+      <div className="flex items-start w-full gap-3">
+        {[
+          ProcessingUnitState.IDLE,
+          ProcessingUnitState.READING,
+          ProcessingUnitState.PROCESSING,
+          ProcessingUnitState.WRITING,
+        ].map((state) => (
+          <div key={state} className="flex items-center gap-1">
+            <span
+              style={{
+                borderRadius: '20px',
+                width: '20px',
+                height: '20px',
+                background: getColorByState(state),
+              }}
+            >
+              &nbsp;
+            </span>
+            <span className="text-sm">{state}</span>
+          </div>
+        ))}
+      </div>
+      <Bar
+        {...config}
+        axis={{ y: { title: 'Time' }, x: { title: 'Processing Unit' } }}
+        height={300}
+        width={900}
+        style={{
+          fill: ({ state }: HistoryEntry) => STATE_TO_COLOR[state],
+        }}
+      />
+    </>
   );
 };
 

@@ -1,6 +1,7 @@
 package com.example.plugins
 
 import kotlinx.serialization.Serializable
+import org.example.Benchmark
 import org.example.ExpressionCompiler
 import org.example.ProcessingUnit
 import org.example.VectorSystem
@@ -17,18 +18,33 @@ data class SerializableHistoryEntry(
 )
 
 @Serializable
-data class EvaluateExpressionResponse(val entries: List<SerializableHistoryEntry>)
+data class SerializableSystemSpecs(
+    val efficiency: Double,
+    val acceleration: Double,
+    val sequentialProcessingTime: Int,
+    val parallelProcessingTime: Int,
+    val processingUnitsCount: Int,
+)
+
+@Serializable
+data class EvaluateExpressionResponse(
+    val entries: List<SerializableHistoryEntry>,
+    val specs: SerializableSystemSpecs,
+)
 
 fun evaluateExpression(request: EvaluateExpressionRequest): EvaluateExpressionResponse {
-    val optimizedExpression = ExpressionCompiler().produceOptimizedAst(request.expression)
-        ?: throw Exception("Failed to compile expression!")
+    val benchmark = Benchmark()
+    val specs = benchmark.run(request.expression)
 
-    val vectorSystem = VectorSystem(optimizedExpression)
-    vectorSystem.process()
-
-    val history = vectorSystem.getHistory()
-    val response =
-        EvaluateExpressionResponse(entries = history.map {
+    val response = EvaluateExpressionResponse(
+        specs = SerializableSystemSpecs(
+            efficiency = specs.efficiency,
+            acceleration = specs.acceleration,
+            parallelProcessingTime = specs.parallelProcessingTime,
+            sequentialProcessingTime = specs.sequentialProcessingTime,
+            processingUnitsCount = specs.processingUnitsCount,
+        ),
+        entries = specs.parallelProcessingHistory.map {
             SerializableHistoryEntry(
                 processingUnitId = it.processingUnitId,
                 taskId = it.task?.getPrettyId(),

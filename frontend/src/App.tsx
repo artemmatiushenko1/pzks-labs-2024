@@ -34,7 +34,7 @@ const App = () => {
 
   return (
     <div className="flex items-center justify-center mt-20 flex-col ">
-      <div className="w-[700px] gap-3 flex flex-col">
+      <div className="w-[600px] gap-3 flex flex-col">
         <ExpressionForm onSubmit={compileExpression} isLoading={isCompiling} />
         {Boolean(compilationErrors?.length) && (
           <Badge
@@ -52,17 +52,23 @@ const App = () => {
           />
         )}
         {compilationErrors?.length === 0 && <CompilationSuccessAlert />}
+        {optimizedTree && <TreeViewer tree={optimizedTree} />}
       </div>
-      {optimizedTree && <TreeViewer tree={optimizedTree} />}
-      {optimizedTree && (
-        <>
-          <Button onClick={handleEvaluateExpression} disabled={isEvaluating}>
-            <GanttChartIcon />
-            Evaluate
-          </Button>
-          <GanttChart entries={evaluationResult?.entries ?? []} />
-        </>
-      )}
+      <div className='className="w-[800px]'>
+        {optimizedTree && (
+          <div className="flex flex-col gap-2">
+            <Button
+              className="self-start"
+              onClick={handleEvaluateExpression}
+              disabled={isEvaluating}
+            >
+              <GanttChartIcon />
+              Evaluate
+            </Button>
+            <GanttChart entries={evaluationResult?.entries ?? []} />
+          </div>
+        )}
+      </div>
     </div>
   );
 };
