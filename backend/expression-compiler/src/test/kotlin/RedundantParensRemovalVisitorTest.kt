@@ -1,5 +1,6 @@
 import net.oddpoet.expect.extension.equal
 import net.oddpoet.expect.should
+import org.example.generateAst
 import org.example.parser.*
 import org.example.visitors.RedundantParensRemovalVisitor
 import org.junit.jupiter.api.Test

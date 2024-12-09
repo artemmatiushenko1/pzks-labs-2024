@@ -9,4 +9,23 @@ type TreeNode = {
   children: TreeNode[];
 };
 
-export { type CompilationError, type TreeNode };
+enum ProcessingUnitState {
+  IDLE = 'IDLE',
+  READING = 'READING',
+  PROCESSING = 'PROCESSING',
+  WRITING = 'WRITING',
+}
+
+type HistoryEntry = {
+  time: number;
+  processingUnitId: string;
+  taskId: string;
+  state: ProcessingUnitState;
+};
+
+export {
+  type CompilationError,
+  type TreeNode,
+  ProcessingUnitState,
+  type HistoryEntry,
+};
