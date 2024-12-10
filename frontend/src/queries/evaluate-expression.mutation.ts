@@ -1,4 +1,4 @@
-import { HistoryEntry } from '@/lib/types';
+import { HistoryEntry, SystemSpecs } from '@/lib/types';
 import { useMutation } from '@tanstack/react-query';
 
 const useEvaluateExpression = () => {
@@ -14,6 +14,7 @@ const useEvaluateExpression = () => {
 
       return response.json() as Promise<{
         entries: HistoryEntry[];
+        specs: SystemSpecs;
       }>;
     },
   });
