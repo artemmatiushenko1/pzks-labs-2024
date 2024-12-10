@@ -1,5 +1,6 @@
 import { HistoryEntry, ProcessingUnitState } from '@/lib/types';
 import { Bar } from '@ant-design/charts';
+import { useLayoutEffect, useState } from 'react';
 
 type GanttChartProps = {
   entries: HistoryEntry[];
@@ -16,6 +17,12 @@ const getColorByState = (state: ProcessingUnitState) => STATE_TO_COLOR[state];
 
 const GanttChart = (props: GanttChartProps) => {
   const { entries } = props;
+
+  const [width, setWidth] = useState(800);
+
+  useLayoutEffect(() => {
+    setWidth(window.innerWidth / 1.2 - 80);
+  }, []);
 
   const transformedData = entries.map((item) => ({
     ...item,
@@ -55,15 +62,15 @@ const GanttChart = (props: GanttChartProps) => {
             >
               &nbsp;
             </span>
-            <span className="text-sm">{state}</span>
+            <span className="text-sm">{state.toLowerCase()}</span>
           </div>
         ))}
       </div>
       <Bar
         {...config}
         axis={{ y: { title: 'Time' }, x: { title: 'Processing Unit' } }}
-        height={300}
-        width={900}
+        height={260}
+        width={width}
         style={{
           fill: ({ state }: HistoryEntry) => STATE_TO_COLOR[state],
         }}

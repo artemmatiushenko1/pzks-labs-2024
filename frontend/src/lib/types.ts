@@ -23,9 +23,19 @@ type HistoryEntry = {
   state: ProcessingUnitState;
 };
 
+type SystemSpecs = {
+  efficiency: number;
+  acceleration: number;
+  sequentialProcessingTime: number;
+  parallelProcessingTime: number;
+  processingUnitsCount: number;
+  parallelProcessingHistory: HistoryEntry[];
+};
+
 export {
   type CompilationError,
   type TreeNode,
   ProcessingUnitState,
   type HistoryEntry,
+  type SystemSpecs,
 };

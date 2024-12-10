@@ -34,7 +34,7 @@ const TreeViewer = (props: TreeViewerProps) => {
   };
 
   return (
-    <div style={{ width: '600px', height: '500px' }}>
+    <div style={{ width: '100%', height: '400px' }}>
       <Tree
         depthFactor={80}
         collapsible={false}
