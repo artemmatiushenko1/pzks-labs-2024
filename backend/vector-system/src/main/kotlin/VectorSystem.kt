@@ -7,7 +7,7 @@ class VectorSystem(
 ) {
     private var time = 1;
     private val history = mutableListOf<HistoryEntry>()
-    private var isReadWriteBlocked = false // TODO: handle read write block
+    private var isReadWriteBlocked = false
     private lateinit var processingUnits: List<ProcessingUnit>
 
     fun setProcessingUnits(getProcessingUnits: (system: VectorSystem) -> List<ProcessingUnit>) {
@@ -75,13 +75,6 @@ class VectorSystem(
 
             if (readyTask == null) {
                 this.nextTick()
-                continue
-            }
-
-            val areAllDependenciesCompleted = readyTask.dependencies.all { it.id in completedTaskIds }
-
-            if (!areAllDependenciesCompleted) {
-                this.nextTick() // TODO: maybe try the next task that is not blocked?
                 continue
             }
 
